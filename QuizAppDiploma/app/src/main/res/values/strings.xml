@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">LearnMeNow</string>
+    <string name="email">E-mail</string>
+    <string name="password">Heslo</string>
+    <string name="whoAreYou">Kto si?</string>
 </resources>
