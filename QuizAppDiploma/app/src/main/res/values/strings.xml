@@ -3,4 +3,13 @@
     <string name="email">E-mail</string>
     <string name="password">Heslo</string>
     <string name="whoAreYou">Kto si?</string>
+    <string name="login">Prihlásiť sa</string>
+    <string name="noAccount">Ešte nemáš účet?</string>
+    <string name="registration">Registrovať sa</string>
+    <string name="headline">Learn Me Now</string>
+    <string name="sinceYear">since 2022</string>
+    <string name="personName">Meno</string>
+    <string name="personSurname">Priezvisko</string>
+    <string name="repeatPassword">Zopakuj heslo</string>
+    <string name="registrationTitle">Registrácia</string>
 </resources>

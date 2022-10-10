@@ -1,4 +1,5 @@
 
+
 # LearnMeNow repository 
 
 The repository is for android application "**LearnMeNow**", which is being developed for **diploma thesis purposes**.
@@ -16,13 +17,27 @@ Main target of the app is to learn you something new via course, in which you wi
 	 - Database -> DatabaseHandler
 	 - Fragments -> RegistrationFragment, WelcomeFragment
 
-# Important files
+#### 10/10/2022
+- Registration and Welcome UI updated by material.io
+- Navigation between fragments 
+	- from login action based on who logged in (admin / lecturer / student)
+- SplashScreen with animation
 
-## TBD
-DESC DESC
+# Important files/packages
 
-## TBD
-DESC DESC
+## Entities
+
+ - Admin.kt
+ - Lecturer.kt
+ - Student.kt
+
+## Fragments
+
+ - WelcomeFragment.kt
+ - RegistrationFragment.kt
+ - AdminFragment.kt
+ - StudentFragment.kt
+ - LecturerFragment.kt
 
 # Docs reference
 **Fragments**</br>
@@ -30,6 +45,10 @@ https://developer.android.com/guide/fragments </br></br>
 
 **SQLiteDatabase**</br>
 https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase </br></br>
+
+**Splash screens**</br>
+https://developer.android.com/develop/ui/views/launch/splash-screen </br></br>
+
 
 
 # Have fun :)
