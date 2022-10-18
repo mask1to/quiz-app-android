@@ -1,20 +1,21 @@
-package com.example.quizappdiploma.fragments
+package com.example.quizappdiploma.fragments.courses
 
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
 
-class StudentFragment : Fragment()
+
+class BiologyCourse : Fragment()
 {
 
-    private lateinit var showFirstBtn : Button
+    private lateinit var firstLecture : Button
+    private lateinit var secondLecture : Button
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -32,15 +33,21 @@ class StudentFragment : Fragment()
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View?
     {
-        return inflater.inflate(R.layout.fragment_student, container, false)
+        return inflater.inflate(R.layout.fragment_biology_course, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
-        showFirstBtn = view.findViewById(R.id.showFirstBtn)
+        firstLecture = view.findViewById(R.id.learnBioFirst)
+        secondLecture = view.findViewById(R.id.learnBioSecond)
 
-        showFirstBtn.setOnClickListener {
-            val action = StudentFragmentDirections.actionStudentFragmentToBiologyCourse()
+        firstLecture.setOnClickListener{
+            val action = BiologyCourseDirections.actionBiologyCourseToFirstBioLecture()
+            view.findNavController().navigate(action)
+        }
+
+        secondLecture.setOnClickListener {
+            val action = BiologyCourseDirections.actionBiologyCourseToSecondBioLecture()
             view.findNavController().navigate(action)
         }
 
@@ -48,5 +55,3 @@ class StudentFragment : Fragment()
     }
 
 }
-
-
