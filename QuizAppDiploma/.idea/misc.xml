@@ -9,9 +9,12 @@
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/drawable/ic_launcher_background.xml" value="0.162" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/drawable/ic_logo.xml" value="0.162" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/drawable/splash_background.xml" value="0.162" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/activity_bio_lecture.xml" value="0.1" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/activity_splash_screen.xml" value="0.1838768115942029" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/each_item.xml" value="0.12360688956433637" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_admin.xml" value="0.1838768115942029" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_biology_course.xml" value="0.35778985507246375" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_blank.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_course.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_course_list.xml" value="0.1838768115942029" />

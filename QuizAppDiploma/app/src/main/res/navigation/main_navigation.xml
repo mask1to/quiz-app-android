@@ -49,22 +49,5 @@
         android:id="@+id/biologyCourse"
         android:name="com.example.quizappdiploma.fragments.courses.BiologyCourse"
         android:label="fragment_biology_course"
-        tools:layout="@layout/fragment_biology_course" >
-        <action
-            android:id="@+id/action_biologyCourse_to_firstBioLecture"
-            app:destination="@id/firstBioLecture" />
-        <action
-            android:id="@+id/action_biologyCourse_to_secondBioLecture"
-            app:destination="@id/secondBioLecture" />
-    </fragment>
-    <fragment
-        android:id="@+id/firstBioLecture"
-        android:name="com.example.quizappdiploma.fragments.courses.lectures.FirstBioLecture"
-        android:label="fragment_first_bio_lecture"
-        tools:layout="@layout/fragment_first_bio_lecture" />
-    <fragment
-        android:id="@+id/secondBioLecture"
-        android:name="com.example.quizappdiploma.fragments.courses.lectures.SecondBioLecture"
-        android:label="fragment_second_bio_lecture"
-        tools:layout="@layout/fragment_second_bio_lecture" />
+        tools:layout="@layout/fragment_biology_course" />
 </navigation>

@@ -1,21 +1,26 @@
 package com.example.quizappdiploma.fragments.courses
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.OnBackPressedCallback
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.quizappdiploma.Course
+import com.example.quizappdiploma.CourseAdapter
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.fragments.courses.lectures.BioLecture
 
 
 class BiologyCourse : Fragment()
 {
 
-    private lateinit var firstLecture : Button
-    private lateinit var secondLecture : Button
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var courseList : ArrayList<Course>
+    private lateinit var courseAdapter: CourseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -29,26 +34,41 @@ class BiologyCourse : Fragment()
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View?
     {
+
         return inflater.inflate(R.layout.fragment_biology_course, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
-        firstLecture = view.findViewById(R.id.learnBioFirst)
-        secondLecture = view.findViewById(R.id.learnBioSecond)
+        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
-        firstLecture.setOnClickListener{
-            val action = BiologyCourseDirections.actionBiologyCourseToFirstBioLecture()
-            view.findNavController().navigate(action)
-        }
+        courseList = ArrayList()
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "Ahoj"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "Ako"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "sa"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "mas"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "Ahoj"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "ako"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "sa"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "mas"))
+        courseList.add(Course(R.drawable.ic_baseline_email_24, "Ahoj"))
 
-        secondLecture.setOnClickListener {
-            val action = BiologyCourseDirections.actionBiologyCourseToSecondBioLecture()
-            view.findNavController().navigate(action)
+
+        courseAdapter = CourseAdapter(courseList)
+        recyclerView.adapter = courseAdapter
+
+        courseAdapter.onItemClick = {
+            val intent = Intent(context, BioLecture::class.java)
+            intent.putExtra("course", it)
+            startActivity(intent)
         }
 
         super.onViewCreated(view, savedInstanceState)
