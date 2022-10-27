@@ -1,4 +1,4 @@
-package com.example.quizappdiploma
+package com.example.quizappdiploma.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.quizappdiploma.entities.Course
+import com.example.quizappdiploma.R
 
 class CourseAdapter(private val courseList : ArrayList<Course>)
     :RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
@@ -19,7 +21,7 @@ class CourseAdapter(private val courseList : ArrayList<Course>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.each_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.each_course_item, parent, false)
         return CourseViewHolder(view)
     }
 

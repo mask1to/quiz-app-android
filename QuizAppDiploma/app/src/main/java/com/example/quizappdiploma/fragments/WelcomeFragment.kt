@@ -48,11 +48,10 @@ class WelcomeFragment : Fragment()
         passwordField = view.findViewById(R.id.passwordField)
 
         val items = listOf("Študent", "Lektor", "Administrátor")
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
+        val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
         (textField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
         loginButton.setOnClickListener {
-            //TODO()
             val emailInput = emailField.editText?.text.toString()
             val passwordInput = passwordField.editText?.text.toString()
             /**

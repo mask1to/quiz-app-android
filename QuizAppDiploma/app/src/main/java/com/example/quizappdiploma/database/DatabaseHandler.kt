@@ -37,7 +37,7 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         onCreate(db)
     }
 
-    fun insertNewStudent(student : Student) : Long
+    /*fun insertNewStudent(student : Student) : Long
     {
         val db = this.writableDatabase
 
@@ -49,10 +49,10 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         val success = db.insert(TBL_STUDENT, null, contentValues)
         db.close()
         return success
-    }
+    }*/
 
-    @SuppressLint("Range")
-    fun getAllStudents():ArrayList<Student>
+    //@SuppressLint("Range")
+    /*fun getAllStudents():ArrayList<Student>
     {
         val studentList : ArrayList<Student> = ArrayList()
         val selectQuery = "SELECT * FROM $TBL_STUDENT"
@@ -85,6 +85,6 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         }
 
         return studentList
-    }
+    }*/
 
 }

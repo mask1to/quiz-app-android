@@ -49,5 +49,10 @@
         android:id="@+id/biologyCourse"
         android:name="com.example.quizappdiploma.fragments.courses.BiologyCourse"
         android:label="fragment_biology_course"
-        tools:layout="@layout/fragment_biology_course" />
+        tools:layout="@layout/fragment_biology_recycler_course" />
+    <fragment
+        android:id="@+id/biologyQuiz"
+        android:name="com.example.quizappdiploma.fragments.quizzes.BiologyQuiz"
+        android:label="fragment_biology_quiz"
+        tools:layout="@layout/fragment_biology_quiz" />
 </navigation>
