@@ -13,21 +13,27 @@
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/activity_detailed.xml" value="0.2" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/activity_splash_screen.xml" value="0.1838768115942029" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/each_course_item.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/each_item.xml" value="0.176" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/each_lecture_item.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/entity_dropdown_item.xml" value="0.10104166666666667" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_admin.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_bio_lecture.xml" value="0.1" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_biology_content.xml" value="0.2" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_biology_course.xml" value="0.35778985507246375" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_biology_quiz.xml" value="0.4" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_biology_recycler_course.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_blank.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_course.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_course_list.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_first_bio_lecture.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_first_course.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_lecturer.xml" value="0.1838768115942029" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_registration.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_scrolling.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_second_bio_lecture.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_student.xml" value="0.176" />
+        <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/fragment_student_recycler.xml" value="0.15353260869565216" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/list_item.xml" value="0.1838768115942029" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/registration_fragment.xml" value="0.264" />
         <entry key="..\:/Users/masko/AndroidStudioProjects/Diplomka/quiz-app-android/QuizAppDiploma/app/src/main/res/layout/welcome_fragment.xml" value="0.358695652173913" />

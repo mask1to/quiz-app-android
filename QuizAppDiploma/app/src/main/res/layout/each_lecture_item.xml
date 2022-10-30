@@ -7,37 +7,36 @@
     app:cardCornerRadius="20dp"
     android:layout_marginHorizontal = "10dp"
     android:layout_marginVertical="16dp"
-    android:id="@+id/eachCourseCardView"
+    android:id="@+id/eachLectureCardView"
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/eachCourseImg"
+            android:id="@+id/eachImg"
             android:layout_width="120dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_baseline_person_24"
+            android:src="@drawable/icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-            android:id="@+id/eachCourseTextView"
+            android:id="@+id/eachTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
-            android:text="Kurz celý"
+            android:text="Kurz"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/eachCourseImg" />
+            app:layout_constraintStart_toEndOf="@+id/eachImg" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
