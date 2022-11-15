@@ -30,6 +30,13 @@
         <action
             android:id="@+id/action_studentFragment_to_biologyCourse"
             app:destination="@id/biologyCourse" />
+        <!--<argument
+            android:name="courseClass"
+            app:argType="com.example.quizappdiploma.entities.Course" />-->
+        <!--
+        <argument
+            android:name="lectureClass"
+            app:argType="com.example.quizappdiploma.entities.Lecture" /> -->
     </fragment>
     <fragment
         android:id="@+id/lecturerFragment"
@@ -62,5 +69,10 @@
     <fragment
         android:id="@+id/biologyContent"
         android:name="com.example.quizappdiploma.fragments.courses.content.BiologyContent"
-        android:label="BiologyContent" />
+        android:label="BiologyContent">
+    <argument
+        android:name="lectureClass"
+        app:argType="com.example.quizappdiploma.entities.Lecture" />
+    </fragment>
+
 </navigation>

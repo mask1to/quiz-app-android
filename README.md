@@ -23,6 +23,12 @@ Main target of the app is to learn you something new via course, in which you wi
 	- from login action based on who logged in (admin / lecturer / student)
 - SplashScreen with animation
 
+#### 01/11/2022
+- Adapters for Course and Lecture added
+- RecyclerView implemented for courses and lectures
+- Course and Lecture are from now on data classes as Admin, Student, Lecturer
+
+
 # Important files/packages
 
 ## Entities
@@ -30,6 +36,8 @@ Main target of the app is to learn you something new via course, in which you wi
  - Admin.kt
  - Lecturer.kt
  - Student.kt
+ - Course.kt
+ - Lecture.kt
 
 ## Fragments
 
@@ -38,6 +46,7 @@ Main target of the app is to learn you something new via course, in which you wi
  - AdminFragment.kt
  - StudentFragment.kt
  - LecturerFragment.kt
+ - BiologyCourse.kt, BiologyContent.kt, BiologyQuiz.kt
 
 # Docs reference
 **Fragments**</br>

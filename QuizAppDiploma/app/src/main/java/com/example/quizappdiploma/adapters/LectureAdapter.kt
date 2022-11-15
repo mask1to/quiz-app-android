@@ -24,7 +24,13 @@ class LectureAdapter(private val lectureList : ArrayList<Lecture>)
         val textView : TextView = itemView.findViewById(R.id.eachTextView)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LectureViewHolder {
+    override fun getItemViewType(position: Int): Int
+    {
+        return position % 2 * 2
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LectureViewHolder
+    {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.each_lecture_item, parent, false)
         return LectureViewHolder(view)
     }
@@ -35,8 +41,9 @@ class LectureAdapter(private val lectureList : ArrayList<Lecture>)
         holder.textView.text = lecture.name
 
         holder.lectureCardView.setOnClickListener {
-            val action = BiologyCourseDirections.actionBiologyCourseToBiologyContent()
+            val action = BiologyCourseDirections.actionBiologyCourseToBiologyContent(lecture)
             holder.itemView.findNavController().navigate(action)
+
         }
     }
 

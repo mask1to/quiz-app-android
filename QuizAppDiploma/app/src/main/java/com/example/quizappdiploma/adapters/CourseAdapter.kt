@@ -1,5 +1,6 @@
 package com.example.quizappdiploma.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +13,11 @@ import com.example.quizappdiploma.R
 import com.example.quizappdiploma.entities.Course
 import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.fragments.StudentFragmentDirections
+import com.example.quizappdiploma.interfaces.RecyclerInterface
 
 class CourseAdapter(private val courseList : ArrayList<Course>)
     : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
 {
-
     class CourseViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
     {
         val courseCardView : CardView = itemView.findViewById(R.id.eachCourseCardView)
@@ -37,8 +38,10 @@ class CourseAdapter(private val courseList : ArrayList<Course>)
         holder.textView.text = course.name
 
         holder.courseCardView.setOnClickListener {
+
             val action = StudentFragmentDirections.actionStudentFragmentToBiologyCourse()
             holder.itemView.findNavController().navigate(action)
+            Log.d("CourseAdapter", "Click item")
         }
     }
 

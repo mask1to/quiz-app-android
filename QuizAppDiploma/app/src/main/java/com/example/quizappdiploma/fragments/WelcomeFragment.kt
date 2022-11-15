@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.adapters.CourseAdapter
+import com.example.quizappdiploma.entities.Course
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
 
@@ -24,6 +26,7 @@ class WelcomeFragment : Fragment()
     private lateinit var passwordField : TextInputLayout
     private lateinit var registerButton : Button
     private lateinit var loginButton : Button
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {

@@ -1,10 +1,11 @@
 package com.example.quizappdiploma.entities
 
 data class Lecturer(
-    val name: String,
-    val password : String,
+    val id : Int,
+    val username: String,
     val email : String,
-    val isAdmin : Boolean,
-    val isLecturer : Boolean,
-    val isStudent : Boolean
+    val password : String,
+    val isAdmin : Int,
+    val isLecturer : Int,
+    val isStudent : Int
 )
