@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LearningNow</string>
     <string name="email">E-mail</string>
@@ -8,8 +9,7 @@
     <string name="registration">Registrovať sa</string>
     <string name="headline">Learning Now</string>
     <string name="sinceYear">since 2022</string>
-    <string name="personName">Meno</string>
-    <string name="personSurname">Priezvisko</string>
+    <string name="personNickName">Používateľské meno</string>
     <string name="repeatPassword">Zopakuj heslo</string>
     <string name="registrationTitle">Registrácia</string>
     <!-- TODO: Remove or change this placeholder text -->

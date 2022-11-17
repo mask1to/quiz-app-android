@@ -13,7 +13,6 @@ import com.example.quizappdiploma.R
 import com.example.quizappdiploma.entities.Course
 import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.fragments.StudentFragmentDirections
-import com.example.quizappdiploma.interfaces.RecyclerInterface
 
 class CourseAdapter(private val courseList : ArrayList<Course>)
     : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()

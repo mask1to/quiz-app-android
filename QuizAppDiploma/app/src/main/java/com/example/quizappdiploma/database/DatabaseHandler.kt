@@ -6,6 +6,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.quizappdiploma.entities.Course
+import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.entities.Student
 import java.lang.Exception
 
@@ -14,7 +16,7 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
     companion object
     {
         private const val DATABASE_VERSION = 1
-        private const val DATABASE_NAME = "learningNow"
+        private const val DATABASE_NAME = "learningnow3"
         private const val TBL_USERS = "tbl_users"
         private const val TBL_COURSE = "tbl_course"
         private const val TBL_LECTURE = "tbl_lecture"
@@ -22,28 +24,28 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         /**
          * Table users
          */
-        private const val KEY_ID_STUDENT = "id"
-        private const val KEY_USERNAME = "username"
-        private const val KEY_EMAIL = "email"
-        private const val KEY_PASSWORD = "password"
-        private const val KEY_STUDENT = "isStudent"
-        private const val KEY_LECTURER = "isLecturer"
-        private const val KEY_ADMIN = "isAdmin"
+        private const val KEY_ID_STUDENT = "id "
+        private const val KEY_USERNAME = "username "
+        private const val KEY_EMAIL = "email "
+        private const val KEY_PASSWORD = "password "
+        private const val KEY_STUDENT = "isStudent "
+        private const val KEY_LECTURER = "isLecturer "
+        private const val KEY_ADMIN = "isAdmin "
 
         /**
          * Table course
          */
-        private const val KEY_ID_COURSE = "id"
-        private const val KEY_NAME_COURSE = "name"
-        private const val KEY_IMAGE_ID_COURSE = "image_id"
+        private const val KEY_ID_COURSE = "id "
+        private const val KEY_NAME_COURSE = "name "
+        private const val KEY_IMAGE_ID_COURSE = "image_id "
 
         /**
          * Table lecture
          */
-        private const val KEY_ID_LECTURE = "id"
-        private const val KEY_NAME_LECTURE = "name"
-        private const val KEY_DESC_LECTURE = "content_description"
-        private const val KEY_IMAGE_ID_LECTURE = "image_id"
+        private const val KEY_ID_LECTURE = "id "
+        private const val KEY_NAME_LECTURE = "name "
+        private const val KEY_DESC_LECTURE = "content_description "
+        private const val KEY_IMAGE_ID_LECTURE = "image_id "
 
 
     }
@@ -51,10 +53,10 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
     override fun onCreate(db: SQLiteDatabase?)
     {
         val createUserTable = ("CREATE TABLE " + TBL_USERS + "("
-                                   + KEY_ID_STUDENT + "INTEGER PRIMARY KEY,"
-                                   + KEY_USERNAME + "TEXT,"
-                                   + KEY_EMAIL + "TEXT,"
-                                   + KEY_PASSWORD + "TEXT,"
+                                   + KEY_ID_STUDENT + "INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                                   + KEY_USERNAME + "TEXT NOT NULL,"
+                                   + KEY_PASSWORD + "TEXT NOT NULL,"
+                                   + KEY_EMAIL + "TEXT NOT NULL,"
                                    + KEY_STUDENT + "INTEGER,"
                                    + KEY_LECTURER + "INTEGER,"
                                    + KEY_ADMIN + "INTEGER"
@@ -62,17 +64,17 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
                                  )
 
         val createCourseTable = ("CREATE TABLE " + TBL_COURSE + "("
-                                    + KEY_ID_COURSE + "INTEGER PRIMARY KEY,"
-                                    + KEY_NAME_COURSE + "TEXT,"
-                                    + KEY_IMAGE_ID_COURSE + "INTEGER"
+                                    + KEY_ID_COURSE + "INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                                    + KEY_NAME_COURSE + "TEXT NOT NULL,"
+                                    + KEY_IMAGE_ID_COURSE + "INTEGER NOT NULL"
                                     + ")"
                                 )
 
         val createLectureTable = ("CREATE TABLE " + TBL_LECTURE + "("
-                                    + KEY_ID_LECTURE + "INTEGER PRIMARY KEY,"
-                                    + KEY_NAME_LECTURE + "TEXT,"
-                                    + KEY_DESC_LECTURE + "TEXT,"
-                                    + KEY_IMAGE_ID_LECTURE + "TEXT,"
+                                    + KEY_ID_LECTURE + "INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                                    + KEY_NAME_LECTURE + "TEXT NOT NULL,"
+                                    + KEY_DESC_LECTURE + "TEXT NOT NULL,"
+                                    + KEY_IMAGE_ID_LECTURE + "INTEGER"
                                     + ")"
                                  )
 
@@ -95,10 +97,10 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
-        contentValues.put(KEY_ID_STUDENT, student.id)
+        //contentValues.put(KEY_ID_STUDENT, student.id)
         contentValues.put(KEY_USERNAME, student.username)
-        contentValues.put(KEY_EMAIL, student.email)
         contentValues.put(KEY_PASSWORD, student.password)
+        contentValues.put(KEY_EMAIL, student.email)
         contentValues.put(KEY_STUDENT, student.isStudent)
         contentValues.put(KEY_LECTURER, student.isLecturer)
         contentValues.put(KEY_ADMIN, student.isAdmin)
@@ -109,7 +111,7 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         return success
     }
 
-    fun updateUser(student : Student) : Int
+    /*fun updateUser(student : Student) : Int
     {
         val db = this.writableDatabase
         val contentValues = ContentValues()
@@ -126,6 +128,33 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         return success
     }
 
+    fun updateCourse(course : Course) : Int
+    {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(KEY_NAME_COURSE, course.name)
+        contentValues.put(KEY_IMAGE_ID_COURSE, course.image)
+
+        val success = db.update(TBL_COURSE, contentValues, KEY_ID_COURSE + "=" + course.id, null)
+
+        db.close()
+        return success
+    }
+
+    fun updateLecture(lecture : Lecture) : Int
+    {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(KEY_NAME_LECTURE, lecture.name)
+        contentValues.put(KEY_DESC_LECTURE, lecture.description)
+        contentValues.put(KEY_IMAGE_ID_LECTURE, lecture.image)
+
+        val success = db.update(TBL_LECTURE, contentValues, KEY_ID_LECTURE + "=" + lecture.id, null)
+
+        db.close()
+        return success
+    }
+
     fun deleteUser(student : Student) : Int
     {
         val db = this.writableDatabase
@@ -133,6 +162,30 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         contentValues.put(KEY_ID_STUDENT, student.id)
 
         val success = db.delete(TBL_USERS, KEY_ID_STUDENT + "=" + student.id, null)
+
+        db.close()
+        return success
+    }
+
+    fun deleteCourse(course : Course) : Int
+    {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(KEY_ID_COURSE, course.id)
+
+        val success = db.delete(TBL_COURSE, KEY_ID_COURSE + "=" + course.id, null)
+
+        db.close()
+        return success
+    }
+
+    fun deleteLecture(lecture : Lecture) : Int
+    {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(KEY_ID_LECTURE, lecture.id)
+
+        val success = db.delete(TBL_LECTURE, KEY_ID_LECTURE + "=" + lecture.id, null)
 
         db.close()
         return success
@@ -183,6 +236,13 @@ class DatabaseHandler(context: Context):SQLiteOpenHelper(context, DATABASE_NAME,
         }
 
         return studentList
+    }
+    */
+    fun getCourses() : Cursor?
+    {
+        val db = this.readableDatabase
+
+        return db.rawQuery("SELECT * FROM $TBL_COURSE", null)
     }
 
 

@@ -65,7 +65,11 @@
     <fragment
         android:id="@+id/registrationFragment"
         android:name="com.example.quizappdiploma.fragments.RegistrationFragment"
-        android:label="RegistrationFragment" />
+        android:label="RegistrationFragment" >
+        <action
+            android:id="@+id/action_registrationFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/biologyContent"
         android:name="com.example.quizappdiploma.fragments.courses.content.BiologyContent"

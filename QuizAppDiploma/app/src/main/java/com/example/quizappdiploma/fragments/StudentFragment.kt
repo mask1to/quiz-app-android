@@ -1,6 +1,7 @@
 package com.example.quizappdiploma.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.adapters.CourseAdapter
+import com.example.quizappdiploma.database.DatabaseHandler
 import com.example.quizappdiploma.entities.Course
+import com.example.quizappdiploma.entities.Student
 
 class StudentFragment : Fragment()
 {

@@ -11,10 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.adapters.LectureAdapter
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.interfaces.RecyclerInterface
 
 
-class BiologyCourse : Fragment(), RecyclerInterface
+class BiologyCourse : Fragment()
 {
     private lateinit var recyclerView: RecyclerView
     private lateinit var lectureList : ArrayList<Lecture>
@@ -54,8 +53,6 @@ class BiologyCourse : Fragment(), RecyclerInterface
         lectureList.add(Lecture(0, R.drawable.ic_baseline_person_24, "Ahoj", "Cau"))
         lectureList.add(Lecture(1, R.drawable.ic_baseline_person_24, "Ahoj2", "Cau2"))
 
-
-
         lectureAdapter = LectureAdapter(lectureList)
         recyclerView.adapter = lectureAdapter
 
@@ -64,11 +61,6 @@ class BiologyCourse : Fragment(), RecyclerInterface
         }
 
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onItemClick(position: Int)
-    {
-
     }
 
 }
