@@ -13,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.adapters.CourseAdapter
+import com.example.quizappdiploma.database.DatabaseHandler
+import com.example.quizappdiploma.entities.Course
+import com.example.quizappdiploma.entities.Student
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
 
@@ -24,6 +28,7 @@ class WelcomeFragment : Fragment()
     private lateinit var passwordField : TextInputLayout
     private lateinit var registerButton : Button
     private lateinit var loginButton : Button
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -48,11 +53,17 @@ class WelcomeFragment : Fragment()
         passwordField = view.findViewById(R.id.passwordField)
 
         val items = listOf("Študent", "Lektor", "Administrátor")
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
+        val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
         (textField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
+        val db = DatabaseHandler(requireContext())
+
+        val student = Student("masko4", "masko2", "masko3", 0, 0, 1)
+        db.insertNewUser(student)
+
+        Log.d("StudentFragment", db.getCourses().toString())
+
         loginButton.setOnClickListener {
-            //TODO()
             val emailInput = emailField.editText?.text.toString()
             val passwordInput = passwordField.editText?.text.toString()
             /**

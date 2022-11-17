@@ -17,10 +17,10 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.SplashScreen"
+            android:name=".splash_screens.SplashScreen"
             android:exported="true"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
