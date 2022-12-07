@@ -6,11 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.database.DatabaseHandler
-import com.example.quizappdiploma.entities.Student
 
 class AdminFragment : Fragment()
 {

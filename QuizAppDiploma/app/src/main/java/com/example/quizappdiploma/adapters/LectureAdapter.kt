@@ -6,16 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.fragments.courses.BiologyCourseDirections
 
-class LectureAdapter(private val lectureList : ArrayList<Lecture>)
+class LectureAdapter(private val lectureList : ArrayList<Lecturea>)
     :RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
 {
-    var onItemClick : ((Lecture) -> Unit)? = null
+    var onItemClick : ((Lecturea) -> Unit)? = null
 
     class LectureViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
     {
@@ -41,8 +38,8 @@ class LectureAdapter(private val lectureList : ArrayList<Lecture>)
         holder.textView.text = lecture.name
 
         holder.lectureCardView.setOnClickListener {
-            val action = BiologyCourseDirections.actionBiologyCourseToBiologyContent(lecture)
-            holder.itemView.findNavController().navigate(action)
+            /*val action = BiologyCourseDirections.actionBiologyCourseToBiologyContent(lecture)
+            holder.itemView.findNavController().navigate(action)*/
 
         }
     }

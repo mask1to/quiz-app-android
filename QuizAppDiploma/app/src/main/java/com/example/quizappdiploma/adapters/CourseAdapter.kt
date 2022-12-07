@@ -10,11 +10,9 @@ import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.entities.Course
-import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.fragments.StudentFragmentDirections
 
-class CourseAdapter(private val courseList : ArrayList<Course>)
+class CourseAdapter(private val courseList : ArrayList<Coursea>)
     : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
 {
     class CourseViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)

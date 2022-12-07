@@ -8,16 +8,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.adapters.CourseAdapter
-import com.example.quizappdiploma.database.DatabaseHandler
-import com.example.quizappdiploma.entities.Course
-import com.example.quizappdiploma.entities.Student
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.example.quizappdiploma.entities.UserModel
 import com.google.android.material.textfield.TextInputLayout
 
 
@@ -29,7 +24,7 @@ class WelcomeFragment : Fragment()
     private lateinit var registerButton : Button
     private lateinit var loginButton : Button
 
-
+    private lateinit var student : UserModel
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -58,14 +53,15 @@ class WelcomeFragment : Fragment()
 
         val db = DatabaseHandler(requireContext())
 
-        val student = Student("masko4", "masko2", "masko3", 0, 0, 1)
-        db.insertNewUser(student)
 
-        Log.d("StudentFragment", db.getCourses().toString())
 
         loginButton.setOnClickListener {
             val emailInput = emailField.editText?.text.toString()
             val passwordInput = passwordField.editText?.text.toString()
+
+            //check if user exists
+            val loginCheck = db.checkByUsername(emailInput, passwordInput)
+            Log.d("loginCheck", loginCheck.toString())
             /**
              * Student logged in
              **/

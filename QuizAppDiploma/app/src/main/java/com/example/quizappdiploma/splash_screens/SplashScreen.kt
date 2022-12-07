@@ -12,6 +12,7 @@ import com.example.quizappdiploma.MainActivity
 import com.example.quizappdiploma.R
 
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
 
     private lateinit var animationView: LottieAnimationView

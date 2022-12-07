@@ -74,9 +74,9 @@
         android:id="@+id/biologyContent"
         android:name="com.example.quizappdiploma.fragments.courses.content.BiologyContent"
         android:label="BiologyContent">
-    <argument
+    <!--<argument
         android:name="lectureClass"
-        app:argType="com.example.quizappdiploma.entities.Lecture" />
+        app:argType="com.example.quizappdiploma.entities.Lecture" />-->
     </fragment>
 
 </navigation>
