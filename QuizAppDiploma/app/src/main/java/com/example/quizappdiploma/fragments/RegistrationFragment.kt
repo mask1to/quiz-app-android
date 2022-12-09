@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.entities.UserModel
 import com.google.android.material.textfield.TextInputLayout
 
 class RegistrationFragment : Fragment()
@@ -45,15 +44,7 @@ class RegistrationFragment : Fragment()
 
         registerButton.setOnClickListener {
 
-            if(checkFields())
-            {
-                val db = DatabaseHandler(requireContext())
-                val student = UserModel(nicknameField.editText?.text.toString(), firstPassword.editText?.text.toString(), emailField.editText?.text.toString(), 0, 0, 1)
-                db.insertNewUser(student)
-                Toast.makeText(requireContext(), "Registrácia bola úspešná", Toast.LENGTH_SHORT).show()
-                val action = RegistrationFragmentDirections.actionRegistrationFragmentToWelcomeFragment()
-                view.findNavController().navigate(action)
-            }
+
         }
     }
 

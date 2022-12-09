@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.entities.UserModel
 import com.google.android.material.textfield.TextInputLayout
 
 
@@ -24,7 +23,6 @@ class WelcomeFragment : Fragment()
     private lateinit var registerButton : Button
     private lateinit var loginButton : Button
 
-    private lateinit var student : UserModel
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -51,17 +49,13 @@ class WelcomeFragment : Fragment()
         val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
         (textField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
-        val db = DatabaseHandler(requireContext())
-
-
 
         loginButton.setOnClickListener {
             val emailInput = emailField.editText?.text.toString()
             val passwordInput = passwordField.editText?.text.toString()
 
             //check if user exists
-            val loginCheck = db.checkByUsername(emailInput, passwordInput)
-            Log.d("loginCheck", loginCheck.toString())
+
             /**
              * Student logged in
              **/

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.quizappdiploma.R
 
-class BiologyContent : Fragment()
+class BiologyFragment : Fragment()
 {
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -18,7 +18,7 @@ class BiologyContent : Fragment()
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View?
     {
-        return inflater.inflate(R.layout.fragment_biology_content, container, false)
+        return inflater.inflate(R.layout.fragment_biology, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)

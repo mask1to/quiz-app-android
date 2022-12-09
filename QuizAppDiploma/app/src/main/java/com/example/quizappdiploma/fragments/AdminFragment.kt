@@ -12,11 +12,6 @@ import com.example.quizappdiploma.R
 class AdminFragment : Fragment()
 {
 
-    private lateinit var theUsername : EditText
-    private lateinit var theEmail : EditText
-    private lateinit var thePassword : EditText
-
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -41,29 +36,4 @@ class AdminFragment : Fragment()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    fun addStudent(view : View)
-    {
-        val username = theUsername.text.toString()
-        val email = theEmail.text.toString()
-        val password = thePassword.text.toString()
-        val databaseHandler = DatabaseHandler(this.requireContext())
-
-        if(!username.isEmpty() && !email.isEmpty())
-        {
-            /*val status = databaseHandler.insertNewStudent(Student(0, username, email, password, 0, 0, 0))
-
-            if(status > -1)
-            {
-                Toast.makeText(context, "Entry saved", Toast.LENGTH_SHORT).show()
-                theUsername.text.clear()
-                theEmail.text.clear()
-                thePassword.text.clear()
-            }
-            else
-            {
-                Toast.makeText(context, "Entry not saved", Toast.LENGTH_SHORT).show()
-            }*/
-        }
-
-    }
 }

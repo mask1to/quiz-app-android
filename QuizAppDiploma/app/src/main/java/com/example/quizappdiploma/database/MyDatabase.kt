@@ -13,7 +13,7 @@ import com.example.quizappdiploma.database.users.UserModel
 
 @Database(
     entities = [UserModel::class, CourseModel::class,
-                LectureModel::class, QuizModel::class, 
+                LectureModel::class, QuizModel::class,
                 QuizQuestionModel::class, QuizAnswerModel::class],
     version = 1,
     exportSchema = false)
@@ -25,8 +25,7 @@ abstract class MyDatabase : RoomDatabase()
         @Volatile
         private var INSTANCE: MyDatabase? = null
 
-        fun getDatabase(context: Context): MyDatabase
-        {
+        fun getDatabase(context: Context): MyDatabase {
             return INSTANCE ?: synchronized(this)
             {
                 val instance = Room.databaseBuilder(
