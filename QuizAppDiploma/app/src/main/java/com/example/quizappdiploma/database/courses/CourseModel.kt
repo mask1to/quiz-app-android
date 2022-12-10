@@ -3,13 +3,16 @@ package com.example.quizappdiploma.database.courses
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "courses")
 class CourseModel(
     @PrimaryKey(autoGenerate = true)
+    @NotNull
     val id : Int,
     @ColumnInfo(name = "course_name")
-    val courseName : String,
+    @NotNull
+    val courseName : String
 )
 {
     override fun equals(other: Any?): Boolean

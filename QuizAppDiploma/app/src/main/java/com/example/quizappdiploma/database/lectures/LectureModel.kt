@@ -2,16 +2,25 @@ package com.example.quizappdiploma.database.lectures
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.quizappdiploma.database.courses.CourseModel
+import org.jetbrains.annotations.NotNull
+
+/*@Entity(foreignKeys = arrayOf(ForeignKey(entity = CourseModel::class, parentColumns = arrayOf("id"),
+    childColumns = arrayOf("course_id"), onDelete = ForeignKey.CASCADE)))*/
 
 @Entity(tableName = "lectures")
 class LectureModel(
     @PrimaryKey(autoGenerate = true)
+    @NotNull
     val id : Int,
     @ColumnInfo(name = "lecture_name")
+    @NotNull
     val lectureName : String,
     @ColumnInfo(name = "lecture_description")
-    val lectureDescription : String
+    @NotNull
+    val lectureDescription : String,
 )
 {
     override fun equals(other: Any?): Boolean

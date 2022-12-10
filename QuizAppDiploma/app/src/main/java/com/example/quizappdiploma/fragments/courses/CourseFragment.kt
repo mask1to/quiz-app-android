@@ -44,7 +44,7 @@ class CourseFragment : Fragment()
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = CourseAdapter(requireContext())
 
-        
+
     }
 
 }

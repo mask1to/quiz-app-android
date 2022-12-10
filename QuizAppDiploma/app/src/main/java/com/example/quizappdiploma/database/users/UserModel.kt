@@ -3,23 +3,31 @@ package com.example.quizappdiploma.database.users
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "users")
 class UserModel(
     @PrimaryKey(autoGenerate = true)
+    @NotNull
     val id : Int,
     @ColumnInfo(name = "email")
+    @NotNull
     val email : String,
     @ColumnInfo(name = "username")
+    @NotNull
     val username : String,
     @ColumnInfo(name = "password")
+    @NotNull
     val password : String,
     @ColumnInfo(name = "is_admin")
-    val isAdmin : Boolean,
+    @NotNull
+    val isAdmin : Int,
     @ColumnInfo(name = "is_lecturer")
-    val isLecturer : Boolean,
+    @NotNull
+    val isLecturer : Int,
     @ColumnInfo(name = "is_student")
-    val isStudent : Boolean
+    @NotNull
+    val isStudent : Int
 )
 {
     override fun equals(other: Any?): Boolean

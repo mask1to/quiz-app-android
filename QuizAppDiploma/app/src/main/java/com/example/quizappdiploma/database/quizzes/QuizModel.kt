@@ -3,16 +3,21 @@ package com.example.quizappdiploma.database.quizzes
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "quizzes")
 class QuizModel(
     @PrimaryKey(autoGenerate = true)
+    @NotNull
     val id : Int,
     @ColumnInfo(name = "quiz_name")
+    @NotNull
     val quizName : String,
     @ColumnInfo(name = "is_active")
-    val isQuizActive : Boolean,
+    @NotNull
+    val isQuizActive : Int,
     @ColumnInfo(name = "quiz_difficulty")
+    @NotNull
     val quizDifficulty : Int
 )
 {
