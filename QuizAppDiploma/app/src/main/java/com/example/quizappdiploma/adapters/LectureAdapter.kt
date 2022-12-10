@@ -1,53 +1,65 @@
 package com.example.quizappdiploma.adapters
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.example.quizappdiploma.entities.Lecture
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.fragments.courses.BiologyCourseDirections
+import com.example.quizappdiploma.database.lectures.LectureModel
 
-class LectureAdapter(private val lectureList : ArrayList<Lecture>)
-    :RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
+class LectureAdapter(val lectureContext : Context) : RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
 {
-    var onItemClick : ((Lecture) -> Unit)? = null
 
-    class LectureViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
-    {
-        val lectureCardView : CardView = itemView.findViewById(R.id.eachLectureCardView)
-        val imageView : ImageView = itemView.findViewById(R.id.eachImg)
-        val textView : TextView = itemView.findViewById(R.id.eachTextView)
-    }
-
-    override fun getItemViewType(position: Int): Int
-    {
-        return position % 2 * 2
+    var lectureData : List<LectureModel> = emptyList()
+    @SuppressLint("NotifyDataSetChanged")
+    set(value){
+        field = value
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LectureViewHolder
     {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.each_lecture_item, parent, false)
-        return LectureViewHolder(view)
+        return LectureViewHolder(parent)
     }
 
-    override fun onBindViewHolder(holder: LectureViewHolder, position: Int) {
-        val lecture = lectureList[position]
-        holder.imageView.setImageResource(lecture.image)
-        holder.textView.text = lecture.name
+    override fun onBindViewHolder(holder: LectureViewHolder, position: Int)
+    {
+        holder.bindData(lectureData[position])
+    }
 
-        holder.lectureCardView.setOnClickListener {
-            val action = BiologyCourseDirections.actionBiologyCourseToBiologyContent(lecture)
-            holder.itemView.findNavController().navigate(action)
+    override fun getItemCount(): Int
+    {
+        return lectureData.size
+    }
+
+    class LectureViewHolder(
+        private val parent : ViewGroup,
+        itemView : View = LayoutInflater.from(parent.context).inflate(
+            R.layout.each_lecture_item,
+            parent, false)
+    ) : RecyclerView.ViewHolder(itemView)
+    {
+        fun bindData(item : LectureModel)
+        {
+            itemView.findViewById<TextView>(R.id.lectureNameTxt).text = item.lectureName
+            itemView.findViewById<TextView>(R.id.lectureDescTxt).text = item.lectureDescription
+            itemView.findViewById<CardView>(R.id.lectureCardView).setOnClickListener {
+                // navigate to content
+            }
 
         }
     }
 
-    override fun getItemCount(): Int {
-        return lectureList.size
-    }
+
+
+
+
+
+
+
 }

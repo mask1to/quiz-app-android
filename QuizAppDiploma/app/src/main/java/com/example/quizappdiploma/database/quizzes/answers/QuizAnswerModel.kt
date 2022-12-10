@@ -1,0 +1,47 @@
+package com.example.quizappdiploma.database.quizzes.answers
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
+
+@Entity(tableName = "quiz_answers")
+class QuizAnswerModel(
+    @PrimaryKey(autoGenerate = true)
+    @NotNull
+    val id : Int,
+    @ColumnInfo(name = "answer_name")
+    @NotNull
+    val answerName : String,
+    @ColumnInfo(name = "is_answer_correct")
+    @NotNull
+    val answerCorrect : Int
+)
+{
+    override fun equals(other: Any?): Boolean
+    {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as QuizAnswerModel
+
+        if (id != other.id) return false
+        if (answerName != other.answerName) return false
+        if (answerCorrect != other.answerCorrect) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int
+    {
+        var result = id
+        result = 31 * result + answerName.hashCode()
+        result = 31 * result + answerCorrect.hashCode()
+        return result
+    }
+
+    override fun toString(): String
+    {
+        return "QuizAnswer(id=$id, answerName='$answerName', answerCorrect=$answerCorrect)"
+    }
+}

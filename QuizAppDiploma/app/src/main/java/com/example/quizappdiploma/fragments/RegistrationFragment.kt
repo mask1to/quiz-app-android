@@ -7,20 +7,28 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.database.DatabaseHandler
-import com.example.quizappdiploma.entities.Student
+import com.example.quizappdiploma.databinding.RegistrationFragmentBinding
+import com.example.quizappdiploma.fragments.viewmodels.Helper
+import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class RegistrationFragment : Fragment()
 {
+    private var _binding : RegistrationFragmentBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var nicknameField : TextInputLayout
     private lateinit var emailField : TextInputLayout
     private lateinit var firstPassword : TextInputLayout
     private lateinit var secondPassword : TextInputLayout
     private lateinit var registerButton : Button
+
+    private val userViewModel : UserViewModel by lazy {
+        ViewModelProvider(this, Helper.getUserViewModelFactory(requireContext()))[UserViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -31,7 +39,8 @@ class RegistrationFragment : Fragment()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View?
     {
-        return inflater.inflate(R.layout.registration_fragment, container, false)
+        _binding = RegistrationFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
@@ -44,17 +53,20 @@ class RegistrationFragment : Fragment()
         secondPassword = view.findViewById(R.id.passwordRegisterField2)
         registerButton = view.findViewById(R.id.registerBtn2)
 
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            usermodel = userViewModel
+        }
+
+        userViewModel.users.observe(viewLifecycleOwner)
+        {
+            it?.apply {
+
+            }
+        }
+
         registerButton.setOnClickListener {
 
-            if(checkFields())
-            {
-                val db = DatabaseHandler(requireContext())
-                val student = Student(nicknameField.editText?.text.toString(), firstPassword.editText?.text.toString(), emailField.editText?.text.toString(), 0, 0, 1)
-                db.insertNewUser(student)
-                Toast.makeText(requireContext(), "Registrácia bola úspešná", Toast.LENGTH_SHORT).show()
-                val action = RegistrationFragmentDirections.actionRegistrationFragmentToWelcomeFragment()
-                view.findNavController().navigate(action)
-            }
         }
     }
 

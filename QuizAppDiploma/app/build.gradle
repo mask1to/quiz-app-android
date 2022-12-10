@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -29,38 +30,55 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += [
+                "-Xjvm-default=all",
+        ]
     }
     buildFeatures {
-        viewBinding true
+        viewBinding = true
+        dataBinding = true
     }
 }
 
 dependencies {
 
-    implementation 'androidx.test:core-ktx:1.4.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.datatransport:transport-runtime:3.0.1'
     def lifecycle_version = "2.4.0"
-    // ViewModel
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    //CardView
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    //RecyclerView
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
+    //ViewModel lifecycle &  lifecycle livedata
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    // LiveData
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-
-    def sqlite_version = "2.2.0"
-    implementation("androidx.sqlite:sqlite-ktx:$sqlite_version")
-    implementation("androidx.sqlite:sqlite-framework:$sqlite_version")
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
+    //Material io
+    implementation 'com.google.android.material:material:1.6.1'
+
+    //Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
+
+    //Lottie animation
     implementation 'com.airbnb.android:lottie:3.4.1'
 
-    implementation 'androidx.core:core-splashscreen:1.0.0-beta02'
+    //RoomDB
+    implementation "androidx.room:room-runtime:2.4.3"
+    kapt "androidx.room:room-compiler:2.4.3"
+    implementation "androidx.room:room-ktx:2.4.3"
+
+    //DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

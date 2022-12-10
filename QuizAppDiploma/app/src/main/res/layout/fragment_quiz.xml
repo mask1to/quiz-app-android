@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/backgroundColor"
-        tools:context=".fragments.quizzes.BiologyQuiz">
+        tools:context=".fragments.quizzes.QuizFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/firstCardQuestion"

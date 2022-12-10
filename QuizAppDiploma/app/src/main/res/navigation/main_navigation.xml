@@ -26,17 +26,10 @@
         android:id="@+id/studentFragment"
         android:name="com.example.quizappdiploma.fragments.StudentFragment"
         android:label="fragment_student"
-        tools:layout="@layout/fragment_student_recycler" >
+        tools:layout="@layout/fragment_student" >
         <action
-            android:id="@+id/action_studentFragment_to_biologyCourse"
-            app:destination="@id/biologyCourse" />
-        <!--<argument
-            android:name="courseClass"
-            app:argType="com.example.quizappdiploma.entities.Course" />-->
-        <!--
-        <argument
-            android:name="lectureClass"
-            app:argType="com.example.quizappdiploma.entities.Lecture" /> -->
+            android:id="@+id/action_studentFragment_to_courseFragment"
+            app:destination="@id/courseFragment" />
     </fragment>
     <fragment
         android:id="@+id/lecturerFragment"
@@ -49,20 +42,6 @@
         android:label="fragment_admin"
         tools:layout="@layout/fragment_admin" />
     <fragment
-        android:id="@+id/biologyCourse"
-        android:name="com.example.quizappdiploma.fragments.courses.BiologyCourse"
-        android:label="fragment_biology_course"
-        tools:layout="@layout/fragment_biology_recycler_course" >
-        <action
-            android:id="@+id/action_biologyCourse_to_biologyContent"
-            app:destination="@id/biologyContent" />
-    </fragment>
-    <fragment
-        android:id="@+id/biologyQuiz"
-        android:name="com.example.quizappdiploma.fragments.quizzes.BiologyQuiz"
-        android:label="fragment_biology_quiz"
-        tools:layout="@layout/fragment_biology_quiz" />
-    <fragment
         android:id="@+id/registrationFragment"
         android:name="com.example.quizappdiploma.fragments.RegistrationFragment"
         android:label="RegistrationFragment" >
@@ -71,12 +50,22 @@
             app:destination="@id/welcomeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/biologyContent"
-        android:name="com.example.quizappdiploma.fragments.courses.content.BiologyContent"
-        android:label="BiologyContent">
-    <argument
-        android:name="lectureClass"
-        app:argType="com.example.quizappdiploma.entities.Lecture" />
+        android:id="@+id/courseFragment"
+        android:name="com.example.quizappdiploma.fragments.courses.CourseFragment"
+        android:label="fragment_course"
+        tools:layout="@layout/fragment_course" >
+        <action
+            android:id="@+id/action_courseFragment_to_lectureFragment"
+            app:destination="@id/lectureFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.example.quizappdiploma.fragments.quizzes.QuizFragment"
+        android:label="QuizFragment" />
+    <fragment
+        android:id="@+id/lectureFragment"
+        android:name="com.example.quizappdiploma.fragments.lectures.LectureFragment"
+        android:label="fragment_lecture"
+        tools:layout="@layout/fragment_lecture" />
 
 </navigation>
