@@ -21,6 +21,9 @@ interface MyDatabaseDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUsers(users : List<UserModel>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(userModel: UserModel)
+
     @Query("DELETE FROM courses")
     fun deleteCourses()
 

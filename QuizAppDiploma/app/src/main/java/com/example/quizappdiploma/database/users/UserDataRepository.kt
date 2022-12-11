@@ -33,4 +33,9 @@ class UserDataRepository private constructor(private val cache : MyLocalCache)
 
         return userList
     }
+
+    suspend fun insertUser(userModel: UserModel)
+    {
+        cache.insertUser(userModel)
+    }
 }

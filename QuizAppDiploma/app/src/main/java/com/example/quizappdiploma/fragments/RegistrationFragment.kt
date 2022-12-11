@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.database.users.UserModel
 import com.example.quizappdiploma.databinding.RegistrationFragmentBinding
 import com.example.quizappdiploma.fragments.viewmodels.Helper
 import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
@@ -66,7 +67,8 @@ class RegistrationFragment : Fragment()
         }
 
         registerButton.setOnClickListener {
-
+            val student = UserModel(1, emailField.editText?.text.toString(), nicknameField.editText?.text.toString(), firstPassword.editText?.text.toString(), 0, 0, 1)
+            userViewModel.insertUser(student)
         }
     }
 

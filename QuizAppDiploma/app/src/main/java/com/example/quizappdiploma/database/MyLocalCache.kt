@@ -22,6 +22,11 @@ class MyLocalCache(val databaseDao: MyDatabaseDao)
         databaseDao.insertUsers(users)
     }
 
+    suspend fun insertUser(userModel: UserModel)
+    {
+        databaseDao.insertUser(userModel)
+    }
+
     fun deleteCourses()
     {
         databaseDao.deleteCourses()
