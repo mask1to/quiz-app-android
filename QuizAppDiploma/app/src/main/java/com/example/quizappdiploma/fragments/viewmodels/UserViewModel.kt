@@ -16,13 +16,6 @@ class UserViewModel(private val userDataRepository: UserDataRepository) : ViewMo
     val message : LiveData<LiveDataEvent<String>> get() = _message
     val loadData = MutableLiveData(false)
 
-    val users : LiveData<List<UserModel>> = liveData {
-        loadData.postValue(true)
-        val getUsers = userDataRepository.getUsers()
-        emit(getUsers)
-        loadData.postValue(false)
-    }
-
 
     fun insertUser(user : UserModel)
     {

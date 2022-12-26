@@ -27,9 +27,7 @@ class AdminFragment : Fragment()
         checkLoginStatus()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View?
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
     {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         return binding.root

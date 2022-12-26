@@ -8,11 +8,11 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.users.UserModel
 import com.example.quizappdiploma.databinding.RegistrationFragmentBinding
-import com.example.quizappdiploma.fragments.viewmodels.Helper
+import com.example.quizappdiploma.fragments.viewmodels.helpers.Helper
 import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
 import com.google.android.material.textfield.TextInputLayout
 
@@ -38,7 +38,7 @@ class RegistrationFragment : Fragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View?
+                              savedInstanceState: Bundle?): View
     {
         _binding = RegistrationFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -67,8 +67,18 @@ class RegistrationFragment : Fragment()
         }
 
         registerButton.setOnClickListener {
-            val student = UserModel(1, emailField.editText?.text.toString(), nicknameField.editText?.text.toString(), firstPassword.editText?.text.toString(), 0, 0, 1)
-            userViewModel.insertUser(student)
+            val email = emailField.editText?.text.toString()
+            val nickname = nicknameField.editText?.text.toString()
+            val password = firstPassword.editText?.text.toString()
+
+            if(checkFields())
+            {
+                val student = UserModel(0, email, nickname, password, 0, 0, 1)
+                userViewModel.insertUser(student)
+                Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_registrationFragment_to_welcomeFragment)
+            }
+
         }
     }
 

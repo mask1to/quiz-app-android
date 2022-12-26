@@ -1,37 +1,13 @@
 package com.example.quizappdiploma.database.courses
 
-import com.example.quizappdiploma.database.MyLocalCache
+import androidx.lifecycle.LiveData
 
-class CourseDataRepository private constructor(private val cache : MyLocalCache)
+class CourseDataRepository(private val courseDao: CourseDao)
 {
-    companion object{
-        @Volatile
-        private var INSTANCE : CourseDataRepository? = null
+    val readAllData : LiveData<List<CourseModel>> = courseDao.readAllData()
 
-        fun getInstance(cache: MyLocalCache) : CourseDataRepository =
-            INSTANCE ?: synchronized(this)
-            {
-                INSTANCE ?: CourseDataRepository(cache).also { INSTANCE = it }
-            }
-    }
-
-    fun insertCourse(courseModel: CourseModel)
+    suspend fun addCourse(course : CourseModel)
     {
-
-    }
-
-    fun updateCourse(courseModel: CourseModel)
-    {
-
-    }
-
-    fun deleteCourse(courseModel: CourseModel)
-    {
-
-    }
-
-    fun deleteAllCourses()
-    {
-
+        courseDao.addCourse(course)
     }
 }

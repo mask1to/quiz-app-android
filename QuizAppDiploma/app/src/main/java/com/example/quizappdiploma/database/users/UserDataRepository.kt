@@ -17,23 +17,6 @@ class UserDataRepository private constructor(private val cache : MyLocalCache)
             }
     }
 
-    suspend fun getUsers() : List<UserModel>
-    {
-        var userList = listOf<UserModel>()
-
-        userList = userList.map {
-            UserModel(it.id, it.email, it.username, it.password, it.isAdmin, it.isLecturer, it.isStudent)
-        }
-        withContext(Dispatchers.IO)
-        {
-            cache.deleteUsers()
-            cache.insertUsers(userList)
-        }
-
-
-        return userList
-    }
-
     suspend fun insertUser(userModel: UserModel)
     {
         cache.insertUser(userModel)

@@ -1,26 +1,31 @@
 package com.example.quizappdiploma.fragments.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.MyDatabaseDao
 import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.database.courses.CourseModel
 import com.example.quizappdiploma.fragments.viewmodels.helpers.LiveDataEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class CourseViewModel(private val courseDataRepository: CourseDataRepository) : ViewModel()
-{
-    private val _message = MutableLiveData<LiveDataEvent<String>>()
-    val message : LiveData<LiveDataEvent<String>> get() = _message
-    val loadData = MutableLiveData(false)
+class CourseViewModel(application: Application): AndroidViewModel(application) {
 
-    fun showMessage(message : String)
-    {
-        _message.postValue(LiveDataEvent(message))
+    val readAllData: LiveData<List<CourseModel>>
+    private val repository: CourseDataRepository
+
+    init {
+        val courseDao = MyDatabase.getDatabase(application).courseDao()
+        repository = CourseDataRepository(courseDao)
+        readAllData = repository.readAllData
     }
 
-    fun insertCourses(course : CourseModel)
+    fun addCourse(course: CourseModel)
     {
-        //courseDataRepository
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addCourse(course)
+        }
     }
 
 }

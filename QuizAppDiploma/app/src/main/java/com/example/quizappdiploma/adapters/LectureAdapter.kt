@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.lectures.LectureModel
 
-class LectureAdapter(val lectureContext : Context) : RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
+class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
 {
 
     var lectureData : List<LectureModel> = emptyList()

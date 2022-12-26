@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.quizappdiploma.database.courses.CourseDao
 import com.example.quizappdiploma.database.courses.CourseModel
 import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.database.quizzes.QuizModel
@@ -20,6 +21,7 @@ abstract class MyDatabase : RoomDatabase()
 {
 
     abstract fun myDatabaseDao(): MyDatabaseDao
+    abstract fun courseDao(): CourseDao
 
     companion object {
         @Volatile
