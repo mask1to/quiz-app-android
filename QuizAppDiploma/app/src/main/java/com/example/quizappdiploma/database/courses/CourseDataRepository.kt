@@ -10,4 +10,15 @@ class CourseDataRepository(private val courseDao: CourseDao)
     {
         courseDao.addCourse(course)
     }
+
+    suspend fun updateCourse(course: CourseModel)
+    {
+        courseDao.updateCourse(course)
+    }
+
+    suspend fun deleteCourse(course: CourseModel)
+    {
+        courseDao.deleteCourse(course)
+    }
+
 }

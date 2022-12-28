@@ -6,9 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.quizappdiploma.database.courses.CourseDao
 import com.example.quizappdiploma.database.courses.CourseModel
+import com.example.quizappdiploma.database.lectures.LectureDao
 import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.database.quizzes.QuizModel
 import com.example.quizappdiploma.database.quizzes.answers.QuizAnswerModel
+import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDao
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.database.users.UserModel
 
@@ -22,6 +24,8 @@ abstract class MyDatabase : RoomDatabase()
 
     abstract fun myDatabaseDao(): MyDatabaseDao
     abstract fun courseDao(): CourseDao
+    abstract fun lectureDao(): LectureDao
+    abstract fun quizQuestionDao(): QuizQuestionDao
 
     companion object {
         @Volatile

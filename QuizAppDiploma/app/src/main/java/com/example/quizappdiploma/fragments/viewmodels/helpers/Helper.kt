@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.MyLocalCache
-import com.example.quizappdiploma.database.lectures.LectureDataRepository
 import com.example.quizappdiploma.database.users.UserDataRepository
-import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
 import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
 
 object Helper
@@ -22,18 +20,8 @@ object Helper
         return UserDataRepository.getInstance(allowCache(context))
     }
 
-    private fun getLectureRepository(context : Context) : LectureDataRepository
-    {
-        return LectureDataRepository.getInstance(allowCache(context))
-    }
-
     fun getUserViewModelFactory(context: Context) : ViewModelProvider.Factory
     {
         return UserViewModelFactory(getUserRepository(context))
-    }
-
-    fun getLectureViewModelFactory(context: Context) : ViewModelProvider.Factory
-    {
-        return LectureViewModelFactory(getLectureRepository(context))
     }
 }

@@ -28,4 +28,18 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun updateCourse(course: CourseModel)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateCourse(course)
+        }
+    }
+
+    fun deleteCourse(course: CourseModel)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteCourse(course)
+        }
+    }
+
 }

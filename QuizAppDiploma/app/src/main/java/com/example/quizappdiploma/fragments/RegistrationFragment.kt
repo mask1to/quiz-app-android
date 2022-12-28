@@ -59,13 +59,6 @@ class RegistrationFragment : Fragment()
             usermodel = userViewModel
         }
 
-        userViewModel.users.observe(viewLifecycleOwner)
-        {
-            it?.apply {
-
-            }
-        }
-
         registerButton.setOnClickListener {
             val email = emailField.editText?.text.toString()
             val nickname = nicknameField.editText?.text.toString()

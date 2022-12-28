@@ -1,11 +1,9 @@
 package com.example.quizappdiploma.adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -22,14 +20,11 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
         notifyDataSetChanged()
     }
 
+    class LectureViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){}
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LectureViewHolder
     {
-        return LectureViewHolder(parent)
-    }
-
-    override fun onBindViewHolder(holder: LectureViewHolder, position: Int)
-    {
-        holder.bindData(lectureData[position])
+        return LectureViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.each_lecture_item, parent, false))
     }
 
     override fun getItemCount(): Int
@@ -37,29 +32,20 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
         return lectureData.size
     }
 
-    class LectureViewHolder(
-        private val parent : ViewGroup,
-        itemView : View = LayoutInflater.from(parent.context).inflate(
-            R.layout.each_lecture_item,
-            parent, false)
-    ) : RecyclerView.ViewHolder(itemView)
+    override fun onBindViewHolder(holder: LectureViewHolder, position: Int)
     {
-        fun bindData(item : LectureModel)
-        {
-            itemView.findViewById<TextView>(R.id.lectureNameTxt).text = item.lectureName
-            itemView.findViewById<TextView>(R.id.lectureDescTxt).text = item.lectureDescription
-            itemView.findViewById<CardView>(R.id.lectureCardView).setOnClickListener {
-                // navigate to content
-            }
-
+        val currentItem = lectureData[position]
+        holder.itemView.findViewById<TextView>(R.id.lectureNameTxt).text = currentItem.lectureName
+        holder.itemView.findViewById<TextView>(R.id.lectureDescTxt).text = currentItem.lectureDescription
+        holder.itemView.findViewById<CardView>(R.id.lectureCardView).setOnClickListener {
+            // navigate to content
         }
     }
 
-
-
-
-
-
-
-
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(lecture: List<LectureModel>)
+    {
+        this.lectureData = lecture
+        notifyDataSetChanged()
+    }
 }

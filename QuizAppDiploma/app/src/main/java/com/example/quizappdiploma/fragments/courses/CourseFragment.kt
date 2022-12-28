@@ -60,8 +60,8 @@ class CourseFragment : Fragment()
             coursemodel = courseViewModel
         }
 
-        courseViewModel.readAllData.observe(viewLifecycleOwner, Observer { user ->
-            adapter.setData(user)
+        courseViewModel.readAllData.observe(viewLifecycleOwner, Observer { course ->
+            adapter.setData(course)
         })
 
     }

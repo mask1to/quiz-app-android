@@ -1,10 +1,7 @@
 package com.example.quizappdiploma.database.courses
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface CourseDao
@@ -14,4 +11,10 @@ interface CourseDao
 
     @Query("SELECT * FROM courses ORDER BY id ASC")
     fun readAllData(): LiveData<List<CourseModel>>
+
+    @Update
+    suspend fun updateCourse(course: CourseModel)
+
+    @Delete
+    suspend fun deleteCourse(course: CourseModel)
 }
