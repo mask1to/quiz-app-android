@@ -8,12 +8,11 @@ import org.jetbrains.annotations.NotNull
 @Entity(tableName = "courses")
 class CourseModel(
     @PrimaryKey(autoGenerate = true)
-    @NotNull
     val id : Int,
     @ColumnInfo(name = "course_name")
-    @NotNull
     val courseName : String
 )
+
 {
     override fun equals(other: Any?): Boolean
     {

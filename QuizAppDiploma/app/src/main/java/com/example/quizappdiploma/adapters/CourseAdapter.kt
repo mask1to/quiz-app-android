@@ -8,12 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.courses.CourseModel
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import androidx.navigation.Navigation
 import com.example.quizappdiploma.fragments.courses.CourseFragmentDirections
 
-class CourseAdapter(val courseContext : Context) : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
+class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
 {
     var courseData : List<CourseModel> = emptyList()
     @SuppressLint("NotifyDataSetChanged")
@@ -22,14 +21,10 @@ class CourseAdapter(val courseContext : Context) : RecyclerView.Adapter<CourseAd
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder
-    {
-        return CourseViewHolder(parent)
-    }
+    class CourseViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){}
 
-    override fun onBindViewHolder(holder: CourseViewHolder, position: Int)
-    {
-        holder.bindData(courseData[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
+        return CourseViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.each_course_item, parent, false))
     }
 
     override fun getItemCount(): Int
@@ -37,26 +32,22 @@ class CourseAdapter(val courseContext : Context) : RecyclerView.Adapter<CourseAd
         return courseData.size
     }
 
-    class CourseViewHolder(
-        private val parent : ViewGroup,
-        itemView : View = LayoutInflater.from(parent.context).inflate(
-            R.layout.each_course_item, parent, false)
-    ) : RecyclerView.ViewHolder(itemView)
+    override fun onBindViewHolder(holder: CourseViewHolder, position: Int)
     {
-        fun bindData(item : CourseModel)
-        {
-            itemView.findViewById<TextView>(R.id.eachCourseTextView).text = item.courseName
-            itemView.findViewById<CardView>(R.id.eachCourseCardView).setOnClickListener {
-                val action = CourseFragmentDirections.actionCourseFragmentToLectureFragment()
-                Navigation.findNavController(itemView).navigate(action)
-            }
-        }
+        val currentItem = courseData[position]
+        holder.itemView.findViewById<TextView>(R.id.eachCourseTextView).text = currentItem.courseName
 
+        holder.itemView.findViewById<CardView>(R.id.eachCourseCardView).setOnClickListener {
+            val action = CourseFragmentDirections.actionCourseFragmentToLectureFragment()
+            Navigation.findNavController(holder.itemView).navigate(action)
+        }
     }
 
-
-
-
-
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(course: List<CourseModel>)
+    {
+        this.courseData = course
+        notifyDataSetChanged()
+    }
 
 }

@@ -30,17 +30,28 @@
         <action
             android:id="@+id/action_studentFragment_to_courseFragment"
             app:destination="@id/courseFragment" />
+        <action
+            android:id="@+id/action_studentFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/lecturerFragment"
         android:name="com.example.quizappdiploma.fragments.LecturerFragment"
         android:label="fragment_lecturer"
-        tools:layout="@layout/fragment_lecturer" />
+        tools:layout="@layout/fragment_lecturer" >
+        <action
+            android:id="@+id/action_lecturerFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/adminFragment"
         android:name="com.example.quizappdiploma.fragments.AdminFragment"
         android:label="fragment_admin"
-        tools:layout="@layout/fragment_admin" />
+        tools:layout="@layout/fragment_admin" >
+        <action
+            android:id="@+id/action_adminFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/registrationFragment"
         android:name="com.example.quizappdiploma.fragments.RegistrationFragment"
@@ -48,6 +59,9 @@
         <action
             android:id="@+id/action_registrationFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_registrationFragment_to_studentFragment"
+            app:destination="@id/studentFragment" />
     </fragment>
     <fragment
         android:id="@+id/courseFragment"

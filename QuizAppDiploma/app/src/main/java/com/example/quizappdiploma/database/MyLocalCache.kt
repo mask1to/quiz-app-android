@@ -5,7 +5,7 @@ import com.example.quizappdiploma.database.courses.CourseModel
 import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.database.users.UserModel
 
-class MyLocalCache(val databaseDao: MyDatabaseDao)
+class MyLocalCache(private val databaseDao: MyDatabaseDao)
 {
     fun insertCourses(courses : List<CourseModel>)
     {
@@ -17,9 +17,14 @@ class MyLocalCache(val databaseDao: MyDatabaseDao)
         databaseDao.insertLectures(lectures)
     }
 
-    fun insertUsers(users : List<UserModel>)
+    suspend fun insertUser(userModel: UserModel)
     {
-        databaseDao.insertUsers(users)
+        databaseDao.insertUser(userModel)
+    }
+
+    suspend fun readAllData()
+    {
+        databaseDao.readAllData()
     }
 
     fun deleteCourses()
@@ -52,11 +57,4 @@ class MyLocalCache(val databaseDao: MyDatabaseDao)
         databaseDao.deleteQuizQuestions()
     }
 
-    suspend fun getCourses() : LiveData<List<CourseModel>?> = databaseDao.getCourses()
-
-
-    suspend fun getLectures()
-    {
-
-    }
 }
