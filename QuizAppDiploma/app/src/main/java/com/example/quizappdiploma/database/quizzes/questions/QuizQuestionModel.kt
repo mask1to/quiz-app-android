@@ -11,12 +11,12 @@ class QuizQuestionModel(
     val id : Int,
     @ColumnInfo(name = "question_name")
     val questionName : String,
+    @ColumnInfo(name = "image")
+    val image : Int,
     @ColumnInfo(name = "question_points")
     val questionPoints : Int,
     @ColumnInfo(name = "question_difficulty")
     val questionDifficulty : Int,
-    @ColumnInfo(name = "is_question_multi_choice")
-    val questionMultiChoice : Int,
     @ColumnInfo(name = "option_a")
     val questionOptionA : String,
     @ColumnInfo(name = "option_b")
@@ -26,11 +26,10 @@ class QuizQuestionModel(
     @ColumnInfo(name = "option_d")
     val questionOptionD : String,
     @ColumnInfo(name = "answer")
-    val answer : String
+    val answer : Int
 )
 {
-    override fun equals(other: Any?): Boolean
-    {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -38,9 +37,9 @@ class QuizQuestionModel(
 
         if (id != other.id) return false
         if (questionName != other.questionName) return false
+        if (image != other.image) return false
         if (questionPoints != other.questionPoints) return false
         if (questionDifficulty != other.questionDifficulty) return false
-        if (questionMultiChoice != other.questionMultiChoice) return false
         if (questionOptionA != other.questionOptionA) return false
         if (questionOptionB != other.questionOptionB) return false
         if (questionOptionC != other.questionOptionC) return false
@@ -50,13 +49,12 @@ class QuizQuestionModel(
         return true
     }
 
-    override fun hashCode(): Int
-    {
+    override fun hashCode(): Int {
         var result = id
         result = 31 * result + questionName.hashCode()
+        result = 31 * result + image
         result = 31 * result + questionPoints
         result = 31 * result + questionDifficulty
-        result = 31 * result + questionMultiChoice
         result = 31 * result + questionOptionA.hashCode()
         result = 31 * result + questionOptionB.hashCode()
         result = 31 * result + questionOptionC.hashCode()
@@ -65,9 +63,8 @@ class QuizQuestionModel(
         return result
     }
 
-    override fun toString(): String
-    {
-        return "QuizQuestionModel(id=$id, questionName='$questionName', questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionMultiChoice=$questionMultiChoice, questionOptionA='$questionOptionA', questionOptionB='$questionOptionB', questionOptionC='$questionOptionC', questionOptionD='$questionOptionD', answer='$answer')"
+    override fun toString(): String {
+        return "QuizQuestionModel(id=$id, questionName='$questionName', image=$image, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA='$questionOptionA', questionOptionB='$questionOptionB', questionOptionC='$questionOptionC', questionOptionD='$questionOptionD', answer='$answer')"
     }
 
 

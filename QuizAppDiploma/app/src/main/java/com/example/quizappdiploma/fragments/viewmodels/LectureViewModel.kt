@@ -44,4 +44,11 @@ class LectureViewModel(application: Application): AndroidViewModel(application)
             repository.deleteLecture(lecture)
         }
     }
+
+    fun getLecturesByCourseName(courseName : String)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getLecturesByCourseName(courseName)
+        }
+    }
 }
