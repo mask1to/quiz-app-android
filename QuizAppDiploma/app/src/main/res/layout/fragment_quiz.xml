@@ -1,417 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollViewQuiz"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
     android:fillViewport="true"
+    android:background="@color/backgroundColor"
     tools:layout_editor_absoluteX="1dp"
     tools:layout_editor_absoluteY="1dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/backgroundColor"
-        tools:context=".fragments.quizzes.QuizFragment">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/firstCardQuestion"
+        <TextView
+            android:id="@+id/textViewQuestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.062">
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textSize="22sp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="How are you"
+            android:textColor="@color/white"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Quiz Image"
+            tools:src="@drawable/common_full_open_on_phone"/>
 
-                <TextView
-                    android:id="@+id/question1Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="228dp"
-                    android:text="How old is cow?"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <RadioGroup
-                    android:id="@+id/radiogroup1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="vertical"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question1Text">
-
-                    <RadioButton
-                        android:id="@+id/question1Choice1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Lorem"
-                        android:textSize="15sp"/>
-
-                    <RadioButton
-                        android:id="@+id/question1Choice2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Ipsum"
-                        android:textSize="15sp"/>
-
-                    <RadioButton
-                        android:id="@+id/question1Choice3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Forem"
-                        android:textSize="15sp"/>
-
-                    <RadioButton
-                        android:id="@+id/question1Choice4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Popsum"
-                        android:textSize="15sp"/>
-
-                </RadioGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/secondCardQuestion"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.6">
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:background="@color/white"
+            android:orientation="horizontal">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="315dp"
+                android:layout_height="31dp"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:indeterminate="false"
+                android:max="10"
+                android:minHeight="50dp"
+                android:progress="2" />
 
-                <TextView
-                    android:id="@+id/question2Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="How old is horse?"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/textViewProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="15dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/black"
+                tools:text="0/10"
+                />
 
-                <RadioGroup
-                    android:id="@+id/radiogroup2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="vertical"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question2Text">
-
-                    <RadioButton
-                        android:id="@+id/question2Choice1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Lorem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question2Choice2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Ipsum"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question2Choice3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Forem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question2Choice4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Popsum"
-                        android:textSize="15sp" />
-
-                </RadioGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/thirdCardQuestion"
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/textViewFirstOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.15">
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@drawable/default_option_border_bg"
+            android:textSize="18sp"
+            android:text="Fine"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/question3Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="How old is horse?"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <RadioGroup
-                    android:id="@+id/radiogroup3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="vertical"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question3Text">
-
-                    <RadioButton
-                        android:id="@+id/question3Choice1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Lorem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question3Choice2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Ipsum"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question3Choice3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Forem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question3Choice4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Popsum"
-                        android:textSize="15sp" />
-
-                </RadioGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/fourthCardQuestion"
+        <TextView
+            android:id="@+id/textViewSecondOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@drawable/default_option_border_bg"
+            android:textSize="18sp"
+            android:text="Fine"/>
 
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.75">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/question4Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="How old is horse?"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <RadioGroup
-                    android:id="@+id/radiogroup4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="vertical"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question4Text">
-
-                    <RadioButton
-                        android:id="@+id/question4Choice1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Lorem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question4Choice2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Ipsum"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question4Choice3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Forem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question4Choice4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Popsum"
-                        android:textSize="15sp" />
-
-                </RadioGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/fifthCardQuestion"
+        <TextView
+            android:id="@+id/textViewThirdOption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@drawable/default_option_border_bg"
+            android:textSize="18sp"
+            android:text="Fine"/>
 
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="2.35">
+        <TextView
+            android:id="@+id/textViewFourthOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_bold"
+            android:background="@drawable/default_option_border_bg"
+            android:textSize="18sp"
+            android:text="Fine"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/question5Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="How old is horse?"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <RadioGroup
-                    android:id="@+id/radiogroup5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="vertical"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question5Text">
-
-                    <RadioButton
-                        android:id="@+id/question5Choice1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Lorem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question5Choice2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Ipsum"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question5Choice3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Forem"
-                        android:textSize="15sp" />
-
-                    <RadioButton
-                        android:id="@+id/question5Choice4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false"
-                        android:text="Popsum"
-                        android:textSize="15sp" />
-
-                </RadioGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Submit"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="18sp"/>
+    </LinearLayout>
 
 </ScrollView>

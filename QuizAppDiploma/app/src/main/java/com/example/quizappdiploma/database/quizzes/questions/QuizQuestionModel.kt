@@ -29,6 +29,11 @@ class QuizQuestionModel(
     val answer : Int
 )
 {
+
+    override fun toString(): String {
+        return "QuizQuestionModel(id=$id, questionName='$questionName', image=$image, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA='$questionOptionA', questionOptionB='$questionOptionB', questionOptionC='$questionOptionC', questionOptionD='$questionOptionD', answer='$answer')"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -59,13 +64,8 @@ class QuizQuestionModel(
         result = 31 * result + questionOptionB.hashCode()
         result = 31 * result + questionOptionC.hashCode()
         result = 31 * result + questionOptionD.hashCode()
-        result = 31 * result + answer.hashCode()
+        result = 31 * result + answer
         return result
     }
-
-    override fun toString(): String {
-        return "QuizQuestionModel(id=$id, questionName='$questionName', image=$image, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA='$questionOptionA', questionOptionB='$questionOptionB', questionOptionC='$questionOptionC', questionOptionD='$questionOptionD', answer='$answer')"
-    }
-
 
 }
