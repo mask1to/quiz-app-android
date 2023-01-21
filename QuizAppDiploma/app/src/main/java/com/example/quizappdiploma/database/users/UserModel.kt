@@ -9,23 +9,22 @@ import org.jetbrains.annotations.NotNull
 @Entity(tableName = "users")
 class UserModel(
     @PrimaryKey(autoGenerate = true)
-    val id : Int,
+    val id : Int?,
     @ColumnInfo(name = "email")
-    val email : String,
+    val email : String?,
     @ColumnInfo(name = "username")
-    val username : String,
+    val username : String?,
     @ColumnInfo(name = "password")
-    val password : String,
+    val password : String?,
     @ColumnInfo(name = "is_admin")
-    val isAdmin : Int,
+    val isAdmin : Int?,
     @ColumnInfo(name = "is_lecturer")
-    val isLecturer : Int,
+    val isLecturer : Int?,
     @ColumnInfo(name = "is_student")
-    val isStudent : Int
+    val isStudent : Int?
 )
 {
-    override fun equals(other: Any?): Boolean
-    {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -42,21 +41,19 @@ class UserModel(
         return true
     }
 
-    override fun hashCode(): Int
-    {
-        var result = id
-        result = 31 * result + email.hashCode()
-        result = 31 * result + username.hashCode()
-        result = 31 * result + password.hashCode()
-        result = 31 * result + isAdmin.hashCode()
-        result = 31 * result + isLecturer.hashCode()
-        result = 31 * result + isStudent.hashCode()
+    override fun hashCode(): Int {
+        var result = id ?: 0
+        result = 31 * result + (email?.hashCode() ?: 0)
+        result = 31 * result + (username?.hashCode() ?: 0)
+        result = 31 * result + (password?.hashCode() ?: 0)
+        result = 31 * result + (isAdmin ?: 0)
+        result = 31 * result + (isLecturer ?: 0)
+        result = 31 * result + (isStudent ?: 0)
         return result
     }
 
-    override fun toString(): String
-    {
-        return "UserModel(id=$id, email='$email', username='$username', password='$password', isAdmin=$isAdmin, isLecturer=$isLecturer, isStudent=$isStudent)"
+    override fun toString(): String {
+        return "UserModel(id=$id, email=$email, username=$username, password=$password, isAdmin=$isAdmin, isLecturer=$isLecturer, isStudent=$isStudent)"
     }
 
 }

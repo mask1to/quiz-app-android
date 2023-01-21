@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.courses.CourseModel
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.navigation.Navigation
 import com.example.quizappdiploma.fragments.courses.CourseFragmentDirections
+import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
 
 class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
 {
@@ -38,6 +40,7 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
         holder.itemView.findViewById<TextView>(R.id.eachCourseTextView).text = currentItem.courseName
 
         holder.itemView.findViewById<CardView>(R.id.eachCourseCardView).setOnClickListener {
+            //lectureViewModel.getLecturesByCourseName(currentItem.courseName)
             val action = CourseFragmentDirections.actionCourseFragmentToLectureFragment()
             Navigation.findNavController(holder.itemView).navigate(action)
         }

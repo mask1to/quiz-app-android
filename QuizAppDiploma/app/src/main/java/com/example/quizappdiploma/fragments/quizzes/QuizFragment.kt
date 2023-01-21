@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.quizzes.questions.ConstantsBeta
@@ -77,12 +74,13 @@ class QuizFragment : Fragment(), OnClickListener
 
     private fun setQuestion()
     {
-        myCurrentPosition = 1
+        defaultOptionsView()
+        //myCurrentPosition = 1
         val question: QuizQuestionModel = myQuestionList!![myCurrentPosition - 1]
 
         progressBar.progress = myCurrentPosition
         textViewProgress.text = "$myCurrentPosition/${progressBar.max}"
-        imageQuestion.setImageResource(question.image)
+        question.image?.let { imageQuestion.setImageResource(it) }
         textViewQuestion.text = question.questionName
         textViewFirstOption.text = question.questionOptionA
         textViewSecondOption.text = question.questionOptionB
@@ -141,6 +139,35 @@ class QuizFragment : Fragment(), OnClickListener
         )
     }
 
+    private fun answerView(answer : Int, drawableView : Int)
+    {
+        when(answer){
+            1 -> {
+                textViewFirstOption.background = ContextCompat.getDrawable(
+                    requireContext(), drawableView
+                )
+            }
+
+            2 -> {
+                textViewFirstOption.background = ContextCompat.getDrawable(
+                    requireContext(), drawableView
+                )
+            }
+
+            3 -> {
+                textViewFirstOption.background = ContextCompat.getDrawable(
+                    requireContext(), drawableView
+                )
+            }
+
+            4 -> {
+                textViewFirstOption.background = ContextCompat.getDrawable(
+                    requireContext(), drawableView
+                )
+            }
+        }
+    }
+
     override fun onClick(p0: View?)
     {
         when(p0?.id)
@@ -170,10 +197,40 @@ class QuizFragment : Fragment(), OnClickListener
             }
 
             R.id.btnSubmit -> {
+                if(mySelectedOption == 0)
+                {
+                    myCurrentPosition++
 
+                    when{
+                        myCurrentPosition <= myQuestionList!!.size ->{
+                            setQuestion()
+                        }
+                        else ->{
+                            Toast.makeText(requireContext(), "You made it", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else
+                {
+                    val question = myQuestionList?.get(myCurrentPosition - 1)
+                    if(question!!.answer != mySelectedOption)
+                    {
+                        answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
+                    }
+                    answerView(mySelectedOption, R.drawable.correct_option_border_bg)
+
+                    if(myCurrentPosition == myQuestionList!!.size)
+                    {
+                        submitBtn.text = "Finish"
+                    }
+                    else
+                    {
+                        submitBtn.text = "Next"
+                    }
+
+                    mySelectedOption = 0
+                }
             }
         }
     }
-
-
 }

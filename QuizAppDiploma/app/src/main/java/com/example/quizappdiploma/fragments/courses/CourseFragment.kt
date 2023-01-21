@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.adapters.CourseAdapter
 import com.example.quizappdiploma.databinding.FragmentCourseBinding
 import com.example.quizappdiploma.fragments.viewmodels.CourseViewModel
+import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
 
 
 class CourseFragment : Fragment()
@@ -30,7 +31,7 @@ class CourseFragment : Fragment()
     }*/
 
     private lateinit var courseViewModel : CourseViewModel
-
+    private lateinit var lectureViewModel: LectureViewModel
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -51,11 +52,13 @@ class CourseFragment : Fragment()
     {
         super.onViewCreated(view, savedInstanceState)
 
+        //lectureViewModel = ViewModelProvider(this)[LectureViewModel::class.java]
         val adapter = CourseAdapter()
         recyclerView = binding.courseRecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+
 
         courseViewModel = ViewModelProvider(this)[CourseViewModel::class.java]
 

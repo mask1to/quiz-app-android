@@ -8,31 +8,27 @@ import org.jetbrains.annotations.NotNull
 @Entity(tableName = "quiz_questions")
 class QuizQuestionModel(
     @PrimaryKey(autoGenerate = true)
-    val id : Int,
+    val id : Int?,
     @ColumnInfo(name = "question_name")
-    val questionName : String,
+    val questionName : String?,
     @ColumnInfo(name = "image")
-    val image : Int,
+    val image : Int?,
     @ColumnInfo(name = "question_points")
-    val questionPoints : Int,
+    val questionPoints : Int?,
     @ColumnInfo(name = "question_difficulty")
-    val questionDifficulty : Int,
+    val questionDifficulty : Int?,
     @ColumnInfo(name = "option_a")
-    val questionOptionA : String,
+    val questionOptionA : String?,
     @ColumnInfo(name = "option_b")
-    val questionOptionB : String,
+    val questionOptionB : String?,
     @ColumnInfo(name = "option_c")
-    val questionOptionC : String,
+    val questionOptionC : String?,
     @ColumnInfo(name = "option_d")
-    val questionOptionD : String,
+    val questionOptionD : String?,
     @ColumnInfo(name = "answer")
-    val answer : Int
+    val answer : Int?
 )
 {
-
-    override fun toString(): String {
-        return "QuizQuestionModel(id=$id, questionName='$questionName', image=$image, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA='$questionOptionA', questionOptionB='$questionOptionB', questionOptionC='$questionOptionC', questionOptionD='$questionOptionD', answer='$answer')"
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -55,17 +51,20 @@ class QuizQuestionModel(
     }
 
     override fun hashCode(): Int {
-        var result = id
-        result = 31 * result + questionName.hashCode()
-        result = 31 * result + image
-        result = 31 * result + questionPoints
-        result = 31 * result + questionDifficulty
-        result = 31 * result + questionOptionA.hashCode()
-        result = 31 * result + questionOptionB.hashCode()
-        result = 31 * result + questionOptionC.hashCode()
-        result = 31 * result + questionOptionD.hashCode()
-        result = 31 * result + answer
+        var result = id ?: 0
+        result = 31 * result + (questionName?.hashCode() ?: 0)
+        result = 31 * result + (image ?: 0)
+        result = 31 * result + (questionPoints ?: 0)
+        result = 31 * result + (questionDifficulty ?: 0)
+        result = 31 * result + (questionOptionA?.hashCode() ?: 0)
+        result = 31 * result + (questionOptionB?.hashCode() ?: 0)
+        result = 31 * result + (questionOptionC?.hashCode() ?: 0)
+        result = 31 * result + (questionOptionD?.hashCode() ?: 0)
+        result = 31 * result + (answer ?: 0)
         return result
     }
 
+    override fun toString(): String {
+        return "QuizQuestionModel(id=$id, questionName=$questionName, image=$image, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer)"
+    }
 }
