@@ -9,20 +9,19 @@ import org.jetbrains.annotations.NotNull
 class QuizModel(
     @PrimaryKey(autoGenerate = true)
     @NotNull
-    val id : Int,
+    val id : Int?,
     @ColumnInfo(name = "quiz_name")
     @NotNull
-    val quizName : String,
+    val quizName : String?,
     @ColumnInfo(name = "is_active")
     @NotNull
-    val isQuizActive : Int,
+    val isQuizActive : Int?,
     @ColumnInfo(name = "quiz_difficulty")
     @NotNull
-    val quizDifficulty : Int
+    val quizDifficulty : Int?
 )
 {
-    override fun equals(other: Any?): Boolean
-    {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -36,18 +35,15 @@ class QuizModel(
         return true
     }
 
-    override fun hashCode(): Int
-    {
-        var result = id
-        result = 31 * result + quizName.hashCode()
-        result = 31 * result + isQuizActive.hashCode()
-        result = 31 * result + quizDifficulty
+    override fun hashCode(): Int {
+        var result = id ?: 0
+        result = 31 * result + (quizName?.hashCode() ?: 0)
+        result = 31 * result + (isQuizActive ?: 0)
+        result = 31 * result + (quizDifficulty ?: 0)
         return result
     }
 
-    override fun toString(): String
-    {
-        return "Quiz(id=$id, quizName='$quizName', isQuizActive=$isQuizActive, quizDifficulty=$quizDifficulty)"
+    override fun toString(): String {
+        return "QuizModel(id=$id, quizName=$quizName, isQuizActive=$isQuizActive, quizDifficulty=$quizDifficulty)"
     }
-
 }

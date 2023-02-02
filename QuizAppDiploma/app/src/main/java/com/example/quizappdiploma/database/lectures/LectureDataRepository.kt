@@ -23,4 +23,9 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         lectureDao.deleteLecture(lecture)
     }
+
+    fun getLecturesByCourseName(courseName : String)
+    {
+        lectureDao.getLecturesByCourseName(courseName)
+    }
 }
