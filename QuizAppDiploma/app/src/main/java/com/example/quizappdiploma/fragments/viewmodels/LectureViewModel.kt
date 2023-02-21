@@ -1,10 +1,7 @@
 package com.example.quizappdiploma.fragments.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.database.courses.CourseModel
@@ -16,6 +13,7 @@ import kotlinx.coroutines.launch
 class LectureViewModel(application: Application): AndroidViewModel(application)
 {
     val readAllData: LiveData<List<LectureModel>>
+    var selectedLectures : LiveData<List<LectureModel>?>? = null
     private val repository: LectureDataRepository
 
     init {
@@ -49,6 +47,18 @@ class LectureViewModel(application: Application): AndroidViewModel(application)
     {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getLecturesByCourseName(courseName)
+        }
+    }
+
+    fun getLecturesByCourseId(courseId : Int)
+    {
+        /*viewModelScope.launch(Dispatchers.IO){
+            repository.getLecturesByCourseId(courseId)
+        }*/
+
+        selectedLectures = liveData {
+            repository.getLecturesByCourseId(courseId)
+            //emitSource(repository.getLecturesByCourseId(courseId))
         }
     }
 }

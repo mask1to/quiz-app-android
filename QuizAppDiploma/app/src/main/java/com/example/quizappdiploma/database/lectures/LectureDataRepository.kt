@@ -28,4 +28,8 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         lectureDao.getLecturesByCourseName(courseName)
     }
+
+    fun getLecturesByCourseId(courseId: Int) {
+        lectureDao.getLecturesByCourseId(courseId)
+    }
 }

@@ -73,13 +73,41 @@
             app:destination="@id/lectureFragment" />
     </fragment>
     <fragment
-        android:id="@+id/quizFragment"
-        android:name="com.example.quizappdiploma.fragments.quizzes.QuizFragment"
-        android:label="QuizFragment" />
-    <fragment
         android:id="@+id/lectureFragment"
         android:name="com.example.quizappdiploma.fragments.lectures.LectureFragment"
         android:label="fragment_lecture"
-        tools:layout="@layout/fragment_lecture" />
+        tools:layout="@layout/fragment_lecture" >
+        <action
+            android:id="@+id/action_lectureFragment_to_quizFragment2"
+            app:destination="@id/quizFragment" />
+        <argument
+            android:name="course_id"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultQuizFragment"
+        android:name="com.example.quizappdiploma.fragments.quizzes.ResultQuizFragment"
+        android:label="fragment_result_quiz"
+        tools:layout="@layout/fragment_result_quiz" >
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <argument android:name="totalQuestions"
+            app:argType="integer" />
+        <argument
+            android:name="correctAnswers"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_resultQuizFragment_to_studentFragment"
+            app:destination="@id/studentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.example.quizappdiploma.fragments.quizzes.QuizFragment"
+        android:label="QuizFragment" >
+        <action
+            android:id="@+id/action_quizFragment_to_resultQuizFragment"
+            app:destination="@id/resultQuizFragment" />
+    </fragment>
 
 </navigation>

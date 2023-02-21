@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import com.example.quizappdiploma.R
@@ -24,6 +26,7 @@ class ResultQuizFragment : Fragment()
     private lateinit var congratsTextView: TextView
     private lateinit var trophyAnimation : LottieAnimationView
     private lateinit var btnFinish : Button
+    private val args : ResultQuizFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -36,6 +39,7 @@ class ResultQuizFragment : Fragment()
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
@@ -46,7 +50,15 @@ class ResultQuizFragment : Fragment()
         congratsTextView = binding.textViewCongrats
         trophyAnimation = binding.trophyAnimation
         btnFinish = binding.btnFinish
+
+        usernameTextView.text = args.username
+        scoreTextView.text = "Your score is ${args.correctAnswers} out of ${args.totalQuestions}"
         setupAnimation(trophyAnimation)
+
+        btnFinish.setOnClickListener{
+            val action = ResultQuizFragmentDirections.actionResultQuizFragmentToStudentFragment()
+            Navigation.findNavController(requireView()).navigate(action)
+        }
     }
 
     @SuppressLint("Range")

@@ -38,10 +38,11 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
     {
         val currentItem = courseData[position]
         holder.itemView.findViewById<TextView>(R.id.eachCourseTextView).text = currentItem.courseName
-
         holder.itemView.findViewById<CardView>(R.id.eachCourseCardView).setOnClickListener {
             //lectureViewModel.getLecturesByCourseName(currentItem.courseName)
-            val action = CourseFragmentDirections.actionCourseFragmentToLectureFragment()
+            //TODO: check if id is being passed correctly
+            val action = CourseFragmentDirections.actionCourseFragmentToLectureFragment(currentItem.id!!)
+            Log.d("id", currentItem.id.toString())
             Navigation.findNavController(holder.itemView).navigate(action)
         }
     }

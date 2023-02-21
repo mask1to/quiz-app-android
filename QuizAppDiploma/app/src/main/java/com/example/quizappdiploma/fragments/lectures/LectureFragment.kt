@@ -1,12 +1,14 @@
 package com.example.quizappdiploma.fragments.lectures
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
@@ -20,6 +22,7 @@ class LectureFragment : Fragment()
 {
     private var _binding : FragmentLectureBinding? = null
     private val binding get() = _binding!!
+    private val args : LectureFragmentArgs by navArgs()
     private lateinit var recyclerView: RecyclerView
     private lateinit var lectureViewModel: LectureViewModel
 
@@ -52,8 +55,14 @@ class LectureFragment : Fragment()
         }
 
         lectureViewModel.readAllData.observe(viewLifecycleOwner, Observer { lecture ->
-            adapter.setData(lecture)
+            //adapter.setData(lecture)
+            lectureViewModel.getLecturesByCourseId(args.courseId)
         })
+
+        Log.d("id in fragment:", args.courseId.toString())
+        /*lectureViewModel.selectedLectures?.observe(viewLifecycleOwner){
+            lectureViewModel.getLecturesByCourseId(args.courseId)
+        }*/
 
     }
 }
