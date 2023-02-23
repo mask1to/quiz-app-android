@@ -77,12 +77,12 @@
         android:name="com.example.quizappdiploma.fragments.lectures.LectureFragment"
         android:label="fragment_lecture"
         tools:layout="@layout/fragment_lecture" >
-        <action
-            android:id="@+id/action_lectureFragment_to_quizFragment2"
-            app:destination="@id/quizFragment" />
         <argument
             android:name="course_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_lectureFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
     </fragment>
     <fragment
         android:id="@+id/resultQuizFragment"
@@ -108,6 +108,20 @@
         <action
             android:id="@+id/action_quizFragment_to_resultQuizFragment"
             app:destination="@id/resultQuizFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contentFragment"
+        android:name="com.example.quizappdiploma.fragments.content.ContentFragment"
+        android:label="ContentFragment" >
+        <action
+            android:id="@+id/action_contentFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
+        <argument
+            android:name="lecture_title"
+            app:argType="string" />
+        <argument
+            android:name="lecture_description"
+            app:argType="string" />
     </fragment>
 
 </navigation>

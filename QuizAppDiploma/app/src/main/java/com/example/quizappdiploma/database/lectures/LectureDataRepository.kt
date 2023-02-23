@@ -24,12 +24,8 @@ class LectureDataRepository(private val lectureDao: LectureDao)
         lectureDao.deleteLecture(lecture)
     }
 
-    fun getLecturesByCourseName(courseName : String)
+    fun getLecturesByCourseId(courseId: Int) : LiveData<List<LectureModel>>
     {
-        lectureDao.getLecturesByCourseName(courseName)
-    }
-
-    fun getLecturesByCourseId(courseId: Int) {
-        lectureDao.getLecturesByCourseId(courseId)
+        return lectureDao.getLecturesByCourseId(courseId)
     }
 }

@@ -6,17 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.quizappdiploma.R
-import com.example.quizappdiploma.adapters.CourseAdapter
 import com.example.quizappdiploma.adapters.LectureAdapter
-import com.example.quizappdiploma.databinding.FragmentCourseBinding
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.lectures.LectureDataRepository
 import com.example.quizappdiploma.databinding.FragmentLectureBinding
 import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
+import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
 
 class LectureFragment : Fragment()
 {
@@ -47,22 +46,20 @@ class LectureFragment : Fragment()
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        lectureViewModel = ViewModelProvider(this)[LectureViewModel::class.java]
+        val dao = MyDatabase.getDatabase(requireContext()).lectureDao()
+        val repository = LectureDataRepository(dao)
+        lectureViewModel = ViewModelProvider(this, LectureViewModelFactory(repository)).get(LectureViewModel::class.java)
+
+        lectureViewModel.getLecturesByCourseId(args.courseId).observe(viewLifecycleOwner){lectures ->
+            adapter.setData(lectures)
+        }
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             lecturemodel = lectureViewModel
         }
 
-        lectureViewModel.readAllData.observe(viewLifecycleOwner, Observer { lecture ->
-            //adapter.setData(lecture)
-            lectureViewModel.getLecturesByCourseId(args.courseId)
-        })
-
         Log.d("id in fragment:", args.courseId.toString())
-        /*lectureViewModel.selectedLectures?.observe(viewLifecycleOwner){
-            lectureViewModel.getLecturesByCourseId(args.courseId)
-        }*/
 
     }
 }
