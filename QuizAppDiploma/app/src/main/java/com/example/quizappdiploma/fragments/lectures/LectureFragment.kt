@@ -35,7 +35,6 @@ class LectureFragment : Fragment()
         _binding = FragmentLectureBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
@@ -48,7 +47,7 @@ class LectureFragment : Fragment()
 
         val dao = MyDatabase.getDatabase(requireContext()).lectureDao()
         val repository = LectureDataRepository(dao)
-        lectureViewModel = ViewModelProvider(this, LectureViewModelFactory(repository)).get(LectureViewModel::class.java)
+        lectureViewModel = ViewModelProvider(this, LectureViewModelFactory(repository))[LectureViewModel::class.java]
 
         lectureViewModel.getLecturesByCourseId(args.courseId).observe(viewLifecycleOwner){lectures ->
             adapter.setData(lectures)
@@ -62,4 +61,5 @@ class LectureFragment : Fragment()
         Log.d("id in fragment:", args.courseId.toString())
 
     }
+
 }

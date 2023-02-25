@@ -31,7 +31,6 @@ class CourseFragment : Fragment()
     }*/
 
     private lateinit var courseViewModel : CourseViewModel
-    private lateinit var lectureViewModel: LectureViewModel
 
     override fun onCreate(savedInstanceState: Bundle?)
     {

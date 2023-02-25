@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
@@ -7,7 +7,7 @@
             type="com.example.quizappdiploma.fragments.viewmodels.ContentViewModel" />
     </data>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:id="@+id/lecture_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,11 +19,17 @@
         android:id="@+id/lectureTitleTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:gravity="center"
+        android:text="@string/lecture_title"
+        android:textColor="#FFFFFF"
+        android:textSize="26sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/lectureDescriptionTxt"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:text="@string/lecture_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp" />
@@ -31,15 +37,16 @@
     <ImageView
         android:id="@+id/lectureImageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:layout_marginTop="8dp"
         android:adjustViewBounds="true"
+        android:src="@drawable/cow"
         android:scaleType="centerCrop" />
 
     <Button
         android:id="@+id/lectureNextBtn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:text="Next" />

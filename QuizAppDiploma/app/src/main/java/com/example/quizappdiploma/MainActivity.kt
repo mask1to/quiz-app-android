@@ -2,7 +2,6 @@ package com.example.quizappdiploma
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -22,7 +21,6 @@ class MainActivity : AppCompatActivity()
         findViewById<BottomNavigationView>(R.id.nav_view)
             .setupWithNavController(navController)
     }
-
     override fun onSupportNavigateUp(): Boolean
     {
         return Navigation.findNavController(this, R.id.nav_host_fragment).navigateUp()

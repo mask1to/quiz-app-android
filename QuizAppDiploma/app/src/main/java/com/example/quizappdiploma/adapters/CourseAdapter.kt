@@ -37,12 +37,10 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
     override fun onBindViewHolder(holder: CourseViewHolder, position: Int)
     {
         val currentItem = courseData[position]
-        holder.itemView.findViewById<TextView>(R.id.eachCourseTextView).text = currentItem.courseName
+
+        holder.itemView.findViewById<TextView>(R.id.eachCourseTextView).text = splitString(currentItem.courseName.toString())
         holder.itemView.findViewById<CardView>(R.id.eachCourseCardView).setOnClickListener {
-            //lectureViewModel.getLecturesByCourseName(currentItem.courseName)
-            //TODO: check if id is being passed correctly
             val action = CourseFragmentDirections.actionCourseFragmentToLectureFragment(currentItem.id!!)
-            Log.d("id", currentItem.id.toString())
             Navigation.findNavController(holder.itemView).navigate(action)
         }
     }
@@ -53,5 +51,22 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
         this.courseData = course
         notifyDataSetChanged()
     }
+
+    fun splitString(input: String): String {
+        val maxCharsPerLine = 15
+        val words = input.split(" ")
+        var lineLength = 0
+        var result = ""
+        for (word in words) {
+            if (lineLength + word.length > maxCharsPerLine) {
+                result += "\n"
+                lineLength = 0
+            }
+            result += "$word "
+            lineLength += word.length + 1
+        }
+        return result.trim()
+    }
+
 
 }

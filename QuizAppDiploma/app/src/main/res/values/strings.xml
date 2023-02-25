@@ -18,4 +18,7 @@
     <string name="question_name">Question name</string>
     <string name="answer">Answer</string>
     <string name="submit">Submit</string>
+    <string name="lecture_title">Lecture Title</string>
+    <string name="lecture_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut elit ac velit viverra suscipit. Phasellus vitae tortor vel neque dictum varius. Maecenas nec placerat neque, vel sollicitudin urna. Sed malesuada ipsum in lacus congue, id efficitur velit consequat. Sed bibendum nibh ipsum, sed egestas massa efficitur at. Sed in justo tellus. Nunc ullamcorper bibendum felis, vel laoreet tortor.</string>
+    <string name="courseName">Meno kurzu</string>
 </resources>

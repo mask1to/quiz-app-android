@@ -1,14 +1,17 @@
 package com.example.quizappdiploma.adapters
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.lectures.LectureModel
+import com.example.quizappdiploma.fragments.lectures.LectureFragmentDirections
 
 class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
 {
@@ -35,10 +38,16 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
     override fun onBindViewHolder(holder: LectureViewHolder, position: Int)
     {
         val currentItem = lectureData[position]
-        holder.itemView.findViewById<TextView>(R.id.lectureNameTxt).text = currentItem.lectureName
-        holder.itemView.findViewById<TextView>(R.id.lectureDescTxt).text = currentItem.lectureDescription
+        holder.itemView.findViewById<TextView>(R.id.lectureNameTxt).text = splitString(currentItem.lectureName.toString())
+        //holder.itemView.findViewById<TextView>(R.id.lectureDescTxt).text = currentItem.lectureDescription
         holder.itemView.findViewById<CardView>(R.id.lectureCardView).setOnClickListener {
-            // navigate to content
+            val action = LectureFragmentDirections.actionLectureFragmentToContentFragment(
+                currentItem.lectureName.toString(),
+                currentItem.lectureDescription.toString(),
+                currentItem.image_path.toString()
+            )
+            Log.d("lecture id:", currentItem.id.toString())
+            Navigation.findNavController(holder.itemView).navigate(action)
         }
     }
 
@@ -47,5 +56,21 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
     {
         this.lectureData = lecture
         notifyDataSetChanged()
+    }
+
+    fun splitString(input: String): String {
+        val maxCharsPerLine = 15
+        val words = input.split(" ")
+        var lineLength = 0
+        var result = ""
+        for (word in words) {
+            if (lineLength + word.length > maxCharsPerLine) {
+                result += "\n"
+                lineLength = 0
+            }
+            result += "$word "
+            lineLength += word.length + 1
+        }
+        return result.trim()
     }
 }

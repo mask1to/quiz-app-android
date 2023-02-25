@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 
 class LectureViewModel(private val lectureDataRepository: LectureDataRepository): ViewModel()
 {
-
     fun getLecturesByCourseId(courseId: Int): LiveData<List<LectureModel>>
     {
         return lectureDataRepository.getLecturesByCourseId(courseId)

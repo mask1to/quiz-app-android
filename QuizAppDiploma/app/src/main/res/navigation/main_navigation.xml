@@ -122,6 +122,9 @@
         <argument
             android:name="lecture_description"
             app:argType="string" />
+        <argument
+            android:name="imagePath"
+            app:argType="string" />
     </fragment>
 
 </navigation>
