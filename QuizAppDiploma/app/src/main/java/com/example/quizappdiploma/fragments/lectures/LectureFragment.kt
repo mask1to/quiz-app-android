@@ -44,6 +44,7 @@ class LectureFragment : Fragment()
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+        //adapter.setSelectedItem(0)
 
         val dao = MyDatabase.getDatabase(requireContext()).lectureDao()
         val repository = LectureDataRepository(dao)

@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.lectures.LectureDataRepository
@@ -106,6 +107,8 @@ class ContentFragment : Fragment()
 
         nextLectureButton.setOnClickListener {
             Log.d("test", "click")
+            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment()
+            Navigation.findNavController(requireView()).navigate(action)
         }
     }
 
@@ -143,7 +146,6 @@ class ContentFragment : Fragment()
 
                 }
             }
-            // Create the AlertDialog
             builder.create()
         }
         alertDialog.show()
@@ -156,6 +158,5 @@ class ContentFragment : Fragment()
             Manifest.permission.INTERNET
         ) == PackageManager.PERMISSION_GRANTED
     }
-
 
 }

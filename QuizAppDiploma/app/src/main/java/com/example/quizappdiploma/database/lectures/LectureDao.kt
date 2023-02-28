@@ -8,18 +8,10 @@ interface LectureDao
 {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addLecture(lecture : LectureModel)
-    @Query("SELECT * FROM lectures ORDER BY lecture_name ASC")
-    fun readAllData(): LiveData<List<LectureModel>>
-
     @Query("SELECT * FROM lectures JOIN courses ON lectures.course_id = courses.id WHERE courses.course_name = :courseName")
-    //"SELECT lecture_name FROM lectures INNER JOIN courses ON lectures.course_id = courses.id WHERE courses.id = lectures.course_id AND courses.course_name = :courseName"
     fun getLecturesByCourseName(courseName : String) : LiveData<List<LectureModel>>
-
     @Query("SELECT * FROM lectures WHERE lectures.course_id = :courseId")
     fun getLecturesByCourseId(courseId: Int) : LiveData<List<LectureModel>>
-
-    /*@Query("SELECT * FROM lectures WHERE lecture_name = :lectureName")
-    fun getLectureByLectureName(lectureName : String)*/
     @Update
     suspend fun updateLecture(lecture: LectureModel)
     @Delete

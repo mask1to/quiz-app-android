@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.fragments.lectures.LectureFragmentDirections
+import kotlinx.coroutines.selects.select
 
 class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
 {
@@ -23,7 +24,7 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
         notifyDataSetChanged()
     }
 
-    class LectureViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){}
+    class LectureViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LectureViewHolder
     {
@@ -35,9 +36,11 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
         return lectureData.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: LectureViewHolder, position: Int)
     {
         val currentItem = lectureData[position]
+
         holder.itemView.findViewById<TextView>(R.id.lectureNameTxt).text = splitString(currentItem.lectureName.toString())
         //holder.itemView.findViewById<TextView>(R.id.lectureDescTxt).text = currentItem.lectureDescription
         holder.itemView.findViewById<CardView>(R.id.lectureCardView).setOnClickListener {
@@ -49,6 +52,10 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
             Log.d("lecture id:", currentItem.id.toString())
             Navigation.findNavController(holder.itemView).navigate(action)
         }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     @SuppressLint("NotifyDataSetChanged")

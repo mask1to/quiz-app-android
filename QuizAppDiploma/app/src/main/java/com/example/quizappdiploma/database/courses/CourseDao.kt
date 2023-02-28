@@ -10,7 +10,7 @@ interface CourseDao
     suspend fun addCourse(course : CourseModel)
 
     @Query("SELECT * FROM courses ORDER BY id ASC")
-    fun readAllData(): LiveData<List<CourseModel>>
+    fun getCoursesOrderByIdAsc(): LiveData<List<CourseModel>>
 
     @Update
     suspend fun updateCourse(course: CourseModel)

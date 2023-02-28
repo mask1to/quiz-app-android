@@ -7,8 +7,6 @@ import com.example.quizappdiploma.database.courses.CourseDataRepository
 
 class LectureDataRepository(private val lectureDao: LectureDao)
 {
-    val readAllData : LiveData<List<LectureModel>> = lectureDao.readAllData()
-
     suspend fun addLecture(lecture : LectureModel)
     {
         lectureDao.addLecture(lecture)
@@ -23,7 +21,6 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         lectureDao.deleteLecture(lecture)
     }
-
     fun getLecturesByCourseId(courseId: Int) : LiveData<List<LectureModel>>
     {
         return lectureDao.getLecturesByCourseId(courseId)

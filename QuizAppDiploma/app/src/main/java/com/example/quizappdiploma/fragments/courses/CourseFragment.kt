@@ -15,9 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.adapters.CourseAdapter
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.databinding.FragmentCourseBinding
 import com.example.quizappdiploma.fragments.viewmodels.CourseViewModel
 import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
+import com.example.quizappdiploma.fragments.viewmodels.factory.CourseViewModelFactory
 
 
 class CourseFragment : Fragment()
@@ -51,24 +54,24 @@ class CourseFragment : Fragment()
     {
         super.onViewCreated(view, savedInstanceState)
 
-        //lectureViewModel = ViewModelProvider(this)[LectureViewModel::class.java]
         val adapter = CourseAdapter()
         recyclerView = binding.courseRecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
+        val dao = MyDatabase.getDatabase(requireContext()).courseDao()
+        val repository = CourseDataRepository(dao)
+        courseViewModel = ViewModelProvider(this, CourseViewModelFactory(repository))[CourseViewModel::class.java]
 
-        courseViewModel = ViewModelProvider(this)[CourseViewModel::class.java]
+        courseViewModel.getCoursesByIdAsc().observe(viewLifecycleOwner) { courses ->
+            adapter.setData(courses)
+        }
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             coursemodel = courseViewModel
         }
-
-        courseViewModel.readAllData.observe(viewLifecycleOwner, Observer { course ->
-            adapter.setData(course)
-        })
 
     }
 
