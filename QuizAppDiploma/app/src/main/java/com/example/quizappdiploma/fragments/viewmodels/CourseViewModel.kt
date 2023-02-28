@@ -10,36 +10,25 @@ import com.example.quizappdiploma.fragments.viewmodels.helpers.LiveDataEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CourseViewModel(application: Application): AndroidViewModel(application) {
-
-    val readAllData: LiveData<List<CourseModel>>
-    private val repository: CourseDataRepository
-
-    init {
-        val courseDao = MyDatabase.getDatabase(application).courseDao()
-        repository = CourseDataRepository(courseDao)
-        readAllData = repository.readAllData
-    }
-
-    fun addCourse(course: CourseModel)
+class CourseViewModel(private val courseDataRepository: CourseDataRepository): ViewModel()
+{
+    fun getCoursesByIdAsc() : LiveData<List<CourseModel>>
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addCourse(course)
-        }
+        return courseDataRepository.getCoursesByIdAsc()
     }
 
-    fun updateCourse(course: CourseModel)
+    suspend fun addCourse(course : CourseModel)
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.updateCourse(course)
-        }
+        return courseDataRepository.addCourse(course)
     }
 
-    fun deleteCourse(course: CourseModel)
+    suspend fun updateCourse(course : CourseModel)
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteCourse(course)
-        }
+        return courseDataRepository.updateCourse(course)
     }
 
+    suspend fun deleteCourse(course : CourseModel)
+    {
+        return courseDataRepository.deleteCourse(course)
+    }
 }

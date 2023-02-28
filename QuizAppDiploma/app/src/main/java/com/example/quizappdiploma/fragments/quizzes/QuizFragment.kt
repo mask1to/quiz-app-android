@@ -10,6 +10,9 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.quizzes.questions.ConstantsBeta
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
@@ -21,6 +24,12 @@ class QuizFragment : Fragment(), OnClickListener
 
     private var _binding : FragmentQuizBinding? = null
     private val binding get() = _binding!!
+
+    //getUsername of user, who is doing it
+    private val username = "masko"
+
+    private var correctAnswers : Int = 0
+
     private lateinit var progressBar : ProgressBar
     private lateinit var submitBtn : Button
     private lateinit var textViewProgress : TextView
@@ -206,7 +215,10 @@ class QuizFragment : Fragment(), OnClickListener
                             setQuestion()
                         }
                         else ->{
-                            Toast.makeText(requireContext(), "You made it", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireContext(), "You made it", Toast.LENGTH_SHORT).show()
+                            //TODO: send correct_answers, username, total_questions
+                            val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(username, myQuestionList!!.size, correctAnswers)
+                            Navigation.findNavController(requireView()).navigate(action)
                         }
                     }
                 }
@@ -217,7 +229,11 @@ class QuizFragment : Fragment(), OnClickListener
                     {
                         answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
                     }
-                    answerView(mySelectedOption, R.drawable.correct_option_border_bg)
+                    else
+                    {
+                        answerView(mySelectedOption, R.drawable.correct_option_border_bg)
+                        correctAnswers++
+                    }
 
                     if(myCurrentPosition == myQuestionList!!.size)
                     {

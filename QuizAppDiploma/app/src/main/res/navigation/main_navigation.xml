@@ -73,13 +73,61 @@
             app:destination="@id/lectureFragment" />
     </fragment>
     <fragment
-        android:id="@+id/quizFragment"
-        android:name="com.example.quizappdiploma.fragments.quizzes.QuizFragment"
-        android:label="QuizFragment" />
-    <fragment
         android:id="@+id/lectureFragment"
         android:name="com.example.quizappdiploma.fragments.lectures.LectureFragment"
         android:label="fragment_lecture"
-        tools:layout="@layout/fragment_lecture" />
+        tools:layout="@layout/fragment_lecture" >
+        <argument
+            android:name="course_id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_lectureFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultQuizFragment"
+        android:name="com.example.quizappdiploma.fragments.quizzes.ResultQuizFragment"
+        android:label="fragment_result_quiz"
+        tools:layout="@layout/fragment_result_quiz" >
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <argument android:name="totalQuestions"
+            app:argType="integer" />
+        <argument
+            android:name="correctAnswers"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_resultQuizFragment_to_studentFragment"
+            app:destination="@id/studentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.example.quizappdiploma.fragments.quizzes.QuizFragment"
+        android:label="QuizFragment" >
+        <action
+            android:id="@+id/action_quizFragment_to_resultQuizFragment"
+            app:destination="@id/resultQuizFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contentFragment"
+        android:name="com.example.quizappdiploma.fragments.content.ContentFragment"
+        android:label="ContentFragment" >
+        <action
+            android:id="@+id/action_contentFragment_to_quizFragment"
+            app:destination="@id/quizFragment" />
+        <argument
+            android:name="lecture_title"
+            app:argType="string" />
+        <argument
+            android:name="lecture_description"
+            app:argType="string" />
+        <argument
+            android:name="imagePath"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_contentFragment_to_lectureFragment"
+            app:destination="@id/lectureFragment" />
+    </fragment>
 
 </navigation>
