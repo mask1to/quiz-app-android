@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.databinding.FragmentProfileBinding
 import com.example.quizappdiploma.databinding.FragmentStudentBinding
@@ -30,5 +31,9 @@ class ProfileFragment : Fragment()
         super.onViewCreated(view, savedInstanceState)
 
         profileImage = binding.imageView
+
+        binding.courseBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_studentFragment_to_courseFragment)
+        }
     }
 }

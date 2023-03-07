@@ -49,6 +49,8 @@ class StudentFragment : Fragment()
     {
         super.onViewCreated(view, savedInstanceState)
 
+        checkLoginStatus()
+
         replaceFragment(ProfileFragment())
 
         binding.bottomNavigationView.setOnItemSelectedListener {
@@ -56,7 +58,7 @@ class StudentFragment : Fragment()
             {
                 R.id.logout -> logout()
                 R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.courses -> replaceFragment(CourseFragment())
+                R.id.stats -> replaceFragment(StatsFragment())
                 else ->
                 {
 
@@ -79,7 +81,7 @@ class StudentFragment : Fragment()
         if(preferenceManager.isLogin() == false)
         {
             val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-            Navigation.findNavController(requireView()).navigate(action)
+            findNavController().navigate(action)
         }
     }
 
@@ -87,7 +89,7 @@ class StudentFragment : Fragment()
     {
         preferenceManager.removeData()
         val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-        Navigation.findNavController(requireView()).navigate(action)
+        findNavController().navigate(action)
     }
 
 }

@@ -11,8 +11,8 @@ class QuizQuestionModel(
     val id : Int?,
     @ColumnInfo(name = "question_name")
     val questionName : String?,
-    @ColumnInfo(name = "image")
-    val image : Int?,
+    @ColumnInfo(name = "image_path")
+    val image_path : String?,
     @ColumnInfo(name = "question_points")
     val questionPoints : Int?,
     @ColumnInfo(name = "question_difficulty")
@@ -38,7 +38,7 @@ class QuizQuestionModel(
 
         if (id != other.id) return false
         if (questionName != other.questionName) return false
-        if (image != other.image) return false
+        if (image_path != other.image_path) return false
         if (questionPoints != other.questionPoints) return false
         if (questionDifficulty != other.questionDifficulty) return false
         if (questionOptionA != other.questionOptionA) return false
@@ -53,7 +53,7 @@ class QuizQuestionModel(
     override fun hashCode(): Int {
         var result = id ?: 0
         result = 31 * result + (questionName?.hashCode() ?: 0)
-        result = 31 * result + (image ?: 0)
+        result = 31 * result + (image_path?.hashCode() ?: 0)
         result = 31 * result + (questionPoints ?: 0)
         result = 31 * result + (questionDifficulty ?: 0)
         result = 31 * result + (questionOptionA?.hashCode() ?: 0)
@@ -65,6 +65,6 @@ class QuizQuestionModel(
     }
 
     override fun toString(): String {
-        return "QuizQuestionModel(id=$id, questionName=$questionName, image=$image, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer)"
+        return "QuizQuestionModel(id=$id, questionName=$questionName, image_path=$image_path, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer)"
     }
 }

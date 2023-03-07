@@ -1,44 +1,34 @@
 package com.example.quizappdiploma.fragments.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.example.quizappdiploma.database.MyDatabase
+import androidx.lifecycle.ViewModel
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class QuizQuestionViewModel(application: Application): AndroidViewModel(application)
+class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestionDataRepository): ViewModel()
 {
-    val readAllData: LiveData<List<QuizQuestionModel>>
-    private val repository : QuizQuestionDataRepository
-
-    init {
-        val quizQuestionDao = MyDatabase.getDatabase(application).quizQuestionDao()
-        repository = QuizQuestionDataRepository(quizQuestionDao)
-        readAllData = repository.readAllData
+    suspend fun addQuestion(question : QuizQuestionModel)
+    {
+        quizQuestionDataRepository.addQuestion(question)
     }
 
-    fun addQuestion(question : QuizQuestionModel)
+    suspend fun updateQuestion(question: QuizQuestionModel)
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addQuestion(question)
-        }
+        quizQuestionDataRepository.updateQuestion(question)
     }
 
-    fun updateQuestion(question: QuizQuestionModel)
+    suspend fun deleteQuestion(question: QuizQuestionModel)
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.updateQuestion(question)
-        }
+        quizQuestionDataRepository.deleteQuestion(question)
     }
 
-    fun deleteQuestion(question: QuizQuestionModel)
+    fun getFirstFiveQuestions() : LiveData<List<QuizQuestionModel>>
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteQuestion(question)
-        }
+        return quizQuestionDataRepository.getFirstFiveQuestions()
+    }
+
+    fun getLastFiveQuestions() : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDataRepository.getLastFiveQuestions()
     }
 }

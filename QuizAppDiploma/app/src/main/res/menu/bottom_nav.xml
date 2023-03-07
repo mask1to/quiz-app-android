@@ -5,9 +5,9 @@
         android:id="@+id/profile"
         android:icon="@drawable/baseline_person_24"/>
 
-    <item android:title="Courses"
-        android:id="@+id/courses"
-        android:icon="@drawable/baseline_book_24"/>
+    <item android:title="Stats"
+        android:id="@+id/stats"
+        android:icon="@drawable/baseline_query_stats_24"/>
 
     <item android:title="Logout"
         android:id="@+id/logout"

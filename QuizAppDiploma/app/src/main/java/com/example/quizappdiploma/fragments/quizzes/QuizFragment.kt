@@ -3,6 +3,7 @@ package com.example.quizappdiploma.fragments.quizzes
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,14 +11,23 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.quizzes.questions.ConstantsBeta
+import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.databinding.FragmentAdminBinding
 import com.example.quizappdiploma.databinding.FragmentQuizBinding
+import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
+import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
+import kotlinx.coroutines.*
 
 class QuizFragment : Fragment(), OnClickListener
 {
@@ -27,9 +37,7 @@ class QuizFragment : Fragment(), OnClickListener
 
     //getUsername of user, who is doing it
     private val username = "masko"
-
-    private var correctAnswers : Int = 0
-
+    private lateinit var quizQuestionViewModel: QuizQuestionViewModel
     private lateinit var progressBar : ProgressBar
     private lateinit var submitBtn : Button
     private lateinit var textViewProgress : TextView
@@ -43,6 +51,8 @@ class QuizFragment : Fragment(), OnClickListener
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
     private var mySelectedOption : Int = 0
+    private var correctAnswers : Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -75,7 +85,19 @@ class QuizFragment : Fragment(), OnClickListener
         textViewFourthOption.setOnClickListener(this)
         submitBtn.setOnClickListener(this)
 
-        myQuestionList = ConstantsBeta.getFirstFiveQuestions()
+        val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
+        val repository = QuizQuestionDataRepository(dao)
+        quizQuestionViewModel = ViewModelProvider(this, QuizQuestionViewModelFactory(repository))[QuizQuestionViewModel::class.java]
+
+        /*quizQuestionViewModel.getFirstFiveQuestions().observeOnce(this) { questionList ->
+            Log.d("QuizViewModel", "getFirstFiveQuestions: $questionList")
+            myQuestionList!!.addAll(questionList)
+            // Update UI with arrayList
+        }*/
+
+        //TODO
+        myQuestionList = ConstantsBeta.getFirstFiveQuestions(dao)
+        //myQuestionList = quizQuestionViewModel.getFirstFiveQuestions() as ArrayList<QuizQuestionModel>
         setQuestion()
         //defaultOptionsView()
 
@@ -89,7 +111,7 @@ class QuizFragment : Fragment(), OnClickListener
 
         progressBar.progress = myCurrentPosition
         textViewProgress.text = "$myCurrentPosition/${progressBar.max}"
-        question.image?.let { imageQuestion.setImageResource(it) }
+        //question.image?.let { imageQuestion.setImageResource(it) }
         textViewQuestion.text = question.questionName
         textViewFirstOption.text = question.questionOptionA
         textViewSecondOption.text = question.questionOptionB
@@ -158,19 +180,19 @@ class QuizFragment : Fragment(), OnClickListener
             }
 
             2 -> {
-                textViewFirstOption.background = ContextCompat.getDrawable(
+                textViewSecondOption.background = ContextCompat.getDrawable(
                     requireContext(), drawableView
                 )
             }
 
             3 -> {
-                textViewFirstOption.background = ContextCompat.getDrawable(
+                textViewThirdOption.background = ContextCompat.getDrawable(
                     requireContext(), drawableView
                 )
             }
 
             4 -> {
-                textViewFirstOption.background = ContextCompat.getDrawable(
+                textViewFourthOption.background = ContextCompat.getDrawable(
                     requireContext(), drawableView
                 )
             }
@@ -225,6 +247,8 @@ class QuizFragment : Fragment(), OnClickListener
                 else
                 {
                     val question = myQuestionList?.get(myCurrentPosition - 1)
+                    Log.d("Question answer:", question!!.answer.toString())
+                    Log.d("Selected option:", mySelectedOption.toString())
                     if(question!!.answer != mySelectedOption)
                     {
                         answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
@@ -248,5 +272,31 @@ class QuizFragment : Fragment(), OnClickListener
                 }
             }
         }
+    }
+
+    /*private fun getFirstFiveQuestions(): ArrayList<QuizQuestionModel> {
+        val questionList = ArrayList<QuizQuestionModel>()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
+            val firstFiveQuestions = dao.getFirstFiveQuestions()
+            val lastFiveQuestions = dao.getLastFiveQuestions()
+
+            withContext(Dispatchers.Main) {
+                questionList.addAll(firstFiveQuestions)
+                questionList.addAll(lastFiveQuestions)
+            }
+        }
+
+        return questionList
+    }*/
+
+    fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: Observer<T>) {
+        observe(owner, object : Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this)
+            }
+        })
     }
 }

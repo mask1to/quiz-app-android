@@ -28,11 +28,14 @@
         android:label="fragment_student"
         tools:layout="@layout/fragment_student" >
         <action
-            android:id="@+id/action_studentFragment_to_courseFragment"
-            app:destination="@id/courseFragment" />
-        <action
             android:id="@+id/action_studentFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_studentFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_studentFragment_to_courseFragment"
+            app:destination="@id/courseFragment" />
     </fragment>
     <fragment
         android:id="@+id/lecturerFragment"
@@ -128,6 +131,15 @@
         <action
             android:id="@+id/action_contentFragment_to_lectureFragment"
             app:destination="@id/lectureFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.quizappdiploma.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_courseFragment"
+            app:destination="@id/courseFragment" />
     </fragment>
 
 </navigation>

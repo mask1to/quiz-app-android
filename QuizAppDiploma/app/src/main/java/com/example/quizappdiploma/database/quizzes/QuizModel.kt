@@ -8,16 +8,12 @@ import org.jetbrains.annotations.NotNull
 @Entity(tableName = "quizzes")
 class QuizModel(
     @PrimaryKey(autoGenerate = true)
-    @NotNull
     val id : Int?,
     @ColumnInfo(name = "quiz_name")
-    @NotNull
     val quizName : String?,
     @ColumnInfo(name = "is_active")
-    @NotNull
     val isQuizActive : Int?,
     @ColumnInfo(name = "quiz_difficulty")
-    @NotNull
     val quizDifficulty : Int?
 )
 {

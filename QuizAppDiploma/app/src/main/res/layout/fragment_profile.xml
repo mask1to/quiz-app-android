@@ -39,28 +39,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="E-mail"
-        android:textSize="20sp"
         android:textColor="@color/white"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userNameTxt"
-        app:layout_constraintVertical_bias="0.143" />
+        app:layout_constraintVertical_bias="0.14" />
 
-    <TextView
-        android:id="@+id/enrolledCourses"
+    <Button
+        android:id="@+id/courseBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enrolled courses"
-        android:textSize="20sp"
-        android:textColor="@color/white"
+        android:text="Courses"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userNameTxt"
-        app:layout_constraintVertical_bias="0.36" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.523" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
