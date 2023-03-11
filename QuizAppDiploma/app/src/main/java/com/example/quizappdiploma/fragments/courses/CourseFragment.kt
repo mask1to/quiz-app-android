@@ -28,18 +28,11 @@ class CourseFragment : Fragment()
     private var _binding : FragmentCourseBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
-
-    /*private val courseViewModel : CourseViewModel by lazy {
-        ViewModelProvider(this, Helper.getCourseViewModelFactory(requireContext()))[CourseViewModel::class.java]
-    }*/
-
     private lateinit var courseViewModel : CourseViewModel
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View
@@ -48,7 +41,6 @@ class CourseFragment : Fragment()
         _binding = FragmentCourseBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {

@@ -94,15 +94,17 @@ class ContentFragment : Fragment()
             }
         }.start()
 
-
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             contentmodel = contentViewModel
         }
 
+        val myArgs = arguments
+        val courseId = myArgs?.getInt("course_id")
+        Log.d("courseId in content: ", courseId.toString())
+
         nextLectureButton.setOnClickListener {
-            Log.d("test", "click")
-            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment()
+            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
             Navigation.findNavController(requireView()).navigate(action)
         }
     }

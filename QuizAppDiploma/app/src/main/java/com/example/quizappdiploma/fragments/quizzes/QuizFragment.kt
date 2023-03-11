@@ -11,23 +11,15 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
-import com.example.quizappdiploma.database.quizzes.questions.ConstantsBeta
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
-import com.example.quizappdiploma.databinding.FragmentAdminBinding
 import com.example.quizappdiploma.databinding.FragmentQuizBinding
 import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
-import kotlinx.coroutines.*
 
 class QuizFragment : Fragment(), OnClickListener
 {
@@ -50,6 +42,7 @@ class QuizFragment : Fragment(), OnClickListener
 
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
+    private var myQuestionList2 : ArrayList<QuizQuestionModel>? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
 
@@ -89,18 +82,106 @@ class QuizFragment : Fragment(), OnClickListener
         val repository = QuizQuestionDataRepository(dao)
         quizQuestionViewModel = ViewModelProvider(this, QuizQuestionViewModelFactory(repository))[QuizQuestionViewModel::class.java]
 
-        /*quizQuestionViewModel.getFirstFiveQuestions().observeOnce(this) { questionList ->
-            Log.d("QuizViewModel", "getFirstFiveQuestions: $questionList")
-            myQuestionList!!.addAll(questionList)
-            // Update UI with arrayList
-        }*/
+        val myArgs = arguments
+        val courseId = myArgs?.getInt("course_id")
 
-        //TODO
-        myQuestionList = ConstantsBeta.getFirstFiveQuestions(dao)
-        //myQuestionList = quizQuestionViewModel.getFirstFiveQuestions() as ArrayList<QuizQuestionModel>
-        setQuestion()
-        //defaultOptionsView()
+        quizQuestionViewModel.getFirstFiveQuestions(courseId!!, 10).observe(viewLifecycleOwner) { firstQuestions ->
 
+            val questionList = firstQuestions
+
+            if (myQuestionList == null) {
+                myQuestionList = ArrayList()
+            }
+
+            // Add all questions from questionList to myQuestionList
+            myQuestionList?.addAll(questionList)
+            Log.d("myQuestionList", myQuestionList.toString())
+
+            setQuestion()
+        }
+
+        binding.btnSubmit.setOnClickListener {
+
+            if(mySelectedOption == 0)
+            {
+                myCurrentPosition++
+
+                when{
+                    myCurrentPosition <= myQuestionList!!.size ->{
+                        setQuestion()
+                    }
+                    else ->{
+                        //Toast.makeText(requireContext(), "You made it", Toast.LENGTH_SHORT).show()
+                        //TODO: send correct_answers, username, total_questions
+                        val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(username, myQuestionList!!.size, correctAnswers)
+                        Navigation.findNavController(requireView()).navigate(action)
+                    }
+                }
+            }
+            else
+            {
+                Log.d("myCurrentPosition: ", myCurrentPosition.toString())
+
+                val question = myQuestionList?.get(myCurrentPosition - 1)
+                Log.d("Question answer:", question!!.answer.toString())
+                Log.d("Selected option:", mySelectedOption.toString())
+                if(question!!.answer != mySelectedOption)
+                {
+                    answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
+                }
+                else
+                {
+                    answerView(mySelectedOption, R.drawable.correct_option_border_bg)
+                    correctAnswers++
+                }
+
+                if(myCurrentPosition == 10)
+                {
+                    submitBtn.text = "Finish"
+                }
+                else
+                {
+                    submitBtn.text = "Next"
+                }
+
+                mySelectedOption = 0
+                Log.d("correctAnswers: ", correctAnswers.toString())
+
+                if(myCurrentPosition == 5 && correctAnswers == 5)
+                {
+                    //TODO: generate questions with diff 1 2 3 3 3
+                    Log.d("5 spravnych", "spustam 1 2 3 3 3")
+                    //generateQuestions(quizQuestionViewModel, courseId, 0,1,1,3)
+
+                }
+                else if(myCurrentPosition == 5 && correctAnswers == 4)
+                {
+                    //TODO: generate questions with diff 1 2 2 3 3
+                    Log.d("4 spravnych", "spustam 1 2 2 3 3")
+                }
+                else if(myCurrentPosition == 5 && correctAnswers == 3)
+                {
+                    //TODO: generate questions with diff 1 2 2 2 3
+                    Log.d("3 spravnych", "spustam 1 2 2 2 3")
+                }
+                else if(myCurrentPosition == 5 && correctAnswers == 2)
+                {
+                    //TODO: generate questions with diff 1 1 2 2 2
+                    Log.d("2 spravnych", "spustam 1 1 2 2 2")
+                }
+                else if(myCurrentPosition == 5 && correctAnswers == 1)
+                {
+                    //TODO: generate questions with diff 1 1 1 2 2
+                    Log.d("1 spravnych", "spustam 1 1 1 2 2")
+                }
+                else if(myCurrentPosition == 5 && correctAnswers == 0)
+                {
+                    //TODO: generate questions with diff 1 1 1 1 2
+                    Log.d("0 spravnych", "spustam 1 1 1 1 2")
+                }
+            }
+
+        }
     }
 
     private fun setQuestion()
@@ -111,14 +192,17 @@ class QuizFragment : Fragment(), OnClickListener
 
         progressBar.progress = myCurrentPosition
         textViewProgress.text = "$myCurrentPosition/${progressBar.max}"
-        //question.image?.let { imageQuestion.setImageResource(it) }
+        Log.d("textViewProgress: ", "$myCurrentPosition/${progressBar.max}")
+        //TODO: check how to set image from ContentFragment
+        //question.image?.let { imageQuestion.setImageResource(question.image_path) }
         textViewQuestion.text = question.questionName
         textViewFirstOption.text = question.questionOptionA
         textViewSecondOption.text = question.questionOptionB
         textViewThirdOption.text = question.questionOptionC
         textViewFourthOption.text = question.questionOptionD
 
-        if(myCurrentPosition == myQuestionList!!.size)
+        //if(myCurrentPosition == myQuestionList!!.size)
+        if(myCurrentPosition == 10)
         {
             submitBtn.text = "Finish"
         }
@@ -127,7 +211,6 @@ class QuizFragment : Fragment(), OnClickListener
             submitBtn.text = "Next"
         }
     }
-
     private fun defaultOptionsView()
     {
         val questionOptions = ArrayList<TextView>()
@@ -155,9 +238,7 @@ class QuizFragment : Fragment(), OnClickListener
                 requireContext(), R.drawable.default_option_border_bg
             )
         }
-
     }
-
     private fun selectedOptionView(txtView : TextView, selectedOption : Int)
     {
         defaultOptionsView()
@@ -199,6 +280,29 @@ class QuizFragment : Fragment(), OnClickListener
         }
     }
 
+    private fun generateQuestions(quizQuestionViewModel: QuizQuestionViewModel, courseId : Int, earlyQuestionLimit : Int, firstQuestionLimit : Int, secondQuestionLimit : Int, thirdQuestionLimit : Int)
+    {
+        quizQuestionViewModel.getFirstFiveQuestions(courseId!!, earlyQuestionLimit).observe(viewLifecycleOwner) { firstQuestions ->
+            quizQuestionViewModel.getLastFiveQuestions(courseId, 1, firstQuestionLimit).observe(viewLifecycleOwner) { easyQuestions ->
+                quizQuestionViewModel.getLastFiveQuestions(courseId, 2, secondQuestionLimit).observe(viewLifecycleOwner) { midQuestions ->
+                    quizQuestionViewModel.getLastFiveQuestions(courseId, 3, thirdQuestionLimit).observe(viewLifecycleOwner) { hardQuestions ->
+                        val questionList = firstQuestions + easyQuestions + midQuestions + hardQuestions
+
+                        // Add all questions from questionList to myQuestionList
+                        if(myQuestionList == null)
+                        {
+                            myQuestionList = ArrayList()
+                        }
+                        myQuestionList?.addAll(questionList)
+                        Log.d("newQuestionList", myQuestionList.toString())
+
+                        setQuestion()
+                    }
+                }
+            }
+        }
+    }
+
     override fun onClick(p0: View?)
     {
         when(p0?.id)
@@ -226,77 +330,6 @@ class QuizFragment : Fragment(), OnClickListener
                     selectedOptionView(it, 4)
                 }
             }
-
-            R.id.btnSubmit -> {
-                if(mySelectedOption == 0)
-                {
-                    myCurrentPosition++
-
-                    when{
-                        myCurrentPosition <= myQuestionList!!.size ->{
-                            setQuestion()
-                        }
-                        else ->{
-                            //Toast.makeText(requireContext(), "You made it", Toast.LENGTH_SHORT).show()
-                            //TODO: send correct_answers, username, total_questions
-                            val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(username, myQuestionList!!.size, correctAnswers)
-                            Navigation.findNavController(requireView()).navigate(action)
-                        }
-                    }
-                }
-                else
-                {
-                    val question = myQuestionList?.get(myCurrentPosition - 1)
-                    Log.d("Question answer:", question!!.answer.toString())
-                    Log.d("Selected option:", mySelectedOption.toString())
-                    if(question!!.answer != mySelectedOption)
-                    {
-                        answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
-                    }
-                    else
-                    {
-                        answerView(mySelectedOption, R.drawable.correct_option_border_bg)
-                        correctAnswers++
-                    }
-
-                    if(myCurrentPosition == myQuestionList!!.size)
-                    {
-                        submitBtn.text = "Finish"
-                    }
-                    else
-                    {
-                        submitBtn.text = "Next"
-                    }
-
-                    mySelectedOption = 0
-                }
-            }
         }
-    }
-
-    /*private fun getFirstFiveQuestions(): ArrayList<QuizQuestionModel> {
-        val questionList = ArrayList<QuizQuestionModel>()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
-            val firstFiveQuestions = dao.getFirstFiveQuestions()
-            val lastFiveQuestions = dao.getLastFiveQuestions()
-
-            withContext(Dispatchers.Main) {
-                questionList.addAll(firstFiveQuestions)
-                questionList.addAll(lastFiveQuestions)
-            }
-        }
-
-        return questionList
-    }*/
-
-    fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: Observer<T>) {
-        observe(owner, object : Observer<T> {
-            override fun onChanged(t: T) {
-                observer.onChanged(t)
-                removeObserver(this)
-            }
-        })
     }
 }

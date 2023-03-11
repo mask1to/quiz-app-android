@@ -2,13 +2,22 @@ package com.example.quizappdiploma.database.quizzes.questions
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.quizappdiploma.database.courses.CourseModel
 import org.jetbrains.annotations.NotNull
 
-@Entity(tableName = "quiz_questions")
+@Entity(tableName = "quiz_questions",
+    foreignKeys = [ForeignKey(
+        entity = CourseModel::class,
+        childColumns = ["course_id"],
+        parentColumns = ["id"]
+    )])
 class QuizQuestionModel(
     @PrimaryKey(autoGenerate = true)
     val id : Int?,
+    @ColumnInfo(name = "course_id")
+    val courseId : Int?,
     @ColumnInfo(name = "question_name")
     val questionName : String?,
     @ColumnInfo(name = "image_path")
@@ -37,6 +46,7 @@ class QuizQuestionModel(
         other as QuizQuestionModel
 
         if (id != other.id) return false
+        if (courseId != other.courseId) return false
         if (questionName != other.questionName) return false
         if (image_path != other.image_path) return false
         if (questionPoints != other.questionPoints) return false
@@ -52,6 +62,7 @@ class QuizQuestionModel(
 
     override fun hashCode(): Int {
         var result = id ?: 0
+        result = 31 * result + (courseId ?: 0)
         result = 31 * result + (questionName?.hashCode() ?: 0)
         result = 31 * result + (image_path?.hashCode() ?: 0)
         result = 31 * result + (questionPoints ?: 0)
@@ -65,6 +76,6 @@ class QuizQuestionModel(
     }
 
     override fun toString(): String {
-        return "QuizQuestionModel(id=$id, questionName=$questionName, image_path=$image_path, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer)"
+        return "QuizQuestionModel(id=$id, courseId=$courseId, questionName=$questionName, image_path=$image_path, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer)"
     }
 }

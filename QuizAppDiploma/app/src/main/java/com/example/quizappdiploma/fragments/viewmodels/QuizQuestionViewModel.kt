@@ -11,24 +11,20 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     {
         quizQuestionDataRepository.addQuestion(question)
     }
-
     suspend fun updateQuestion(question: QuizQuestionModel)
     {
         quizQuestionDataRepository.updateQuestion(question)
     }
-
     suspend fun deleteQuestion(question: QuizQuestionModel)
     {
         quizQuestionDataRepository.deleteQuestion(question)
     }
-
-    fun getFirstFiveQuestions() : LiveData<List<QuizQuestionModel>>
+    fun getFirstFiveQuestions(courseId : Int, questionLimit: Int) : LiveData<List<QuizQuestionModel>>
     {
-        return quizQuestionDataRepository.getFirstFiveQuestions()
+        return quizQuestionDataRepository.getFirstFiveQuestions(courseId, questionLimit)
     }
-
-    fun getLastFiveQuestions() : LiveData<List<QuizQuestionModel>>
+    fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
-        return quizQuestionDataRepository.getLastFiveQuestions()
+        return quizQuestionDataRepository.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
     }
 }

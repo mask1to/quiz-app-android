@@ -39,12 +39,11 @@ class LectureFragment : Fragment()
     {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = LectureAdapter()
+        val adapter = LectureAdapter(args.courseId)
         recyclerView = binding.lectureRecyclerView
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
-        //adapter.setSelectedItem(0)
 
         val dao = MyDatabase.getDatabase(requireContext()).lectureDao()
         val repository = LectureDataRepository(dao)

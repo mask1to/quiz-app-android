@@ -1,6 +1,9 @@
 package com.example.quizappdiploma.database.quizzes.questions
 
+import android.content.Context
 import androidx.lifecycle.LiveData
+import com.example.quizappdiploma.database.MyDatabase
+
 class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
 {
     suspend fun addQuestion(question : QuizQuestionModel)
@@ -16,13 +19,15 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
         quizQuestionDao.deleteQuestion(question)
     }
 
-    fun getFirstFiveQuestions() : LiveData<List<QuizQuestionModel>>
+    fun getFirstFiveQuestions(courseId : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
-        return quizQuestionDao.getFirstFiveQuestions()
+        return quizQuestionDao.getFirstFiveQuestions(courseId, questionLimit)
     }
 
-    fun getLastFiveQuestions() : LiveData<List<QuizQuestionModel>>
+    fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
-        return quizQuestionDao.getLastFiveQuestions()
+        return quizQuestionDao.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
     }
+
+
 }

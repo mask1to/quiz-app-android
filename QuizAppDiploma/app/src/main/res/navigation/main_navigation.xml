@@ -111,6 +111,9 @@
         <action
             android:id="@+id/action_quizFragment_to_resultQuizFragment"
             app:destination="@id/resultQuizFragment" />
+        <argument
+            android:name="course_id"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/contentFragment"
@@ -131,6 +134,9 @@
         <action
             android:id="@+id/action_contentFragment_to_lectureFragment"
             app:destination="@id/lectureFragment" />
+        <argument
+            android:name="course_id"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
