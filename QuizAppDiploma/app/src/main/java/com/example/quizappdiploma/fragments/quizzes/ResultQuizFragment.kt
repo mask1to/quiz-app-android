@@ -24,7 +24,7 @@ class ResultQuizFragment : Fragment()
     private lateinit var resultTextView : TextView
     private lateinit var scoreTextView : TextView
     private lateinit var congratsTextView: TextView
-    private lateinit var trophyAnimation : LottieAnimationView
+    private lateinit var finalAnimation : LottieAnimationView
     private lateinit var btnFinish : Button
     private val args : ResultQuizFragmentArgs by navArgs()
 
@@ -48,12 +48,15 @@ class ResultQuizFragment : Fragment()
         resultTextView = binding.textViewResult
         scoreTextView = binding.textViewScore
         congratsTextView = binding.textViewCongrats
-        trophyAnimation = binding.trophyAnimation
+        finalAnimation = binding.finalAnimation
         btnFinish = binding.btnFinish
 
         usernameTextView.text = args.username
-        scoreTextView.text = "Your score is ${args.correctAnswers} out of ${args.totalQuestions}"
-        setupAnimation(trophyAnimation)
+        val correctAnswers = args.correctAnswers
+        val totalQuestions = args.totalQuestions
+
+        scoreTextView.text = "Your score is $correctAnswers out of $totalQuestions"
+        setupAnimation(finalAnimation, correctAnswers)
 
         btnFinish.setOnClickListener{
             val action = ResultQuizFragmentDirections.actionResultQuizFragmentToStudentFragment()
@@ -62,11 +65,25 @@ class ResultQuizFragment : Fragment()
     }
 
     @SuppressLint("Range")
-    private fun setupAnimation(animationView: LottieAnimationView)
+    private fun setupAnimation(animationView: LottieAnimationView, correctAnswers : Int)
     {
-        animationView.speed = 3.0F // How fast does the animation play
-        animationView.progress = 50F // Starts the animation from 50% of the beginning
-        animationView.setAnimation(R.raw.trophy)
+        animationView.speed = 1.0F // How fast does the animation play
+        animationView.progress = 35F // Starts the animation from 50% of the beginning
+        when (correctAnswers)
+        {
+            in 0..2 -> {
+                animationView.setAnimation(R.raw.noknowledge)
+            }
+            in 3..5 -> {
+                animationView.setAnimation(R.raw.neutral)
+            }
+            in 6..8 -> {
+                animationView.setAnimation(R.raw.great)
+            }
+            in 9..10 -> {
+                animationView.setAnimation(R.raw.trophy)
+            }
+        }
         animationView.repeatCount = LottieDrawable.INFINITE
         animationView.playAnimation()
     }

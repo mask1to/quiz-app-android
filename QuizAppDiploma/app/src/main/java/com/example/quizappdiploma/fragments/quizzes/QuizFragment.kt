@@ -1,5 +1,6 @@
 package com.example.quizappdiploma.fragments.quizzes
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
@@ -43,6 +45,7 @@ class QuizFragment : Fragment(), OnClickListener
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
     private var myQuestionList2 : ArrayList<QuizQuestionModel>? = null
+    private var backPressedCallback: OnBackPressedCallback? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
 
@@ -50,6 +53,16 @@ class QuizFragment : Fragment(), OnClickListener
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
+
+        // To disable the back button click, remove the following line
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing to disable the back button click
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            backPressedCallback as OnBackPressedCallback
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
@@ -58,6 +71,7 @@ class QuizFragment : Fragment(), OnClickListener
         return binding.root
     }
 
+    @SuppressLint("LongLogTag")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
@@ -85,7 +99,7 @@ class QuizFragment : Fragment(), OnClickListener
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
 
-        quizQuestionViewModel.getFirstFiveQuestions(courseId!!, 10).observe(viewLifecycleOwner) { firstQuestions ->
+        quizQuestionViewModel.getFirstFiveQuestions(courseId!!, 5).observe(viewLifecycleOwner) { firstQuestions ->
 
             val questionList = firstQuestions
 
@@ -95,7 +109,6 @@ class QuizFragment : Fragment(), OnClickListener
 
             // Add all questions from questionList to myQuestionList
             myQuestionList?.addAll(questionList)
-            Log.d("myQuestionList", myQuestionList.toString())
 
             setQuestion()
         }
@@ -111,7 +124,6 @@ class QuizFragment : Fragment(), OnClickListener
                         setQuestion()
                     }
                     else ->{
-                        //Toast.makeText(requireContext(), "You made it", Toast.LENGTH_SHORT).show()
                         //TODO: send correct_answers, username, total_questions
                         val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(username, myQuestionList!!.size, correctAnswers)
                         Navigation.findNavController(requireView()).navigate(action)
@@ -120,11 +132,7 @@ class QuizFragment : Fragment(), OnClickListener
             }
             else
             {
-                Log.d("myCurrentPosition: ", myCurrentPosition.toString())
-
                 val question = myQuestionList?.get(myCurrentPosition - 1)
-                Log.d("Question answer:", question!!.answer.toString())
-                Log.d("Selected option:", mySelectedOption.toString())
                 if(question!!.answer != mySelectedOption)
                 {
                     answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
@@ -145,40 +153,37 @@ class QuizFragment : Fragment(), OnClickListener
                 }
 
                 mySelectedOption = 0
-                Log.d("correctAnswers: ", correctAnswers.toString())
 
-                if(myCurrentPosition == 5 && correctAnswers == 5)
+                if(myCurrentPosition == 5)
                 {
-                    //TODO: generate questions with diff 1 2 3 3 3
-                    Log.d("5 spravnych", "spustam 1 2 3 3 3")
-                    //generateQuestions(quizQuestionViewModel, courseId, 0,1,1,3)
+                    when (correctAnswers) {
+                        5 -> {
+                            /** 1 2 3 3 3 **/
+                            generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+                        }
+                        4 -> {
+                            /** 1 2 2 3 3 **/
+                            generateQuestions(quizQuestionViewModel, courseId, 1, 2, 2) {}
+                        }
+                        3 -> {
+                            /** 1 2 2 2 3 **/
+                            generateQuestions(quizQuestionViewModel, courseId, 1, 3, 1) {}
+                        }
+                        2 -> {
+                            /** 1 1 2 2 2 **/
+                            generateQuestions(quizQuestionViewModel, courseId, 2, 3, 0) {}
+                        }
+                        1 -> {
+                            /** 1 1 1 2 2 **/
+                            generateQuestions(quizQuestionViewModel, courseId, 3, 2, 0) {}
+                        }
+                        0 -> {
+                            /** 1 1 1 1 2 **/
+                            generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
+                        }
+                    }
+                }
 
-                }
-                else if(myCurrentPosition == 5 && correctAnswers == 4)
-                {
-                    //TODO: generate questions with diff 1 2 2 3 3
-                    Log.d("4 spravnych", "spustam 1 2 2 3 3")
-                }
-                else if(myCurrentPosition == 5 && correctAnswers == 3)
-                {
-                    //TODO: generate questions with diff 1 2 2 2 3
-                    Log.d("3 spravnych", "spustam 1 2 2 2 3")
-                }
-                else if(myCurrentPosition == 5 && correctAnswers == 2)
-                {
-                    //TODO: generate questions with diff 1 1 2 2 2
-                    Log.d("2 spravnych", "spustam 1 1 2 2 2")
-                }
-                else if(myCurrentPosition == 5 && correctAnswers == 1)
-                {
-                    //TODO: generate questions with diff 1 1 1 2 2
-                    Log.d("1 spravnych", "spustam 1 1 1 2 2")
-                }
-                else if(myCurrentPosition == 5 && correctAnswers == 0)
-                {
-                    //TODO: generate questions with diff 1 1 1 1 2
-                    Log.d("0 spravnych", "spustam 1 1 1 1 2")
-                }
             }
 
         }
@@ -187,12 +192,11 @@ class QuizFragment : Fragment(), OnClickListener
     private fun setQuestion()
     {
         defaultOptionsView()
-        //myCurrentPosition = 1
         val question: QuizQuestionModel = myQuestionList!![myCurrentPosition - 1]
 
         progressBar.progress = myCurrentPosition
         textViewProgress.text = "$myCurrentPosition/${progressBar.max}"
-        Log.d("textViewProgress: ", "$myCurrentPosition/${progressBar.max}")
+
         //TODO: check how to set image from ContentFragment
         //question.image?.let { imageQuestion.setImageResource(question.image_path) }
         textViewQuestion.text = question.questionName
@@ -201,7 +205,6 @@ class QuizFragment : Fragment(), OnClickListener
         textViewThirdOption.text = question.questionOptionC
         textViewFourthOption.text = question.questionOptionD
 
-        //if(myCurrentPosition == myQuestionList!!.size)
         if(myCurrentPosition == 10)
         {
             submitBtn.text = "Finish"
@@ -280,13 +283,11 @@ class QuizFragment : Fragment(), OnClickListener
         }
     }
 
-    private fun generateQuestions(quizQuestionViewModel: QuizQuestionViewModel, courseId : Int, earlyQuestionLimit : Int, firstQuestionLimit : Int, secondQuestionLimit : Int, thirdQuestionLimit : Int)
-    {
-        quizQuestionViewModel.getFirstFiveQuestions(courseId!!, earlyQuestionLimit).observe(viewLifecycleOwner) { firstQuestions ->
+    private fun generateQuestions(quizQuestionViewModel: QuizQuestionViewModel, courseId : Int, firstQuestionLimit : Int, secondQuestionLimit : Int, thirdQuestionLimit : Int, callback: (ArrayList<QuizQuestionModel>?) -> Unit){
             quizQuestionViewModel.getLastFiveQuestions(courseId, 1, firstQuestionLimit).observe(viewLifecycleOwner) { easyQuestions ->
                 quizQuestionViewModel.getLastFiveQuestions(courseId, 2, secondQuestionLimit).observe(viewLifecycleOwner) { midQuestions ->
                     quizQuestionViewModel.getLastFiveQuestions(courseId, 3, thirdQuestionLimit).observe(viewLifecycleOwner) { hardQuestions ->
-                        val questionList = firstQuestions + easyQuestions + midQuestions + hardQuestions
+                        val questionList = easyQuestions + midQuestions + hardQuestions
 
                         // Add all questions from questionList to myQuestionList
                         if(myQuestionList == null)
@@ -294,13 +295,11 @@ class QuizFragment : Fragment(), OnClickListener
                             myQuestionList = ArrayList()
                         }
                         myQuestionList?.addAll(questionList)
-                        Log.d("newQuestionList", myQuestionList.toString())
 
-                        setQuestion()
+                        callback(myQuestionList)
                     }
                 }
             }
-        }
     }
 
     override fun onClick(p0: View?)
