@@ -14,7 +14,7 @@ import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.fragments.lectures.LectureFragmentDirections
 import kotlinx.coroutines.selects.select
 
-class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
+class LectureAdapter(private val courseId : Int): RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
 {
 
     var lectureData : List<LectureModel> = emptyList()
@@ -47,7 +47,8 @@ class LectureAdapter: RecyclerView.Adapter<LectureAdapter.LectureViewHolder>()
             val action = LectureFragmentDirections.actionLectureFragmentToContentFragment(
                 currentItem.lectureName.toString(),
                 currentItem.lectureDescription.toString(),
-                currentItem.image_path.toString()
+                currentItem.image_path.toString(),
+                courseId
             )
             Log.d("lecture id:", currentItem.id.toString())
             Navigation.findNavController(holder.itemView).navigate(action)

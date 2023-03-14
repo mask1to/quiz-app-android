@@ -1,6 +1,8 @@
 package com.example.quizappdiploma.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.provider.ContactsContract.Profile
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.adapters.CourseAdapter
 import com.example.quizappdiploma.databinding.FragmentStudentBinding
+import com.example.quizappdiploma.fragments.courses.CourseFragment
 import com.example.quizappdiploma.preferences.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 
@@ -24,13 +28,7 @@ class StudentFragment : Fragment()
 
     private var _binding : FragmentStudentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var courseBtn : Button
-    private lateinit var logoutBtn : Button
     private lateinit var preferenceManager: PreferenceManager
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
-    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
-    private lateinit var toggle : ActionBarDrawerToggle
 
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -50,26 +48,32 @@ class StudentFragment : Fragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        /*courseBtn = binding.courseButton
-        logoutBtn = binding.logoutButton
 
-        logoutBtn.setOnClickListener {
-            logout()
+        checkLoginStatus()
+
+        replaceFragment(ProfileFragment())
+
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            when(it.itemId)
+            {
+                R.id.logout -> logout()
+                R.id.profile -> replaceFragment(ProfileFragment())
+                R.id.stats -> replaceFragment(StatsFragment())
+                else ->
+                {
+
+                }
+            }
+            true
         }
+    }
 
-        courseBtn.setOnClickListener {
-            val action = StudentFragmentDirections.actionStudentFragmentToCourseFragment()
-            Navigation.findNavController(requireView()).navigate(action)
-        }*/
-
-        /*drawerLayout = binding.drawerLayout
-        navigationView = binding.navView
-        toolbar = binding.toolbar
-        //(activity as AppCompatActivity).setSupportActionBar(toolbar)
-        toggle = ActionBarDrawerToggle(requireActivity(), drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()*/
-
+    private fun replaceFragment(fragment : Fragment)
+    {
+        val fragmentManager = childFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frame_layout, fragment)
+        fragmentTransaction.commit()
     }
 
     private fun checkLoginStatus()
@@ -77,7 +81,7 @@ class StudentFragment : Fragment()
         if(preferenceManager.isLogin() == false)
         {
             val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-            Navigation.findNavController(requireView()).navigate(action)
+            findNavController().navigate(action)
         }
     }
 
@@ -85,7 +89,7 @@ class StudentFragment : Fragment()
     {
         preferenceManager.removeData()
         val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-        Navigation.findNavController(requireView()).navigate(action)
+        findNavController().navigate(action)
     }
 
 }

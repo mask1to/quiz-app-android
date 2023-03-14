@@ -11,6 +11,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.example.quizappdiploma.fragments.courses.CourseFragmentDirections
 import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
 

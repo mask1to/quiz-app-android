@@ -1,24 +1,14 @@
 package com.example.quizappdiploma.database.users
 
+import androidx.lifecycle.LiveData
 import com.example.quizappdiploma.database.MyLocalCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserDataRepository private constructor(private val cache : MyLocalCache)
+class UserDataRepository private constructor(private val userDao: UserDao)
 {
-    companion object{
-        @Volatile
-        private var INSTANCE : UserDataRepository? = null
-
-        fun getInstance(cache: MyLocalCache) : UserDataRepository =
-            INSTANCE ?: synchronized(this)
-            {
-                INSTANCE ?: UserDataRepository(cache).also { INSTANCE = it }
-            }
-    }
-
-    suspend fun insertUser(userModel: UserModel)
+    fun getUserByUsernameAndPassword(username: String, password: String): LiveData<List<UserModel>>
     {
-        cache.insertUser(userModel)
+        return userDao.getUserByUsernameAndPassword(username, password)
     }
 }

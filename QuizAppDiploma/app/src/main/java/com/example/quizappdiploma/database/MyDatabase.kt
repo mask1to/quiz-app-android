@@ -12,6 +12,7 @@ import com.example.quizappdiploma.database.quizzes.QuizModel
 import com.example.quizappdiploma.database.quizzes.answers.QuizAnswerModel
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDao
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
+import com.example.quizappdiploma.database.users.UserDao
 import com.example.quizappdiploma.database.users.UserModel
 
 @Database(
@@ -26,6 +27,8 @@ abstract class MyDatabase : RoomDatabase()
     abstract fun courseDao(): CourseDao
     abstract fun lectureDao(): LectureDao
     abstract fun quizQuestionDao(): QuizQuestionDao
+
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

@@ -12,15 +12,8 @@ import kotlinx.coroutines.launch
 
 class UserViewModel(private val userDataRepository: UserDataRepository) : ViewModel()
 {
-    private val _message = MutableLiveData<LiveDataEvent<String>>()
-    val message : LiveData<LiveDataEvent<String>> get() = _message
-    val loadData = MutableLiveData(false)
-
-
-    fun insertUser(user : UserModel)
+    fun login(username: String, password: String) : LiveData<List<UserModel>>
     {
-        viewModelScope.launch(Dispatchers.IO) {
-            userDataRepository.insertUser(user)
-        }
+        return userDataRepository.getUserByUsernameAndPassword(username, password)
     }
 }

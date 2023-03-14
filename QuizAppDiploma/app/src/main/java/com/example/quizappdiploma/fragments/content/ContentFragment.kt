@@ -18,7 +18,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
@@ -26,11 +25,7 @@ import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.lectures.LectureDataRepository
 import com.example.quizappdiploma.databinding.FragmentContentBinding
 import com.example.quizappdiploma.fragments.viewmodels.ContentViewModel
-import com.example.quizappdiploma.fragments.viewmodels.factory.ContentViewModelFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.io.File
+import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -84,7 +79,7 @@ class ContentFragment : Fragment()
 
         val dao = MyDatabase.getDatabase(requireContext()).lectureDao()
         val repository = LectureDataRepository(dao)
-        contentViewModel = ViewModelProvider(this, ContentViewModelFactory(repository))[ContentViewModel::class.java]
+        contentViewModel = ViewModelProvider(this, LectureViewModelFactory(repository))[ContentViewModel::class.java]
 
         lectureTitle.text = args.lectureTitle
         lectureDescription.text = args.lectureDescription
@@ -99,15 +94,17 @@ class ContentFragment : Fragment()
             }
         }.start()
 
-
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             contentmodel = contentViewModel
         }
 
+        val myArgs = arguments
+        val courseId = myArgs?.getInt("course_id")
+        Log.d("courseId in content: ", courseId.toString())
+
         nextLectureButton.setOnClickListener {
-            Log.d("test", "click")
-            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment()
+            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
             Navigation.findNavController(requireView()).navigate(action)
         }
     }
