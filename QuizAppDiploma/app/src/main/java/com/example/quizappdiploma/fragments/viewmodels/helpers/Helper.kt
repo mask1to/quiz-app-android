@@ -15,13 +15,13 @@ object Helper
         val db = MyDatabase.getDatabase(context)
         return MyLocalCache(db.myDatabaseDao())
     }
-    private fun getUserRepository(context: Context) : UserDataRepository
+    /*private fun getUserRepository(context: Context) : UserDataRepository
     {
         return UserDataRepository.getInstance(allowCache(context))
-    }
-    fun getUserViewModelFactory(context: Context) : ViewModelProvider.Factory
+    }*/
+    /*fun getUserViewModelFactory(context: Context) : ViewModelProvider.Factory
     {
         return UserViewModelFactory(getUserRepository(context))
-    }
+    }*/
 
 }

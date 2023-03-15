@@ -27,9 +27,9 @@ class RegistrationFragment : Fragment()
     private lateinit var secondPassword : TextInputLayout
     private lateinit var registerButton : Button
 
-    private val userViewModel : UserViewModel by lazy {
+    /*private val userViewModel : UserViewModel by lazy {
         ViewModelProvider(this, Helper.getUserViewModelFactory(requireContext()))[UserViewModel::class.java]
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -54,10 +54,10 @@ class RegistrationFragment : Fragment()
         secondPassword = view.findViewById(R.id.passwordRegisterField2)
         registerButton = view.findViewById(R.id.registerBtn2)
 
-        binding.apply {
+        /*binding.apply {
             lifecycleOwner = viewLifecycleOwner
             usermodel = userViewModel
-        }
+        }*/
 
         registerButton.setOnClickListener {
             val email = emailField.editText?.text.toString()
@@ -67,7 +67,7 @@ class RegistrationFragment : Fragment()
             if(checkFields())
             {
                 val student = UserModel(0, email, nickname, password, 0, 0, 1)
-                userViewModel.insertUser(student)
+                //userViewModel.insertUser(student)
                 Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_registrationFragment_to_welcomeFragment)
             }

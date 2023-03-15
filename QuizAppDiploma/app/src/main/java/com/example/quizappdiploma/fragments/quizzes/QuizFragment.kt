@@ -41,10 +41,10 @@ class QuizFragment : Fragment(), OnClickListener
     private lateinit var textViewSecondOption : TextView
     private lateinit var textViewThirdOption : TextView
     private lateinit var textViewFourthOption : TextView
+    private lateinit var questionW : TextView
 
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
-    private var myQuestionList2 : ArrayList<QuizQuestionModel>? = null
     private var backPressedCallback: OnBackPressedCallback? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
@@ -55,6 +55,7 @@ class QuizFragment : Fragment(), OnClickListener
         super.onCreate(savedInstanceState)
 
         // To disable the back button click, remove the following line
+        // todo: popBackStack, find out how to delete navigation which was done
         backPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Do nothing to disable the back button click
@@ -85,6 +86,7 @@ class QuizFragment : Fragment(), OnClickListener
         textViewSecondOption = binding.textViewSecondOption
         textViewThirdOption = binding.textViewThirdOption
         textViewFourthOption = binding.textViewFourthOption
+        questionW = binding.textView4
 
         textViewFirstOption.setOnClickListener(this)
         textViewSecondOption.setOnClickListener(this)
@@ -204,6 +206,7 @@ class QuizFragment : Fragment(), OnClickListener
         textViewSecondOption.text = question.questionOptionB
         textViewThirdOption.text = question.questionOptionC
         textViewFourthOption.text = question.questionOptionD
+        questionW.text = "Question weight: "+question.questionDifficulty.toString()
 
         if(myCurrentPosition == 10)
         {

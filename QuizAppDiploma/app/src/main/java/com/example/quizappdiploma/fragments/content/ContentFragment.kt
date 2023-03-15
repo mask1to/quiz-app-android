@@ -84,7 +84,8 @@ class ContentFragment : Fragment()
         lectureTitle.text = args.lectureTitle
         lectureDescription.text = args.lectureDescription
 
-        //todo: make loading while fetching the image
+        //todo: make loading while fetching the image#
+        // cache images, picasso alebo glide
         val imageUrl = args.imagePath
         Thread{
             val bitmap = downloadImage(imageUrl)
@@ -103,6 +104,7 @@ class ContentFragment : Fragment()
         val courseId = myArgs?.getInt("course_id")
         Log.d("courseId in content: ", courseId.toString())
 
+        //todo: lecture_id preniest z content do content
         nextLectureButton.setOnClickListener {
             val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
             Navigation.findNavController(requireView()).navigate(action)
