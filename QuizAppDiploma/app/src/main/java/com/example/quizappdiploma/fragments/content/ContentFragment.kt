@@ -102,12 +102,21 @@ class ContentFragment : Fragment()
 
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
+        var lectureId = myArgs?.getInt("lecture_id")
+        val imagePath = arguments?.getString("imagePath") ?: ""
+        val lectureTitle = arguments?.getString("lecture_title") ?: ""
+        val lectureDescription = arguments?.getString("lecture_description") ?: ""
         Log.d("courseId in content: ", courseId.toString())
+        Log.d("lectureId in content: ", lectureId.toString())
+
 
         //todo: lecture_id preniest z content do content
-        nextLectureButton.setOnClickListener {
-            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
-            Navigation.findNavController(requireView()).navigate(action)
+        if (lectureId != null) {
+            nextLectureButton.setOnClickListener {
+                //val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
+                val action = ContentFragmentDirections.actionContentFragmentSelf(lectureId, lectureTitle, lectureDescription, imagePath, courseId!!)
+                Navigation.findNavController(requireView()).navigate(action)
+            }
         }
     }
 
@@ -123,7 +132,6 @@ class ContentFragment : Fragment()
         }
         return null
     }
-
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun showPermissionAlertDialog()
@@ -149,13 +157,4 @@ class ContentFragment : Fragment()
         }
         alertDialog.show()
     }
-
-    private fun checkPermissions(): Boolean
-    {
-        return ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.INTERNET
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
 }

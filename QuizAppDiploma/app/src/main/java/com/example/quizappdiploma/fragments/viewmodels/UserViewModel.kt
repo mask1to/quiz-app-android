@@ -16,4 +16,9 @@ class UserViewModel(private val userDataRepository: UserDataRepository) : ViewMo
     {
         return userDataRepository.getUserByUsernameAndPassword(username, password)
     }
+
+    fun getUsers() : LiveData<List<UserModel>>
+    {
+        return userDataRepository.getUsers()
+    }
 }

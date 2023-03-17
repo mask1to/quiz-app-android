@@ -48,7 +48,8 @@ class LectureAdapter(private val courseId : Int): RecyclerView.Adapter<LectureAd
                 currentItem.lectureName.toString(),
                 currentItem.lectureDescription.toString(),
                 currentItem.image_path.toString(),
-                courseId
+                courseId,
+                currentItem.id!!
             )
             Log.d("lecture id:", currentItem.id.toString())
             Navigation.findNavController(holder.itemView).navigate(action)
