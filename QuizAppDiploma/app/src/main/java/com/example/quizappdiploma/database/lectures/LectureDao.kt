@@ -12,6 +12,9 @@ interface LectureDao
     fun getLecturesByCourseName(courseName : String) : LiveData<List<LectureModel>>
     @Query("SELECT * FROM lectures WHERE lectures.course_id = :courseId")
     fun getLecturesByCourseId(courseId: Int) : LiveData<List<LectureModel>>
+
+    @Query("SELECT image_path FROM lectures")
+    fun getLectureImagePaths() : LiveData<List<LectureModel>>
     @Update
     suspend fun updateLecture(lecture: LectureModel)
     @Delete

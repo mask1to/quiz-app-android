@@ -19,6 +19,11 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
         quizQuestionDao.deleteQuestion(question)
     }
 
+    suspend fun updateQuestions(questions: List<QuizQuestionModel>)
+    {
+        quizQuestionDao.updateQuestions(questions)
+    }
+
     fun getFirstFiveQuestions(courseId : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
         return quizQuestionDao.getFirstFiveQuestions(courseId, questionLimit)
@@ -27,6 +32,11 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
     fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
         return quizQuestionDao.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
+    }
+
+    fun getImagePaths() : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDao.getImagePaths()
     }
 
 

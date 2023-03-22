@@ -9,7 +9,6 @@ import com.example.quizappdiploma.database.courses.CourseModel
 import com.example.quizappdiploma.database.lectures.LectureDao
 import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.database.quizzes.QuizModel
-import com.example.quizappdiploma.database.quizzes.answers.QuizAnswerModel
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDao
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.database.users.UserDao
@@ -18,7 +17,7 @@ import com.example.quizappdiploma.database.users.UserModel
 @Database(
     entities = [UserModel::class, CourseModel::class,
                 LectureModel::class, QuizModel::class,
-                QuizQuestionModel::class, QuizAnswerModel::class],
+                QuizQuestionModel::class],
     version = 1)
 abstract class MyDatabase : RoomDatabase()
 {
@@ -27,7 +26,6 @@ abstract class MyDatabase : RoomDatabase()
     abstract fun courseDao(): CourseDao
     abstract fun lectureDao(): LectureDao
     abstract fun quizQuestionDao(): QuizQuestionDao
-
     abstract fun userDao(): UserDao
 
     companion object {

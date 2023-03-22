@@ -15,6 +15,11 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     {
         quizQuestionDataRepository.updateQuestion(question)
     }
+
+    suspend fun updateQuestions(questions: List<QuizQuestionModel>)
+    {
+        quizQuestionDataRepository.updateQuestions(questions)
+    }
     suspend fun deleteQuestion(question: QuizQuestionModel)
     {
         quizQuestionDataRepository.deleteQuestion(question)
@@ -26,5 +31,10 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
         return quizQuestionDataRepository.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
+    }
+
+    fun getImagePaths() : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDataRepository.getImagePaths()
     }
 }

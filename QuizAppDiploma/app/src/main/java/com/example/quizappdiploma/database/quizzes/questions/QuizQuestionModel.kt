@@ -35,7 +35,9 @@ class QuizQuestionModel(
     @ColumnInfo(name = "option_d")
     val questionOptionD : String?,
     @ColumnInfo(name = "answer")
-    val answer : Int?
+    val answer : Int?,
+    @ColumnInfo(name = "alreadyUsed")
+    var alreadyUsed : Int?
 )
 {
 
@@ -56,6 +58,7 @@ class QuizQuestionModel(
         if (questionOptionC != other.questionOptionC) return false
         if (questionOptionD != other.questionOptionD) return false
         if (answer != other.answer) return false
+        if (alreadyUsed != other.alreadyUsed) return false
 
         return true
     }
@@ -72,10 +75,11 @@ class QuizQuestionModel(
         result = 31 * result + (questionOptionC?.hashCode() ?: 0)
         result = 31 * result + (questionOptionD?.hashCode() ?: 0)
         result = 31 * result + (answer ?: 0)
+        result = 31 * result + (alreadyUsed ?: 0)
         return result
     }
 
     override fun toString(): String {
-        return "QuizQuestionModel(id=$id, courseId=$courseId, questionName=$questionName, image_path=$image_path, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer)"
+        return "QuizQuestionModel(id=$id, courseId=$courseId, questionName=$questionName, image_path=$image_path, questionPoints=$questionPoints, questionDifficulty=$questionDifficulty, questionOptionA=$questionOptionA, questionOptionB=$questionOptionB, questionOptionC=$questionOptionC, questionOptionD=$questionOptionD, answer=$answer, alreadyUsed=$alreadyUsed)"
     }
 }

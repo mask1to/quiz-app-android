@@ -1,8 +1,12 @@
 package com.example.quizappdiploma.fragments.quizzes
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,11 +21,18 @@ import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.databinding.FragmentQuizBinding
 import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class QuizFragment : Fragment(), OnClickListener
 {
@@ -42,6 +53,7 @@ class QuizFragment : Fragment(), OnClickListener
     private lateinit var textViewThirdOption : TextView
     private lateinit var textViewFourthOption : TextView
     private lateinit var questionW : TextView
+    private var myPathList : ArrayList<QuizQuestionModel>? = null
 
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
@@ -54,11 +66,9 @@ class QuizFragment : Fragment(), OnClickListener
     {
         super.onCreate(savedInstanceState)
 
-        // To disable the back button click, remove the following line
         // todo: popBackStack, find out how to delete navigation which was done
         backPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Do nothing to disable the back button click
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this,
@@ -101,6 +111,24 @@ class QuizFragment : Fragment(), OnClickListener
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
 
+        quizQuestionViewModel.getImagePaths().observe(viewLifecycleOwner){paths ->
+
+            if(myPathList == null)
+            {
+                myPathList = ArrayList()
+            }
+
+            myPathList?.addAll(paths)
+            val context = requireContext()
+            for (imageUrl in paths) {
+                val fileName = "cached_quiz_image_${imageUrl.hashCode()}.jpg"
+                val cachedBitmap = getCachedImage(context, fileName)
+                if (cachedBitmap == null) {
+                    downloadAndCacheImage(context, imageUrl.image_path.toString())
+                }
+            }
+        }
+
         quizQuestionViewModel.getFirstFiveQuestions(courseId!!, 5).observe(viewLifecycleOwner) { firstQuestions ->
 
             val questionList = firstQuestions
@@ -109,9 +137,7 @@ class QuizFragment : Fragment(), OnClickListener
                 myQuestionList = ArrayList()
             }
 
-            // Add all questions from questionList to myQuestionList
             myQuestionList?.addAll(questionList)
-
             setQuestion()
         }
 
@@ -200,7 +226,26 @@ class QuizFragment : Fragment(), OnClickListener
         textViewProgress.text = "$myCurrentPosition/${progressBar.max}"
 
         //TODO: check how to set image from ContentFragment
-        //question.image?.let { imageQuestion.setImageResource(question.image_path) }
+
+        val imagePath = question.image_path
+        val context = requireContext()
+
+        val cachedImage = getCachedImage(context, "cached_quiz_image_${imagePath.hashCode()}.jpg")
+        imageQuestion.setImageBitmap(cachedImage)
+
+        /*if(cachedImage != null)
+        {
+
+        }
+        else
+        {
+            if (imagePath != null) {
+                downloadAndCacheImage(context, imagePath)
+            }
+            Picasso.get().load(imagePath).into(imageQuestion)
+        }*/
+
+        //question.image_path?.let { imageQuestion.setImageBitmap(question.image_path) }
         textViewQuestion.text = question.questionName
         textViewFirstOption.text = question.questionOptionA
         textViewSecondOption.text = question.questionOptionB
@@ -287,7 +332,7 @@ class QuizFragment : Fragment(), OnClickListener
     }
 
     private fun generateQuestions(quizQuestionViewModel: QuizQuestionViewModel, courseId : Int, firstQuestionLimit : Int, secondQuestionLimit : Int, thirdQuestionLimit : Int, callback: (ArrayList<QuizQuestionModel>?) -> Unit){
-            quizQuestionViewModel.getLastFiveQuestions(courseId, 1, firstQuestionLimit).observe(viewLifecycleOwner) { easyQuestions ->
+        quizQuestionViewModel.getLastFiveQuestions(courseId, 1, firstQuestionLimit).observe(viewLifecycleOwner) { easyQuestions ->
                 quizQuestionViewModel.getLastFiveQuestions(courseId, 2, secondQuestionLimit).observe(viewLifecycleOwner) { midQuestions ->
                     quizQuestionViewModel.getLastFiveQuestions(courseId, 3, thirdQuestionLimit).observe(viewLifecycleOwner) { hardQuestions ->
                         val questionList = easyQuestions + midQuestions + hardQuestions
@@ -334,4 +379,58 @@ class QuizFragment : Fragment(), OnClickListener
             }
         }
     }
+
+    private fun downloadAndCacheImage(context: Context, imageUrl: String)
+    {
+        Picasso.get().load(imageUrl).into(object : com.squareup.picasso.Target {
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                val cacheDir = context.cacheDir
+                val fileName = "cached_quiz_image_${imageUrl.hashCode()}.jpg"
+                val file = File(cacheDir, fileName)
+                val outputStream = FileOutputStream(file)
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                outputStream.close()
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+        })
+    }
+
+
+    private fun getCachedImage(context: Context, fileName: String): Bitmap?
+    {
+        val cacheDir = context.cacheDir
+        val file = File(cacheDir, fileName)
+
+        if (!file.exists())
+        {
+            return null
+        }
+
+        val inputStream = FileInputStream(file)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream.close()
+
+        return bitmap
+    }
+
+    private fun markQuestionsAsUsed() {
+        val iterator = myQuestionList!!.iterator()
+
+        lifecycleScope.launch {
+            while (iterator.hasNext()) {
+                val question = iterator.next()
+                if (question.alreadyUsed == 1) {
+                    continue
+                } else {
+                    question.alreadyUsed = 1
+                }
+                quizQuestionViewModel.updateQuestion(question)
+            }
+        }
+    }
+
+
 }

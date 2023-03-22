@@ -46,12 +46,6 @@ class MyLocalCache(private val databaseDao: MyDatabaseDao)
     {
         databaseDao.deleteQuizzes()
     }
-
-    suspend fun deleteQuizAnswers()
-    {
-        databaseDao.deleteQuizAnswers()
-    }
-
     suspend fun deleteQuizQuestions()
     {
         databaseDao.deleteQuizQuestions()

@@ -33,9 +33,6 @@ interface MyDatabaseDao
     @Query("DELETE FROM quizzes")
     suspend fun deleteQuizzes()
 
-    @Query("DELETE FROM quiz_answers")
-    suspend fun deleteQuizAnswers()
-
     @Query("DELETE FROM quiz_questions")
     suspend fun deleteQuizQuestions()
 

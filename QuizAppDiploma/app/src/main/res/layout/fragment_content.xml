@@ -7,6 +7,15 @@
             type="com.example.quizappdiploma.fragments.viewmodels.ContentViewModel" />
     </data>
 
+    <ScrollView
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/scrollViewContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:background="@color/backgroundColor"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
 <LinearLayout
     android:id="@+id/lecture_layout"
     android:layout_width="match_parent"
@@ -25,6 +34,15 @@
         android:textSize="26sp"
         android:textStyle="bold" />
 
+    <ImageView
+        android:id="@+id/lectureImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/cow"
+        android:scaleType="centerCrop" />
+
     <TextView
         android:id="@+id/lectureDescriptionTxt"
         android:textColor="#FFFFFF"
@@ -33,15 +51,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp" />
-
-    <ImageView
-        android:id="@+id/lectureImageView"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="8dp"
-        android:adjustViewBounds="true"
-        android:src="@drawable/cow"
-        android:scaleType="centerCrop" />
 
     <Button
         android:id="@+id/lectureNextBtn"
@@ -52,5 +61,6 @@
         android:text="Next" />
 
 </LinearLayout>
+    </ScrollView>
 
 </layout>

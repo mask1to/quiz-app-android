@@ -25,4 +25,9 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         return lectureDao.getLecturesByCourseId(courseId)
     }
+
+    fun getLectureImagePaths() : LiveData<List<LectureModel>>
+    {
+        return lectureDao.getLectureImagePaths()
+    }
 }
