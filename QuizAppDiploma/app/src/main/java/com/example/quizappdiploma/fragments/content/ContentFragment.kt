@@ -28,7 +28,11 @@ import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.databinding.FragmentContentBinding
 import com.example.quizappdiploma.fragments.viewmodels.ContentViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
+import com.squareup.picasso.Callback
+import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
+import okhttp3.Cache
+import okhttp3.OkHttpClient
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -43,7 +47,7 @@ class ContentFragment : Fragment()
     private lateinit var lectureImage : ImageView
     private lateinit var nextLectureButton: Button
     private lateinit var contentViewModel: ContentViewModel
-    private var myPathList : ArrayList<LectureModel>? = null
+    private lateinit var picasso: Picasso
 
     private val args : ContentFragmentArgs by navArgs()
 
@@ -89,39 +93,34 @@ class ContentFragment : Fragment()
         val repository = LectureDataRepository(dao)
         contentViewModel = ViewModelProvider(this, LectureViewModelFactory(repository))[ContentViewModel::class.java]
 
-        contentViewModel.getLectureImagePaths().observe(viewLifecycleOwner) { paths ->
 
-            if (myPathList == null) {
-                myPathList = ArrayList()
-            }
+        val cacheSize = 20 * 1024 * 1024 // 20 MB
+        val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
+        val okHttpClient = OkHttpClient.Builder()
+            .cache(cache)
+            .build()
 
-            myPathList?.addAll(paths)
-
-            val context = requireContext()
-            for (imageUrl in paths) {
-                val fileName = "cached_image_${imageUrl.hashCode()}.jpg"
-                val cachedBitmap = getCachedImage(context, fileName)
-                if (cachedBitmap == null) {
-                    downloadAndCacheImage(context, imageUrl.image_path.toString())
-                }
-            }
-        }
+        picasso = Picasso.Builder(requireContext())
+            .downloader(OkHttp3Downloader(okHttpClient))
+            .indicatorsEnabled(false)
+            .loggingEnabled(true)
+            .build()
 
         val imageUrl = args.imagePath
-        val context = requireContext()
 
-        val cachedImage = getCachedImage(context, "cached_image_${imageUrl.hashCode()}.jpg")
+        Picasso.get()
+            .load(imageUrl)
+            .noFade()
+            .into(lectureImage, object : Callback {
+                override fun onSuccess() {
+                    binding.imageProgressBar.visibility = View.GONE
+                }
 
-        if (cachedImage != null)
-        {
-            lectureImage.setImageBitmap(cachedImage)
-        }
-        else
-        {
-            //lectureImage.setImageResource(R.drawable.cow)
-            downloadAndCacheImage(context, imageUrl)
-            Picasso.get().load(imageUrl).into(lectureImage)
-        }
+                override fun onError(e: Exception?) {
+                    binding.imageProgressBar.visibility = View.GONE
+                    Log.e("Err: ", "Error loading image: ${e?.message}")
+                }
+            })
 
 
         binding.apply {
@@ -148,26 +147,6 @@ class ContentFragment : Fragment()
             }
         }
     }
-
-    private fun downloadAndCacheImage(context: Context, imageUrl: String)
-    {
-        Picasso.get().load(imageUrl).into(object : com.squareup.picasso.Target {
-            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                val cacheDir = context.cacheDir
-                val fileName = "cached_image_${imageUrl.hashCode()}.jpg"
-                val file = File(cacheDir, fileName)
-                val outputStream = FileOutputStream(file)
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                outputStream.close()
-            }
-
-            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
-
-            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
-        })
-    }
-
-
     private fun getCachedImage(context: Context, fileName: String): Bitmap?
     {
         val cacheDir = context.cacheDir
@@ -184,10 +163,5 @@ class ContentFragment : Fragment()
 
         return bitmap
     }
-
-
-
-
-
 
 }

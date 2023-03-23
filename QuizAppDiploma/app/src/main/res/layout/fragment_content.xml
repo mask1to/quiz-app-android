@@ -43,6 +43,14 @@
         android:src="@drawable/cow"
         android:scaleType="centerCrop" />
 
+    <ProgressBar
+        android:id="@+id/imageProgressBar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/lectureDescriptionTxt"
         android:textColor="#FFFFFF"

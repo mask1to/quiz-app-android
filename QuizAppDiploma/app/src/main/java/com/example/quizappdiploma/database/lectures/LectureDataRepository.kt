@@ -11,12 +11,10 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         lectureDao.addLecture(lecture)
     }
-
     suspend fun updateLecture(lecture: LectureModel)
     {
         lectureDao.updateLecture(lecture)
     }
-
     suspend fun deleteLecture(lecture: LectureModel)
     {
         lectureDao.deleteLecture(lecture)
@@ -26,8 +24,4 @@ class LectureDataRepository(private val lectureDao: LectureDao)
         return lectureDao.getLecturesByCourseId(courseId)
     }
 
-    fun getLectureImagePaths() : LiveData<List<LectureModel>>
-    {
-        return lectureDao.getLectureImagePaths()
-    }
 }
