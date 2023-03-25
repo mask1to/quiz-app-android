@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.databinding.FragmentStudentBinding
 import com.example.quizappdiploma.fragments.ProfileFragment
 import com.example.quizappdiploma.fragments.StatsFragment
@@ -18,7 +21,6 @@ class StudentFragment : Fragment()
     private var _binding : FragmentStudentBinding? = null
     private val binding get() = _binding!!
     private lateinit var preferenceManager: PreferenceManager
-
 
     override fun onCreate(savedInstanceState: Bundle?)
     {

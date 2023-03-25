@@ -1,9 +1,6 @@
 package com.example.quizappdiploma.database.lectures
 
 import androidx.lifecycle.LiveData
-import com.example.quizappdiploma.database.MyLocalCache
-import com.example.quizappdiploma.database.courses.CourseDao
-import com.example.quizappdiploma.database.courses.CourseDataRepository
 
 class LectureDataRepository(private val lectureDao: LectureDao)
 {

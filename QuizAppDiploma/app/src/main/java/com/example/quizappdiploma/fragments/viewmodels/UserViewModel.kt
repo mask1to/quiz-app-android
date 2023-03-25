@@ -3,16 +3,21 @@ package com.example.quizappdiploma.fragments.viewmodels
 import androidx.lifecycle.*
 import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.database.users.UserModel
+import kotlinx.coroutines.launch
 
 class UserViewModel(private val userDataRepository: UserDataRepository) : ViewModel()
 {
-    fun login(username: String, password: String) : LiveData<List<UserModel>>
-    {
-        return userDataRepository.getUserByUsernameAndPassword(username, password)
+    suspend fun getUserByEmailAndPassword(email: String, password: String): UserModel? {
+        return userDataRepository.getUserByEmailAndPassword(email, password)
     }
-
     fun getUsers() : LiveData<List<UserModel>>
     {
         return userDataRepository.getUsers()
+    }
+
+    fun insertUser(user: UserModel) {
+        viewModelScope.launch {
+            userDataRepository.insertUser(user)
+        }
     }
 }

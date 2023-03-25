@@ -143,8 +143,6 @@ class QuizFragment : Fragment(), OnClickListener
             {
                 binding.btnSubmit.isEnabled = false
                 val previousQuestion = myQuestionList!![myCurrentPosition - 1]
-                Log.d("questionList size", myQuestionList!!.size.toString())
-                Log.d("previous: ", previousQuestion.toString())
                 quizQuestionViewModel.updateQuestion(previousQuestion)
                 myCurrentPosition++
 
@@ -318,7 +316,6 @@ class QuizFragment : Fragment(), OnClickListener
                     }
                 }
             } catch (e: Exception) {
-                // Handle exceptions
                 e.printStackTrace()
             }
         }
@@ -358,23 +355,6 @@ class QuizFragment : Fragment(), OnClickListener
         }
     }
 
-    private fun getCachedImage(context: Context, fileName: String): Bitmap?
-    {
-        val cacheDir = context.cacheDir
-        val file = File(cacheDir, fileName)
-
-        if (!file.exists())
-        {
-            return null
-        }
-
-        val inputStream = FileInputStream(file)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        inputStream.close()
-
-        return bitmap
-    }
-
     private fun updateQuizQuestions(correctAnswers: Int, courseId: Int) {
         when (correctAnswers) {
             5 -> {
@@ -404,7 +384,7 @@ class QuizFragment : Fragment(), OnClickListener
         }
     }
 
-    fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+    private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
         observe(lifecycleOwner, object : Observer<T> {
             override fun onChanged(t: T) {
                 observer.onChanged(t)

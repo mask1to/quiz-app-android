@@ -18,7 +18,8 @@ import com.example.quizappdiploma.database.users.UserModel
     entities = [UserModel::class, CourseModel::class,
                 LectureModel::class, QuizModel::class,
                 QuizQuestionModel::class],
-    version = 1)
+    version = 2,
+    exportSchema = false)
 abstract class MyDatabase : RoomDatabase()
 {
 
@@ -34,20 +35,19 @@ abstract class MyDatabase : RoomDatabase()
         private const val  DATABASE_NAME = "quiz_db"
 
         fun getDatabase(context: Context): MyDatabase {
-            return INSTANCE ?: synchronized(this)
-            {
+            return INSTANCE ?: synchronized(this) {
                 if (INSTANCE == null) {
                     synchronized(this) {
-                        INSTANCE =
-                            Room.databaseBuilder(context, MyDatabase::class.java, DATABASE_NAME)
-                                .fallbackToDestructiveMigration()
-                                .createFromAsset("database/quiz_db.db")
-                                .build()
+                        INSTANCE = Room.databaseBuilder(context, MyDatabase::class.java, DATABASE_NAME)
+                            .fallbackToDestructiveMigration()
+                            .createFromAsset("database/quiz_db.db")
+                            .build()
                     }
                 }
-                return INSTANCE!!
+                INSTANCE!!
             }
         }
+
     }
 
 }
