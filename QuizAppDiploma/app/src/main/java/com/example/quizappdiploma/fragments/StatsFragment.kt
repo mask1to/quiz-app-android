@@ -5,56 +5,52 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.adapters.lists.StatsAdapter
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsDataRepository
+import com.example.quizappdiploma.database.users.UserDataRepository
+import com.example.quizappdiploma.fragments.viewmodels.QuizStatsViewModel
+import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
+import com.example.quizappdiploma.fragments.viewmodels.factory.QuizStatsViewModelFactory
+import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [StatsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class StatsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var statsRecyclerView: RecyclerView
+    private lateinit var quizStatsViewModel: QuizStatsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stats, container, false)
+        val view = inflater.inflate(R.layout.fragment_stats, container, false)
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment StatsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            StatsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val dao = MyDatabase.getDatabase(requireContext()).quizStatsDao()
+        val repository = QuizStatsDataRepository(dao)
+        quizStatsViewModel = ViewModelProvider(this, QuizStatsViewModelFactory(repository))[QuizStatsViewModel::class.java]
+
+        // Fetch stats from the database
+        lifecycleScope.launch {
+            val quizStats = dao.getAllStats()
+
+            // Update the RecyclerView adapter with the fetched stats
+            statsRecyclerView = view.findViewById(R.id.stats_recycler_view)
+            statsRecyclerView.layoutManager = LinearLayoutManager(context)
+            statsRecyclerView.adapter = StatsAdapter(quizStats)
+        }
     }
 }

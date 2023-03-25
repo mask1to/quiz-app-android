@@ -11,15 +11,16 @@ import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.database.quizzes.QuizModel
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDao
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsDao
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsModel
 import com.example.quizappdiploma.database.users.UserDao
 import com.example.quizappdiploma.database.users.UserModel
 
 @Database(
     entities = [UserModel::class, CourseModel::class,
                 LectureModel::class, QuizModel::class,
-                QuizQuestionModel::class],
-    version = 2,
-    exportSchema = false)
+                QuizQuestionModel::class, QuizStatsModel::class],
+    version = 2)
 abstract class MyDatabase : RoomDatabase()
 {
 
@@ -28,6 +29,7 @@ abstract class MyDatabase : RoomDatabase()
     abstract fun lectureDao(): LectureDao
     abstract fun quizQuestionDao(): QuizQuestionDao
     abstract fun userDao(): UserDao
+    abstract fun quizStatsDao() : QuizStatsDao
 
     companion object {
         @Volatile
