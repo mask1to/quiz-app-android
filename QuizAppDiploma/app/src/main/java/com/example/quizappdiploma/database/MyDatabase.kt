@@ -8,7 +8,10 @@ import com.example.quizappdiploma.database.courses.CourseDao
 import com.example.quizappdiploma.database.courses.CourseModel
 import com.example.quizappdiploma.database.lectures.LectureDao
 import com.example.quizappdiploma.database.lectures.LectureModel
+import com.example.quizappdiploma.database.quizzes.QuizDao
 import com.example.quizappdiploma.database.quizzes.QuizModel
+import com.example.quizappdiploma.database.quizzes.answers.UserAnswers
+import com.example.quizappdiploma.database.quizzes.answers.UserAnswersDao
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDao
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.database.quizzes.stats.QuizStatsDao
@@ -19,7 +22,8 @@ import com.example.quizappdiploma.database.users.UserModel
 @Database(
     entities = [UserModel::class, CourseModel::class,
                 LectureModel::class, QuizModel::class,
-                QuizQuestionModel::class, QuizStatsModel::class],
+                QuizQuestionModel::class, QuizStatsModel::class,
+                UserAnswers::class],
     version = 2)
 abstract class MyDatabase : RoomDatabase()
 {
@@ -27,9 +31,12 @@ abstract class MyDatabase : RoomDatabase()
     abstract fun myDatabaseDao(): MyDatabaseDao
     abstract fun courseDao(): CourseDao
     abstract fun lectureDao(): LectureDao
+
+    abstract fun quizDao() : QuizDao
     abstract fun quizQuestionDao(): QuizQuestionDao
     abstract fun userDao(): UserDao
     abstract fun quizStatsDao() : QuizStatsDao
+    abstract fun userAnswersDao() : UserAnswersDao
 
     companion object {
         @Volatile

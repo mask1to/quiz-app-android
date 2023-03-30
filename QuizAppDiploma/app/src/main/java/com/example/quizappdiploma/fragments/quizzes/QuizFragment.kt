@@ -20,11 +20,19 @@ import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.quizzes.QuizDataRepository
+import com.example.quizappdiploma.database.quizzes.answers.UserAnswers
+import com.example.quizappdiploma.database.quizzes.answers.UserAnswersDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.databinding.FragmentQuizBinding
 import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
+import com.example.quizappdiploma.fragments.viewmodels.QuizViewModel
+import com.example.quizappdiploma.fragments.viewmodels.UserAnswersViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
+import com.example.quizappdiploma.fragments.viewmodels.factory.QuizViewModelFactory
+import com.example.quizappdiploma.fragments.viewmodels.factory.UserAnswersViewModelFactory
+import com.example.quizappdiploma.preferences.PreferenceManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
@@ -41,8 +49,12 @@ class QuizFragment : Fragment(), OnClickListener
     private val binding get() = _binding!!
 
     //getUsername of user, who is doing it
+    //TODO: remove
     private val username = "masko"
     private lateinit var quizQuestionViewModel: QuizQuestionViewModel
+    private lateinit var userAnswersViewModel: UserAnswersViewModel
+    private lateinit var quizViewModel: QuizViewModel
+
     private lateinit var progressBar : ProgressBar
     private lateinit var submitBtn : Button
     private lateinit var textViewProgress : TextView
@@ -54,8 +66,10 @@ class QuizFragment : Fragment(), OnClickListener
     private lateinit var textViewFourthOption : TextView
     private lateinit var questionW : TextView
     private lateinit var picasso: Picasso
+    private lateinit var preferenceManager: PreferenceManager
 
     private var additionalQuestionsGenerated = false
+    private var questionStartTime: Long = 0
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
     private var backPressedCallback: OnBackPressedCallback? = null
@@ -75,6 +89,7 @@ class QuizFragment : Fragment(), OnClickListener
         requireActivity().onBackPressedDispatcher.addCallback(this,
             backPressedCallback as OnBackPressedCallback
         )
+        preferenceManager = PreferenceManager(requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
@@ -104,6 +119,7 @@ class QuizFragment : Fragment(), OnClickListener
         textViewThirdOption.setOnClickListener(this)
         textViewFourthOption.setOnClickListener(this)
         submitBtn.setOnClickListener(this)
+        val loggedInUser = preferenceManager.getLoggedInUser()
 
         val cacheSize = 20 * 1024 * 1024 // 20 MB
         val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
@@ -118,8 +134,16 @@ class QuizFragment : Fragment(), OnClickListener
             .build()
 
         val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
+        val answerDao = MyDatabase.getDatabase(requireContext()).userAnswersDao()
+        val quizDao = MyDatabase.getDatabase(requireContext()).quizDao()
+
         val repository = QuizQuestionDataRepository(dao)
+        val answerRepository = UserAnswersDataRepository(answerDao)
+        val quizRepository = QuizDataRepository(quizDao)
+
+        quizViewModel = ViewModelProvider(this, QuizViewModelFactory(quizRepository))[QuizViewModel::class.java]
         quizQuestionViewModel = ViewModelProvider(this, QuizQuestionViewModelFactory(repository))[QuizQuestionViewModel::class.java]
+        userAnswersViewModel = ViewModelProvider(this, UserAnswersViewModelFactory(answerRepository))[UserAnswersViewModel::class.java]
 
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
@@ -139,11 +163,24 @@ class QuizFragment : Fragment(), OnClickListener
 
         binding.btnSubmit.setOnClickListener {
 
+            val questionEndTime = System.currentTimeMillis()
+            val timeSpent = questionEndTime - questionStartTime
+            val timeSpentSeconds = timeSpent / 1000
+            questionStartTime = questionEndTime
+            Log.d("timeSpent in seconds: ", timeSpentSeconds.toString())
+
             if(mySelectedOption == 0)
             {
                 binding.btnSubmit.isEnabled = false
                 val previousQuestion = myQuestionList!![myCurrentPosition - 1]
                 quizQuestionViewModel.updateQuestion(previousQuestion)
+                // Reset startTime for the next question
+
+                /*
+                 TODO:
+                  1. spravit nejaku novu tabulku na answers aj s user_id, question_id
+                  2. do poslednych 5 otazok nastavit aj parameter timeSpent
+                 */
                 myCurrentPosition++
 
                 when{
@@ -160,6 +197,28 @@ class QuizFragment : Fragment(), OnClickListener
             else
             {
                 val question = myQuestionList?.get(myCurrentPosition - 1)
+                //val isCorrect = question!!.answer == mySelectedOption
+
+                //val userId: Int? = 1
+                //val quizId: Int? = 1
+
+                quizViewModel.getQuizIdByCourseId(courseId) { quizIds ->
+                    // Use the fetched quizIds here
+                    // If you expect only one quiz_id per course_id, you can use quizIds.first() or quizIds[0]
+
+                    // Call the handleQuizId function with the fetched quiz_id
+                    val userAnswer = UserAnswers(
+                        id = null,
+                        user_id = loggedInUser!!.id,
+                        question_id = question!!.id,
+                        quiz_id = quizIds.first(),
+                        answer = mySelectedOption,
+                        time_spent = timeSpentSeconds.toInt()
+                    )
+
+                    userAnswersViewModel.addUserAnswer(userAnswer)
+                }
+
                 if(question!!.answer != mySelectedOption)
                 {
                     answerView(mySelectedOption, R.drawable.wrong_option_border_bg)
@@ -227,6 +286,7 @@ class QuizFragment : Fragment(), OnClickListener
 
         binding.btnSubmit.isEnabled = true
         binding.btnSubmit.text = "Submit"
+        questionStartTime = System.currentTimeMillis()
     }
 
     private fun defaultOptionsView()

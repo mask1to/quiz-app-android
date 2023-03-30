@@ -13,14 +13,14 @@
             android:id="@+id/action_welcomeFragment_to_lecturerFragment"
             app:destination="@id/lecturerFragment" />
         <action
-            android:id="@+id/action_welcomeFragment_to_adminFragment2"
-            app:destination="@id/adminFragment" />
-        <action
             android:id="@+id/action_welcomeFragment_to_studentFragment"
             app:destination="@id/studentFragment" />
         <action
             android:id="@+id/action_welcomeFragment_to_registrationFragment"
             app:destination="@id/registrationFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_adminFragment"
+            app:destination="@id/adminFragment" />
     </fragment>
     <fragment
         android:id="@+id/studentFragment"

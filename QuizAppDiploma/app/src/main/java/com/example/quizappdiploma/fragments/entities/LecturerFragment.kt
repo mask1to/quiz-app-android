@@ -20,7 +20,7 @@ class LecturerFragment : Fragment()
     {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
-        checkLoginStatus()
+        //checkLoginStatus()
     }
 
     override fun onCreateView(
@@ -35,7 +35,7 @@ class LecturerFragment : Fragment()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun checkLoginStatus()
+    /*private fun checkLoginStatus()
     {
         if(preferenceManager.isLogin() == false)
         {
@@ -49,5 +49,5 @@ class LecturerFragment : Fragment()
         preferenceManager.removeData()
         val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
         Navigation.findNavController(requireView()).navigate(action)
-    }
+    }*/
 }

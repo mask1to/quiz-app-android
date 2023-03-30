@@ -1,5 +1,6 @@
 package com.example.quizappdiploma.fragments.entities
 
+import ProfileFragment
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,7 +9,6 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.databinding.FragmentAdminBinding
-import com.example.quizappdiploma.fragments.ProfileFragment
 import com.example.quizappdiploma.fragments.lists.CourseListFragment
 import com.example.quizappdiploma.fragments.lists.UserListFragment
 import com.example.quizappdiploma.preferences.PreferenceManager
@@ -28,7 +28,7 @@ class AdminFragment : Fragment()
     {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
-        checkLoginStatus()
+        //checkLoginStatus()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
@@ -53,7 +53,7 @@ class AdminFragment : Fragment()
         childFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit()
     }
 
-    private fun checkLoginStatus()
+    /*private fun checkLoginStatus()
     {
         if(preferenceManager.isLogin() == false)
         {
@@ -67,6 +67,6 @@ class AdminFragment : Fragment()
         preferenceManager.removeData()
         val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
         Navigation.findNavController(requireView()).navigate(action)
-    }
+    }*/
 
 }
