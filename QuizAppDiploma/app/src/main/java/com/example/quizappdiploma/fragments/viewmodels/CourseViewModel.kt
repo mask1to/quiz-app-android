@@ -1,14 +1,8 @@
 package com.example.quizappdiploma.fragments.viewmodels
 
-import android.app.Application
 import androidx.lifecycle.*
-import com.example.quizappdiploma.database.MyDatabase
-import com.example.quizappdiploma.database.MyDatabaseDao
 import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.database.courses.CourseModel
-import com.example.quizappdiploma.fragments.viewmodels.helpers.LiveDataEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class CourseViewModel(private val courseDataRepository: CourseDataRepository): ViewModel()
 {

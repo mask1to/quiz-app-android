@@ -1,19 +1,23 @@
 package com.example.quizappdiploma.fragments.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.*
-import com.example.quizappdiploma.database.MyDatabase
-import com.example.quizappdiploma.database.MyDatabaseDao
 import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.database.users.UserModel
-import com.example.quizappdiploma.fragments.viewmodels.helpers.LiveDataEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class UserViewModel(private val userDataRepository: UserDataRepository) : ViewModel()
 {
-    fun login(username: String, password: String) : LiveData<List<UserModel>>
+    suspend fun getUserByEmailAndPassword(email: String, password: String): UserModel? {
+        return userDataRepository.getUserByEmailAndPassword(email, password)
+    }
+    fun getUsers() : LiveData<List<UserModel>>
     {
-        return userDataRepository.getUserByUsernameAndPassword(username, password)
+        return userDataRepository.getUsers()
+    }
+
+    fun insertUser(user: UserModel) {
+        viewModelScope.launch {
+            userDataRepository.insertUser(user)
+        }
     }
 }

@@ -2,8 +2,11 @@ package com.example.quizappdiploma.fragments.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestionDataRepository): ViewModel()
 {
@@ -11,9 +14,12 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     {
         quizQuestionDataRepository.addQuestion(question)
     }
-    suspend fun updateQuestion(question: QuizQuestionModel)
+    fun updateQuestion(question: QuizQuestionModel)
     {
-        quizQuestionDataRepository.updateQuestion(question)
+        viewModelScope.launch(Dispatchers.IO) {
+            question.alreadyUsed = 1
+            quizQuestionDataRepository.updateQuestion(question)
+        }
     }
     suspend fun deleteQuestion(question: QuizQuestionModel)
     {
@@ -23,8 +29,9 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     {
         return quizQuestionDataRepository.getFirstFiveQuestions(courseId, questionLimit)
     }
-    fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
+    suspend fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : List<QuizQuestionModel>
     {
         return quizQuestionDataRepository.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
     }
+
 }

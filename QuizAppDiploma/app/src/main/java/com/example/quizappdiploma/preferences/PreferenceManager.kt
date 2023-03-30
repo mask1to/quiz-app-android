@@ -2,42 +2,56 @@ package com.example.quizappdiploma.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.quizappdiploma.database.users.UserModel
 
 class PreferenceManager(context: Context)
 {
-    val PRIVATE_MODE = 0
 
-    private val PREF_NAME = "SharedPreferences"
-    private val IS_LOGIN = "is_login"
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
 
-    val preferences : SharedPreferences? = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
-    val editor : SharedPreferences.Editor? = preferences?.edit()
-
-    fun setLogin(isLogin : Boolean)
-    {
-        editor?.putBoolean(IS_LOGIN, isLogin)
-        editor?.commit()
+    fun saveUser(user: UserModel) {
+        val editor = sharedPreferences.edit()
+        editor.putInt("user_id", user.id ?: -1)
+        editor.putString("user_email", user.email)
+        editor.putString("username", user.username)
+        editor.putString("user_password", user.password)
+        editor.putInt("is_admin", user.isAdmin ?: 0)
+        editor.putInt("is_lecturer", user.isLecturer ?: 0)
+        editor.putInt("is_student", user.isStudent ?: 0)
+        editor.apply()
     }
 
-    fun setUsername(username : String?)
-    {
-        editor?.putString("username", username)
-        editor?.commit()
+    fun isLoggedIn(): Boolean {
+        return sharedPreferences.getInt("user_id", -1) != -1
     }
 
-    fun isLogin() : Boolean?
-    {
-        return preferences?.getBoolean(IS_LOGIN, false)
+    fun getLoggedInUser(): UserModel? {
+        val id = sharedPreferences.getInt("user_id", -1)
+        if (id == -1) {
+            return null
+        }
+
+        val email = sharedPreferences.getString("user_email", null)
+        val username = sharedPreferences.getString("username", null)
+        val password = sharedPreferences.getString("user_password", null)
+        val isAdmin = sharedPreferences.getInt("is_admin", 0)
+        val isLecturer = sharedPreferences.getInt("is_lecturer", 0)
+        val isStudent = sharedPreferences.getInt("is_student", 0)
+
+        return UserModel(id, email, username, password, isAdmin, isLecturer, isStudent)
     }
 
-    fun getUsername() : String?
-    {
-        return preferences?.getString("username", "")
-    }
-
-    fun removeData()
-    {
-        editor?.clear()
-        editor?.commit()
+    fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.remove("user_id")
+        editor.remove("user_email")
+        editor.remove("username")
+        editor.remove("user_password")
+        editor.remove("is_admin")
+        editor.remove("is_lecturer")
+        editor.remove("is_student")
+        editor.apply()
     }
 }
+

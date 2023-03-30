@@ -1,10 +1,10 @@
 package com.example.quizappdiploma.fragments.content
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.pm.PackageManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -17,17 +17,25 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.lectures.LectureDataRepository
+import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.databinding.FragmentContentBinding
 import com.example.quizappdiploma.fragments.viewmodels.ContentViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
-import java.net.HttpURLConnection
-import java.net.URL
+import com.squareup.picasso.Callback
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
+import okhttp3.Cache
+import okhttp3.OkHttpClient
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class ContentFragment : Fragment()
 {
@@ -39,6 +47,7 @@ class ContentFragment : Fragment()
     private lateinit var lectureImage : ImageView
     private lateinit var nextLectureButton: Button
     private lateinit var contentViewModel: ContentViewModel
+    private lateinit var picasso: Picasso
 
     private val args : ContentFragmentArgs by navArgs()
 
@@ -77,22 +86,42 @@ class ContentFragment : Fragment()
         lectureImage = binding.lectureImageView
         nextLectureButton = binding.lectureNextBtn
 
+        lectureTitle.text = args.lectureTitle
+        lectureDescription.text = args.lectureDescription
+
         val dao = MyDatabase.getDatabase(requireContext()).lectureDao()
         val repository = LectureDataRepository(dao)
         contentViewModel = ViewModelProvider(this, LectureViewModelFactory(repository))[ContentViewModel::class.java]
 
-        lectureTitle.text = args.lectureTitle
-        lectureDescription.text = args.lectureDescription
 
-        //todo: make loading while fetching the image
+        val cacheSize = 20 * 1024 * 1024 // 20 MB
+        val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
+        val okHttpClient = OkHttpClient.Builder()
+            .cache(cache)
+            .build()
+
+        picasso = Picasso.Builder(requireContext())
+            .downloader(OkHttp3Downloader(okHttpClient))
+            .indicatorsEnabled(false)
+            .loggingEnabled(true)
+            .build()
+
         val imageUrl = args.imagePath
-        Thread{
-            val bitmap = downloadImage(imageUrl)
 
-            activity?.runOnUiThread {
-                lectureImage.setImageBitmap(bitmap)
-            }
-        }.start()
+        Picasso.get()
+            .load(imageUrl)
+            .noFade()
+            .into(lectureImage, object : Callback {
+                override fun onSuccess() {
+                    binding.imageProgressBar.visibility = View.GONE
+                }
+
+                override fun onError(e: Exception?) {
+                    binding.imageProgressBar.visibility = View.GONE
+                    Log.e("Err: ", "Error loading image: ${e?.message}")
+                }
+            })
+
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
@@ -101,59 +130,38 @@ class ContentFragment : Fragment()
 
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
+        var lectureId = myArgs?.getInt("lecture_id")
+        val imagePath = arguments?.getString("imagePath") ?: ""
+        val lectureTitle = arguments?.getString("lecture_title") ?: ""
+        val lectureDescription = arguments?.getString("lecture_description") ?: ""
         Log.d("courseId in content: ", courseId.toString())
-
-        nextLectureButton.setOnClickListener {
-            val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
-            Navigation.findNavController(requireView()).navigate(action)
-        }
-    }
-
-    private fun downloadImage(url: String): Bitmap? {
-        try {
-            val connection = URL(url).openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-            val inputStream = connection.inputStream
-            return BitmapFactory.decodeStream(inputStream)
-        } catch (e: Exception) {
-            Log.e("TAG", "Error downloading image: ${e.message}")
-        }
-        return null
-    }
+        Log.d("lectureId in content: ", lectureId.toString())
 
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun showPermissionAlertDialog()
-    {
-        val alertDialog: AlertDialog = requireActivity().let {
-            val builder = AlertDialog.Builder(it)
-            builder.apply {
-                setTitle("Internet access needed")
-                setPositiveButton("OK"
-                ) { dialog, id ->
-                    internetPermissionRequest.launch(
-                        arrayOf(
-                            Manifest.permission.INTERNET
-                        )
-                    )
-                }
-                setNegativeButton("Cancel"
-                ) { dialog, id ->
-
-                }
+        //todo: lecture_id preniest z content do content
+        if (lectureId != null) {
+            nextLectureButton.setOnClickListener {
+                val action = ContentFragmentDirections.actionContentFragmentToQuizFragment(courseId!!)
+                //val action = ContentFragmentDirections.actionContentFragmentSelf(lectureId, lectureTitle, lectureDescription, imagePath, courseId!!)
+                Navigation.findNavController(requireView()).navigate(action)
             }
-            builder.create()
         }
-        alertDialog.show()
     }
-
-    private fun checkPermissions(): Boolean
+    private fun getCachedImage(context: Context, fileName: String): Bitmap?
     {
-        return ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.INTERNET
-        ) == PackageManager.PERMISSION_GRANTED
+        val cacheDir = context.cacheDir
+        val file = File(cacheDir, fileName)
+
+        if (!file.exists())
+        {
+            return null
+        }
+
+        val inputStream = FileInputStream(file)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream.close()
+
+        return bitmap
     }
 
 }

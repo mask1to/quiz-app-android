@@ -1,9 +1,6 @@
 package com.example.quizappdiploma.database.lectures
 
 import androidx.lifecycle.LiveData
-import com.example.quizappdiploma.database.MyLocalCache
-import com.example.quizappdiploma.database.courses.CourseDao
-import com.example.quizappdiploma.database.courses.CourseDataRepository
 
 class LectureDataRepository(private val lectureDao: LectureDao)
 {
@@ -11,12 +8,10 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         lectureDao.addLecture(lecture)
     }
-
     suspend fun updateLecture(lecture: LectureModel)
     {
         lectureDao.updateLecture(lecture)
     }
-
     suspend fun deleteLecture(lecture: LectureModel)
     {
         lectureDao.deleteLecture(lecture)
@@ -25,4 +20,5 @@ class LectureDataRepository(private val lectureDao: LectureDao)
     {
         return lectureDao.getLecturesByCourseId(courseId)
     }
+
 }

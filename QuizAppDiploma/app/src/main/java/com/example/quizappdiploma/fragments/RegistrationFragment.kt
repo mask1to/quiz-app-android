@@ -10,10 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
+import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.database.users.UserModel
 import com.example.quizappdiploma.databinding.RegistrationFragmentBinding
-import com.example.quizappdiploma.fragments.viewmodels.helpers.Helper
+import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
 import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
+import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
+import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
 import com.google.android.material.textfield.TextInputLayout
 
 class RegistrationFragment : Fragment()
@@ -26,10 +31,7 @@ class RegistrationFragment : Fragment()
     private lateinit var firstPassword : TextInputLayout
     private lateinit var secondPassword : TextInputLayout
     private lateinit var registerButton : Button
-
-    private val userViewModel : UserViewModel by lazy {
-        ViewModelProvider(this, Helper.getUserViewModelFactory(requireContext()))[UserViewModel::class.java]
-    }
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -54,6 +56,10 @@ class RegistrationFragment : Fragment()
         secondPassword = view.findViewById(R.id.passwordRegisterField2)
         registerButton = view.findViewById(R.id.registerBtn2)
 
+        val dao = MyDatabase.getDatabase(requireContext()).userDao()
+        val repository = UserDataRepository(dao)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(repository))[UserViewModel::class.java]
+
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             usermodel = userViewModel
@@ -66,7 +72,7 @@ class RegistrationFragment : Fragment()
 
             if(checkFields())
             {
-                val student = UserModel(0, email, nickname, password, 0, 0, 1)
+                val student = UserModel(null, email, nickname, password, 0, 0, 1)
                 userViewModel.insertUser(student)
                 Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_registrationFragment_to_welcomeFragment)
@@ -74,20 +80,28 @@ class RegistrationFragment : Fragment()
 
         }
     }
-
-    private fun checkFields() : Boolean
-    {
-        if(nicknameField.editText?.text.toString().isEmpty() || emailField.editText?.text.toString().isEmpty() ||
-            firstPassword.editText?.text.toString().isEmpty() || secondPassword.editText?.text.toString().isEmpty())
-        {
-            Toast.makeText(requireContext(),"Každé pole musí byť vyplnené", Toast.LENGTH_SHORT).show()
+    private fun checkFields(): Boolean {
+        if (nicknameField.editText?.text.toString().isEmpty() || emailField.editText?.text.toString().isEmpty() ||
+            firstPassword.editText?.text.toString().isEmpty() || secondPassword.editText?.text.toString().isEmpty()
+        ) {
+            Toast.makeText(requireContext(), "Každé pole musí byť vyplnené", Toast.LENGTH_SHORT).show()
             return false
         }
 
-        //TODO: check for password length & email regex
+        // Check for valid email format using a regex pattern
+        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+        if (!emailField.editText?.text.toString().trim().matches(emailPattern.toRegex())) {
+            Toast.makeText(requireContext(), "Neplatný formát e-mailu", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
-        if(!firstPassword.editText?.text.toString().equals(secondPassword.editText?.text.toString()))
-        {
+        // Check for password length
+        if (firstPassword.editText?.text.toString().length < 8) {
+            Toast.makeText(requireContext(), "Heslo musí obsahovať aspoň 8 znakov", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (!firstPassword.editText?.text.toString().equals(secondPassword.editText?.text.toString())) {
             Toast.makeText(requireContext(), "Heslá sa musia zhodovať", Toast.LENGTH_SHORT).show()
             return false
         }

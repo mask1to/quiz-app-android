@@ -1,52 +1,38 @@
-package com.example.quizappdiploma.fragments
+package com.example.quizappdiploma.fragments.entities
 
-import android.annotation.SuppressLint
+import ProfileFragment
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toolbar
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.example.quizappdiploma.R
-import com.example.quizappdiploma.adapters.CourseAdapter
 import com.example.quizappdiploma.databinding.FragmentStudentBinding
-import com.example.quizappdiploma.fragments.courses.CourseFragment
+import com.example.quizappdiploma.fragments.StatsFragment
 import com.example.quizappdiploma.preferences.PreferenceManager
-import com.google.android.material.navigation.NavigationView
 
-class StudentFragment : Fragment()
-{
+class StudentFragment : Fragment() {
 
-    private var _binding : FragmentStudentBinding? = null
+    private var _binding: FragmentStudentBinding? = null
     private val binding get() = _binding!!
     private lateinit var preferenceManager: PreferenceManager
 
-
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View
-    {
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentStudentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         checkLoginStatus()
@@ -54,44 +40,42 @@ class StudentFragment : Fragment()
         replaceFragment(ProfileFragment())
 
         binding.bottomNavigationView.setOnItemSelectedListener {
-            when(it.itemId)
-            {
+            when (it.itemId) {
                 R.id.logout -> logout()
                 R.id.profile -> replaceFragment(ProfileFragment())
                 R.id.stats -> replaceFragment(StatsFragment())
-                else ->
-                {
-
-                }
+                else -> { }
             }
             true
         }
     }
 
-    private fun replaceFragment(fragment : Fragment)
-    {
+    private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = childFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout, fragment)
         fragmentTransaction.commit()
     }
 
-    private fun checkLoginStatus()
-    {
-        if(preferenceManager.isLogin() == false)
-        {
+    private fun checkLoginStatus() {
+        val loggedInUser = preferenceManager.getLoggedInUser()
+        if (loggedInUser == null) {
             val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
             findNavController().navigate(action)
+        } else {
+            Toast.makeText(requireContext(), "Login status true", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun logout()
-    {
-        preferenceManager.removeData()
+    private fun logout() {
+        preferenceManager.logout()
         val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
         findNavController().navigate(action)
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
-
-

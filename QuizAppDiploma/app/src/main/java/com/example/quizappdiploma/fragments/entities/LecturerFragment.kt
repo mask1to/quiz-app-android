@@ -1,15 +1,13 @@
-package com.example.quizappdiploma.fragments
+package com.example.quizappdiploma.fragments.entities
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.navigation.Navigation
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.databinding.FragmentLecturerBinding
-import com.example.quizappdiploma.databinding.FragmentStudentBinding
 import com.example.quizappdiploma.preferences.PreferenceManager
 
 class LecturerFragment : Fragment()
@@ -22,7 +20,7 @@ class LecturerFragment : Fragment()
     {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
-        checkLoginStatus()
+        //checkLoginStatus()
     }
 
     override fun onCreateView(
@@ -37,7 +35,7 @@ class LecturerFragment : Fragment()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun checkLoginStatus()
+    /*private fun checkLoginStatus()
     {
         if(preferenceManager.isLogin() == false)
         {
@@ -51,5 +49,5 @@ class LecturerFragment : Fragment()
         preferenceManager.removeData()
         val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
         Navigation.findNavController(requireView()).navigate(action)
-    }
+    }*/
 }

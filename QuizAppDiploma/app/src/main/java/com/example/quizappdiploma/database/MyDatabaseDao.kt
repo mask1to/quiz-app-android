@@ -14,27 +14,14 @@ interface MyDatabaseDao
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertLectures(lectures : List<LectureModel>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(userModel: UserModel)
-
-    @Update
-    suspend fun updateUser(userModel: UserModel)
-
     @Query("DELETE FROM courses")
     fun deleteCourses()
 
     @Query("DELETE FROM lectures")
     fun deleteLectures()
 
-    @Query("DELETE FROM users")
-    fun deleteUsers()
-
     @Query("DELETE FROM quizzes")
     suspend fun deleteQuizzes()
-
-    @Query("DELETE FROM quiz_answers")
-    suspend fun deleteQuizAnswers()
 
     @Query("DELETE FROM quiz_questions")
     suspend fun deleteQuizQuestions()

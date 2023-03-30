@@ -1,60 +1,60 @@
 package com.example.quizappdiploma.fragments
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.CheckBox
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
+import com.example.quizappdiploma.database.MyDatabase
+import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.databinding.WelcomeFragmentBinding
+import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
+import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
 import com.example.quizappdiploma.preferences.PreferenceManager
 import com.google.android.material.textfield.TextInputLayout
-
-
-class WelcomeFragment : Fragment()
-{
-    private var _binding : WelcomeFragmentBinding? = null
+import kotlinx.coroutines.launch
+class WelcomeFragment : Fragment() {
+    private var _binding: WelcomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var textField : TextInputLayout
-    private lateinit var emailField : TextInputLayout
-    private lateinit var passwordField : TextInputLayout
-    private lateinit var registerButton : Button
-    private lateinit var loginButton : Button
+    private lateinit var textField: TextInputLayout
+    private lateinit var emailField: TextInputLayout
+    private lateinit var passwordField: TextInputLayout
+    private lateinit var registerButton: Button
+    private lateinit var loginButton: Button
+    private lateinit var userViewModel: UserViewModel
     private lateinit var preferenceManager: PreferenceManager
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //(activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         preferenceManager = PreferenceManager(requireContext())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View
-    {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = WelcomeFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkLogin()
 
         textField = binding.menu
         registerButton = binding.registerBtn
         loginButton = binding.loginBtn
         emailField = binding.emailField
         passwordField = binding.passwordField
+
+        checkLogin()
+
+        val dao = MyDatabase.getDatabase(requireContext()).userDao()
+        val repository = UserDataRepository(dao)
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(repository))[UserViewModel::class.java]
 
         val items = listOf("Študent", "Lektor", "Administrátor")
         val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
@@ -63,65 +63,74 @@ class WelcomeFragment : Fragment()
         loginButton.setOnClickListener {
             val emailInput = emailField.editText?.text.toString()
             val passwordInput = passwordField.editText?.text.toString()
+            val role = textField.editText?.text.toString()
 
-            //check if user exists
-
-            /**
-             * Student logged in
-             **/
-            if(textField.editText?.text.toString() == "Študent")
-            {
-                if(emailInput == "student" && passwordInput == "student")
+            // Check if user exists in the database
+            viewLifecycleOwner.lifecycleScope.launch {
+                val user = userViewModel.getUserByEmailAndPassword(emailInput, passwordInput)
+                if (user != null && role.isNotEmpty())
                 {
-                    preferenceManager.setLogin(true)
-                    preferenceManager.setUsername(emailInput)
-                    val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
-                    view.findNavController().navigate(action)
+                    // Logged in successfully
+                    preferenceManager.saveUser(user)
+
+                    Log.d("role: ", role)
+
+                    if(user.isStudent == 1 && user.isAdmin == 0 && user.isLecturer == 0 && role == "Študent")
+                    {
+                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
+                        findNavController().navigate(action)
+                    }
+                    else if(user.isLecturer == 1 && user.isAdmin == 0 && user.isStudent == 0 && role == "Lektor")
+                    {
+                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
+                        findNavController().navigate(action)
+                    }
+                    else if(user.isAdmin == 1 && user.isLecturer == 0 && user.isStudent == 0 && role == "Administrátor")
+                    {
+                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
+                        findNavController().navigate(action)
+                    }
+                    else
+                    {
+                        Toast.makeText(requireContext(), "Invalid email or password or incorrect role", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            else if(textField.editText?.text.toString() == "Lektor")
-            {
-                /**
-                 *  Lecturer logged in
-                 **/
-                if(emailInput == "lecturer" && passwordInput == "lecturer")
+                else
                 {
-                    preferenceManager.setLogin(true)
-                    preferenceManager.setUsername(emailInput)
-
-                    val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
-                    view.findNavController().navigate(action)
-                }
-            }
-            else if(textField.editText?.text.toString() == "Administrátor")
-            {
-                /**
-                 * Admin logged in
-                 **/
-                if(emailInput == "admin" && passwordInput == "admin")
-                {
-                    preferenceManager.setLogin(true)
-                    preferenceManager.setUsername(emailInput)
-                    val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment2()
-                    view.findNavController().navigate(action)
+                    Toast.makeText(requireContext(), "Invalid email or password", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
         registerButton.setOnClickListener {
             val action = WelcomeFragmentDirections.actionWelcomeFragmentToRegistrationFragment()
             view.findNavController().navigate(action)
         }
-
     }
 
-    private fun checkLogin()
-    {
-        if(preferenceManager.isLogin()!!)
-        {
-            val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
-            Navigation.findNavController(requireView()).navigate(action)
+    private fun checkLogin() {
+        val loggedInUser = preferenceManager.getLoggedInUser()
+        val role = textField.editText?.text.toString()
+        if (loggedInUser != null) {
+            if(loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0 && role == "Študent")
+            {
+                val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
+                findNavController().navigate(action)
+            }
+            else if(loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0 && role == "Lektor")
+            {
+                val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
+                findNavController().navigate(action)
+            }
+            else if(loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0 && role == "Administrátor")
+            {
+                val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
+                findNavController().navigate(action)
+            }
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
