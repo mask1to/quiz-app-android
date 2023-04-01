@@ -18,15 +18,18 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
     {
         quizQuestionDao.deleteQuestion(question)
     }
-
     fun getFirstFiveQuestions(courseId : Int, questionLimit : Int) : LiveData<List<QuizQuestionModel>>
     {
         return quizQuestionDao.getFirstFiveQuestions(courseId, questionLimit)
     }
-
     suspend fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : List<QuizQuestionModel>
     {
         return quizQuestionDao.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
+    }
+
+    suspend fun getAverageTimeSpentOnUsedQuestions(): Double?
+    {
+        return quizQuestionDao.getAverageTimeSpentOnUsedQuestions()
     }
 
 }

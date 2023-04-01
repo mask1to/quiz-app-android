@@ -29,7 +29,7 @@ class UserAnswers(
         @ColumnInfo(name = "answer")
         val answer: Int?,
         @ColumnInfo(name = "time_spent")
-        val time_spent: Int?)
+        val time_spent: Double?)
 {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -53,7 +53,7 @@ class UserAnswers(
         result = 31 * result + (question_id ?: 0)
         result = 31 * result + (quiz_id ?: 0)
         result = 31 * result + (answer ?: 0)
-        result = 31 * result + (time_spent ?: 0)
+        result = 31 * result + (time_spent?.hashCode() ?: 0)
         return result
     }
 

@@ -26,11 +26,11 @@ class PreferenceManager(context: Context)
         return sharedPreferences.getInt("user_id", -1) != -1
     }
 
-    fun getLoggedInUser(): UserModel? {
+    fun getLoggedInUser(): UserModel {
         val id = sharedPreferences.getInt("user_id", -1)
-        if (id == -1) {
-            return null
-        }
+        /*if (id == -1) {
+            return 0
+        }*/
 
         val email = sharedPreferences.getString("user_email", null)
         val username = sharedPreferences.getString("username", null)

@@ -34,4 +34,9 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
         return quizQuestionDataRepository.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
     }
 
+    suspend fun getAverageTimeSpentOnUsedQuestions(): Double?
+    {
+        return quizQuestionDataRepository.getAverageTimeSpentOnUsedQuestions()
+    }
+
 }

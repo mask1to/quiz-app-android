@@ -69,7 +69,7 @@ class QuizFragment : Fragment(), OnClickListener
     private lateinit var preferenceManager: PreferenceManager
 
     private var additionalQuestionsGenerated = false
-    private var questionStartTime: Long = 0
+    private var questionStartTime: Double = 0.0
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
     private var backPressedCallback: OnBackPressedCallback? = null
@@ -166,7 +166,7 @@ class QuizFragment : Fragment(), OnClickListener
             val questionEndTime = System.currentTimeMillis()
             val timeSpent = questionEndTime - questionStartTime
             val timeSpentSeconds = timeSpent / 1000
-            questionStartTime = questionEndTime
+            questionStartTime = questionEndTime.toDouble()
             Log.d("timeSpent in seconds: ", timeSpentSeconds.toString())
 
             if(mySelectedOption == 0)
@@ -189,7 +189,8 @@ class QuizFragment : Fragment(), OnClickListener
                     }
                     else ->{
                         //TODO: send correct_answers, username, total_questions
-                        val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(username, myQuestionList!!.size, correctAnswers)
+                        val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(
+                            username, myQuestionList!!.size, correctAnswers)
                         Navigation.findNavController(requireView()).navigate(action)
                     }
                 }
@@ -197,23 +198,15 @@ class QuizFragment : Fragment(), OnClickListener
             else
             {
                 val question = myQuestionList?.get(myCurrentPosition - 1)
-                //val isCorrect = question!!.answer == mySelectedOption
-
-                //val userId: Int? = 1
-                //val quizId: Int? = 1
 
                 quizViewModel.getQuizIdByCourseId(courseId) { quizIds ->
-                    // Use the fetched quizIds here
-                    // If you expect only one quiz_id per course_id, you can use quizIds.first() or quizIds[0]
-
-                    // Call the handleQuizId function with the fetched quiz_id
                     val userAnswer = UserAnswers(
                         id = null,
                         user_id = loggedInUser!!.id,
                         question_id = question!!.id,
                         quiz_id = quizIds.first(),
                         answer = mySelectedOption,
-                        time_spent = timeSpentSeconds.toInt()
+                        time_spent = timeSpentSeconds,
                     )
 
                     userAnswersViewModel.addUserAnswer(userAnswer)
@@ -243,7 +236,16 @@ class QuizFragment : Fragment(), OnClickListener
                 if (myCurrentPosition == 5 && !additionalQuestionsGenerated)
                 {
                     additionalQuestionsGenerated = true
-                    updateQuizQuestions(correctAnswers, courseId)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val averageTime = quizQuestionViewModel.getAverageTimeSpentOnUsedQuestions()
+                        if (averageTime != null) {
+                            Log.d("AverageTime", "Average time spent on used questions: $averageTime")
+                        } else {
+                            Log.d("AverageTime", "No data available")
+                        }
+                        updateQuizQuestions(correctAnswers, courseId, averageTime!!)
+                    }
+
                 }
 
             }
@@ -286,7 +288,7 @@ class QuizFragment : Fragment(), OnClickListener
 
         binding.btnSubmit.isEnabled = true
         binding.btnSubmit.text = "Submit"
-        questionStartTime = System.currentTimeMillis()
+        questionStartTime = System.currentTimeMillis().toDouble()
     }
 
     private fun defaultOptionsView()
@@ -415,31 +417,131 @@ class QuizFragment : Fragment(), OnClickListener
         }
     }
 
-    private fun updateQuizQuestions(correctAnswers: Int, courseId: Int) {
-        when (correctAnswers) {
-            5 -> {
-                /** 1 2 3 3 3 **/
-                generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+    //TODO:
+    private fun updateQuizQuestions(correctAnswers: Int, courseId: Int, timeSpent: Double) {
+        when (correctAnswers)
+        {
+            5 ->
+            {
+                when (timeSpent) {
+                    in 1.0..3.0 -> {
+                        /** 3 3 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 0, 5) {}
+                    }
+                    in 3.01..5.0 -> {
+                        /** 2 3 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 1, 4) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 2 2 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 2, 3) {}
+                    }
+                    else -> {
+                        /** 2 2 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 3, 2) {}
+                    }
+                }
             }
-            4 -> {
-                /** 1 2 2 3 3 **/
-                generateQuestions(quizQuestionViewModel, courseId, 1, 2, 2) {}
+            4 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 2 2 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 3, 2) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 2 2 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 4, 1) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 2 2 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 5, 0) {}
+                    }
+                    else -> {
+                        /** 1 2 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+                    }
+                }
             }
-            3 -> {
-                /** 1 2 2 2 3 **/
-                generateQuestions(quizQuestionViewModel, courseId, 1, 3, 1) {}
+            3 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 1 2 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 1 2 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 2, 2) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 2 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 3, 1) {}
+                    }
+                    else -> {
+                        /** 1 2 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
+                    }
+                }
             }
-            2 -> {
-                /** 1 1 2 2 2 **/
-                generateQuestions(quizQuestionViewModel, courseId, 2, 3, 0) {}
+            2 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 1 2 2 2 2**/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 1 1 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 0, 3) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 1 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 1, 2) {}
+                    }
+                    else -> {
+                        /** 1 1 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
+                    }
+                }
             }
-            1 -> {
-                /** 1 1 1 2 2 **/
-                generateQuestions(quizQuestionViewModel, courseId, 3, 2, 0) {}
+            1 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 1 1 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 1 1 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 3, 0) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 1 1 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 3, 2, 0) {}
+                    }
+                    else -> {
+                        /** 1 1 1 1 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 0, 1) {}
+                    }
+                }
             }
-            0 -> {
-                /** 1 1 1 1 2 **/
-                generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
+            0 ->
+            {
+                when (timeSpent) {
+                    in 2.0..7.0 -> {
+                        /** 1 1 1 1 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 0, 1) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 1 1 1 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
+                    }
+                    else -> {
+                        /** 1 1 1 1 1 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 5, 0, 0) {}
+                    }
+                }
             }
         }
     }
@@ -452,7 +554,5 @@ class QuizFragment : Fragment(), OnClickListener
             }
         })
     }
-
-
 
 }

@@ -90,10 +90,7 @@ class WelcomeFragment : Fragment() {
                         val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
                         findNavController().navigate(action)
                     }
-                    else
-                    {
-                        Toast.makeText(requireContext(), "Invalid email or password or incorrect role", Toast.LENGTH_SHORT).show()
-                    }
+
                 }
                 else
                 {
@@ -109,20 +106,14 @@ class WelcomeFragment : Fragment() {
 
     private fun checkLogin() {
         val loggedInUser = preferenceManager.getLoggedInUser()
-        val role = textField.editText?.text.toString()
         if (loggedInUser != null) {
-            if(loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0 && role == "Študent")
-            {
+            if (loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0) {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
                 findNavController().navigate(action)
-            }
-            else if(loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0 && role == "Lektor")
-            {
+            } else if (loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0) {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
                 findNavController().navigate(action)
-            }
-            else if(loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0 && role == "Administrátor")
-            {
+            } else if (loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0) {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
                 findNavController().navigate(action)
             }
