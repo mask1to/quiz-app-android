@@ -136,7 +136,7 @@
         app:argType="integer" />
     <action
         android:id="@+id/action_contentFragment_to_quizFragment"
-        app:destination="@id/quizFragment"/>
+        app:destination="@id/quizFragment" />
     <action
         android:id="@+id/action_contentFragment_self"
         app:destination="@id/contentFragment" >
@@ -155,5 +155,9 @@
             android:id="@+id/action_profileFragment_to_courseFragment"
             app:destination="@id/courseFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.example.quizappdiploma.fragments.StatsFragment"
+        android:label="StatsFragment" />
 
 </navigation>

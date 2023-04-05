@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.databinding.FragmentAdminBinding
 import com.example.quizappdiploma.fragments.lists.CourseListFragment
@@ -40,6 +42,26 @@ class AdminFragment : Fragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                // Save the current navigation state
+                val navController = findNavController()
+                val navState = navController.saveState()
+
+                // Remove all the previous fragments from the back stack
+                //TODO: change the fragment
+                navController.popBackStack(R.id.courseFragment, true)
+
+                // Minimize the app
+                requireActivity().moveTaskToBack(true)
+
+                // Restore the navigation state when the app is resumed
+                navController.restoreState(navState)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         // Set up initial fragment to be displayed
         switchFragment(usersList)
 
@@ -53,20 +75,5 @@ class AdminFragment : Fragment()
         childFragmentManager.beginTransaction().replace(R.id.fragmentContainer, fragment).commit()
     }
 
-    /*private fun checkLoginStatus()
-    {
-        if(preferenceManager.isLogin() == false)
-        {
-            val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-            Navigation.findNavController(requireView()).navigate(action)
-        }
-    }
-
-    private fun logout()
-    {
-        preferenceManager.removeData()
-        val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-        Navigation.findNavController(requireView()).navigate(action)
-    }*/
 
 }

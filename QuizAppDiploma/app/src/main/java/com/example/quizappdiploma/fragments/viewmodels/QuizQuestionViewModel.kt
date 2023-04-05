@@ -21,6 +21,12 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
             quizQuestionDataRepository.updateQuestion(question)
         }
     }
+    fun resetAllQuestions()
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            quizQuestionDataRepository.resetAllQuestions()
+        }
+    }
     suspend fun deleteQuestion(question: QuizQuestionModel)
     {
         quizQuestionDataRepository.deleteQuestion(question)

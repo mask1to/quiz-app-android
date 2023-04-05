@@ -18,6 +18,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.quizzes.QuizDataRepository
@@ -72,7 +73,6 @@ class QuizFragment : Fragment(), OnClickListener
     private var questionStartTime: Double = 0.0
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
-    private var backPressedCallback: OnBackPressedCallback? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
 
@@ -80,15 +80,6 @@ class QuizFragment : Fragment(), OnClickListener
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-
-        // todo: popBackStack, find out how to delete navigation which was done
-        backPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this,
-            backPressedCallback as OnBackPressedCallback
-        )
         preferenceManager = PreferenceManager(requireContext())
     }
 
@@ -102,6 +93,25 @@ class QuizFragment : Fragment(), OnClickListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+
+        val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                // Save the current navigation state
+                val navController = findNavController()
+                val navState = navController.saveState()
+
+                // Remove all the previous fragments from the back stack
+                navController.popBackStack(R.id.resultQuizFragment, true)
+
+                // Minimize the app
+                requireActivity().moveTaskToBack(true)
+
+                // Restore the navigation state when the app is resumed
+                navController.restoreState(navState)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         progressBar = binding.progressBar
         submitBtn = binding.btnSubmit
@@ -167,20 +177,14 @@ class QuizFragment : Fragment(), OnClickListener
             val timeSpent = questionEndTime - questionStartTime
             val timeSpentSeconds = timeSpent / 1000
             questionStartTime = questionEndTime.toDouble()
-            Log.d("timeSpent in seconds: ", timeSpentSeconds.toString())
+            //Log.d("timeSpent in seconds: ", timeSpentSeconds.toString())
 
             if(mySelectedOption == 0)
             {
                 binding.btnSubmit.isEnabled = false
                 val previousQuestion = myQuestionList!![myCurrentPosition - 1]
                 quizQuestionViewModel.updateQuestion(previousQuestion)
-                // Reset startTime for the next question
 
-                /*
-                 TODO:
-                  1. spravit nejaku novu tabulku na answers aj s user_id, question_id
-                  2. do poslednych 5 otazok nastavit aj parameter timeSpent
-                 */
                 myCurrentPosition++
 
                 when{
@@ -188,9 +192,10 @@ class QuizFragment : Fragment(), OnClickListener
                         setQuestion()
                     }
                     else ->{
-                        //TODO: send correct_answers, username, total_questions
+                        quizQuestionViewModel.resetAllQuestions()
+                        val loggedUser = preferenceManager.getLoggedInUser()
                         val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(
-                            username, myQuestionList!!.size, correctAnswers)
+                            loggedUser.username.toString(), myQuestionList!!.size, correctAnswers)
                         Navigation.findNavController(requireView()).navigate(action)
                     }
                 }
@@ -238,18 +243,10 @@ class QuizFragment : Fragment(), OnClickListener
                     additionalQuestionsGenerated = true
                     viewLifecycleOwner.lifecycleScope.launch {
                         val averageTime = quizQuestionViewModel.getAverageTimeSpentOnUsedQuestions()
-                        if (averageTime != null) {
-                            Log.d("AverageTime", "Average time spent on used questions: $averageTime")
-                        } else {
-                            Log.d("AverageTime", "No data available")
-                        }
                         updateQuizQuestions(correctAnswers, courseId, averageTime!!)
                     }
-
                 }
-
             }
-
         }
     }
 

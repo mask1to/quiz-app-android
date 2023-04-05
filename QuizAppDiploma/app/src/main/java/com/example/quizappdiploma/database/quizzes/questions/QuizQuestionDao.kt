@@ -14,16 +14,29 @@ interface QuizQuestionDao
 
     @Query
         ("""
-            SELECT AVG(time_spent) FROM user_answers WHERE question_id IN 
+            SELECT AVG(time_spent) FROM 
             (
-                SELECT id FROM quiz_questions WHERE alreadyUsed = 1
-            )
+                SELECT time_spent FROM user_answers WHERE question_id IN 
+                (
+                    SELECT id FROM quiz_questions WHERE alreadyUsed = 1
+                )
+                ORDER BY id DESC LIMIT 5
+            ) AS last_five_answers
         """)
     suspend fun getAverageTimeSpentOnUsedQuestions(): Double?
+
+    @Query("SELECT * FROM quiz_questions")
+    fun getAllQuestions() : List<QuizQuestionModel>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addQuestion(question : QuizQuestionModel)
+
     @Update
     fun updateQuestion(question: QuizQuestionModel)
+
+    @Update
+    fun resetQuestion(question: QuizQuestionModel)
+
     @Delete
     suspend fun deleteQuestion(question: QuizQuestionModel)
 

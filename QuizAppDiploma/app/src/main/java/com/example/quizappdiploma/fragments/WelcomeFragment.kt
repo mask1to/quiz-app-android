@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +50,25 @@ class WelcomeFragment : Fragment() {
         loginButton = binding.loginBtn
         emailField = binding.emailField
         passwordField = binding.passwordField
+
+        val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                // Save the current navigation state
+                val navController = findNavController()
+                val navState = navController.saveState()
+
+                // Remove all the previous fragments from the back stack
+                navController.popBackStack(R.id.studentFragment, true)
+
+                // Minimize the app
+                requireActivity().moveTaskToBack(true)
+
+                // Restore the navigation state when the app is resumed
+                navController.restoreState(navState)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         checkLogin()
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
@@ -34,6 +35,25 @@ class StudentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                // Save the current navigation state
+                val navController = findNavController()
+                val navState = navController.saveState()
+
+                // Remove all the previous fragments from the back stack
+                navController.popBackStack(R.id.courseFragment, true)
+
+                // Minimize the app
+                requireActivity().moveTaskToBack(true)
+
+                // Restore the navigation state when the app is resumed
+                navController.restoreState(navState)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         checkLoginStatus()
 

@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
@@ -26,11 +28,20 @@ class ResultQuizFragment : Fragment()
     private lateinit var congratsTextView: TextView
     private lateinit var finalAnimation : LottieAnimationView
     private lateinit var btnFinish : Button
+    private var backPressedCallback: OnBackPressedCallback? = null
     private val args : ResultQuizFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
+
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            backPressedCallback as OnBackPressedCallback
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
