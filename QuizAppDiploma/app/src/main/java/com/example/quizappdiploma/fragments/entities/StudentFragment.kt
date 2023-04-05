@@ -82,8 +82,6 @@ class StudentFragment : Fragment() {
         if (loggedInUser == null) {
             val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
             findNavController().navigate(action)
-        } else {
-            Toast.makeText(requireContext(), "Login status true", Toast.LENGTH_SHORT).show()
         }
     }
 
