@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull
 @Entity(tableName = "users")
 class UserModel(
     @PrimaryKey(autoGenerate = true)
-    val id : Int?,
+    val id : Int? = null,
     @ColumnInfo(name = "email")
     val email : String?,
     @ColumnInfo(name = "username")

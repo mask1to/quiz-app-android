@@ -6,20 +6,24 @@ class CourseDataRepository(private val courseDao: CourseDao)
 {
     suspend fun addCourse(course : CourseModel)
     {
-        courseDao.addCourse(course)
+        return courseDao.addCourse(course)
     }
     suspend fun updateCourse(course: CourseModel)
     {
-        courseDao.updateCourse(course)
+        return courseDao.updateCourse(course)
     }
     suspend fun deleteCourse(course: CourseModel)
     {
-        courseDao.deleteCourse(course)
+        return courseDao.deleteCourse(course)
     }
-
     fun getCoursesByIdAsc() : LiveData<List<CourseModel>>
     {
         return courseDao.getCoursesOrderByIdAsc()
+    }
+
+    fun getCourseByName(courseName : String) : LiveData<List<CourseModel>>
+    {
+        return courseDao.getCourseByName(courseName)
     }
 
 }

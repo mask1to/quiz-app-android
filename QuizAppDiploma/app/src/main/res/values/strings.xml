@@ -24,4 +24,17 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_dialog">Title Dialog</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_username">Enter username</string>
+    <string name="enter_password">Enter password</string>
+    <string name="do_action">Do Action</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_course_name">Enter course name</string>
+    <string name="enter_current_e_mail">Enter current e-mail</string>
+    <string name="enter_new_email">Enter new email</string>
+    <string name="enter_current_username">Enter current username</string>
+    <string name="enter_new_username">Enter new username</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="enter_current_course_name">Enter current course name</string>
 </resources>

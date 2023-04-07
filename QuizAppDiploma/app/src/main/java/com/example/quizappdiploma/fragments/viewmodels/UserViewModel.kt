@@ -7,7 +7,8 @@ import kotlinx.coroutines.launch
 
 class UserViewModel(private val userDataRepository: UserDataRepository) : ViewModel()
 {
-    suspend fun getUserByEmailAndPassword(email: String, password: String): UserModel? {
+    suspend fun getUserByEmailAndPassword(email: String, password: String): UserModel?
+    {
         return userDataRepository.getUserByEmailAndPassword(email, password)
     }
     fun getUsers() : LiveData<List<UserModel>>
@@ -15,9 +16,31 @@ class UserViewModel(private val userDataRepository: UserDataRepository) : ViewMo
         return userDataRepository.getUsers()
     }
 
-    fun insertUser(user: UserModel) {
+    fun getUserByUsernameAndEmail(username: String, email: String): LiveData<List<UserModel>>
+    {
+        return userDataRepository.getUserByUsernameAndEmail(username, email)
+    }
+
+    fun getUserByEmail(email : String) : LiveData<List<UserModel>>
+    {
+        return userDataRepository.getUserByEmail(email)
+    }
+    fun insertUser(user: UserModel)
+    {
         viewModelScope.launch {
             userDataRepository.insertUser(user)
+        }
+    }
+    fun updateUser(user: UserModel)
+    {
+        viewModelScope.launch {
+            userDataRepository.updateUser(user)
+        }
+    }
+    fun deleteUser(user : UserModel)
+    {
+        viewModelScope.launch {
+            userDataRepository.deleteUser(user)
         }
     }
 }
