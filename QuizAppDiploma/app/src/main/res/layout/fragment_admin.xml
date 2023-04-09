@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Users"
+            android:text="@string/users"
             app:cornerRadius="8dp"
             android:backgroundTint="@color/purple_700" />
 
@@ -60,7 +60,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Courses"
+            android:text="@string/courses"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
             app:cornerRadius="8dp"
             android:backgroundTint="@color/purple_700" />
 
@@ -91,9 +99,16 @@
             android:layout_height="wrap_content"
             android:text="Courses" />
 
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lecturesRadioButton"
+            android:text="Lectures"/>
+
     </RadioGroup>
 
     <LinearLayout
+        android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">

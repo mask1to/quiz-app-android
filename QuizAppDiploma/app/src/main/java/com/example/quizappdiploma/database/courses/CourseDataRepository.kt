@@ -20,10 +20,18 @@ class CourseDataRepository(private val courseDao: CourseDao)
     {
         return courseDao.getCoursesOrderByIdAsc()
     }
-
     fun getCourseByName(courseName : String) : LiveData<List<CourseModel>>
     {
         return courseDao.getCourseByName(courseName)
     }
 
+    fun getCourseNames() : LiveData<List<CourseModel>>
+    {
+        return courseDao.getCourseNames()
+    }
+
+    fun getCourseIdByName(courseName : String) : LiveData<List<CourseModel>>
+    {
+        return courseDao.getCourseIdByName(courseName)
+    }
 }
