@@ -1,10 +1,16 @@
 package com.example.quizappdiploma.fragments
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
@@ -18,6 +24,7 @@ import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.databinding.WelcomeFragmentBinding
 import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
+import com.example.quizappdiploma.preferences.AppTheme
 import com.example.quizappdiploma.preferences.PreferenceManager
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
@@ -25,6 +32,7 @@ class WelcomeFragment : Fragment() {
     private var _binding: WelcomeFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var textField: TextInputLayout
+    private lateinit var themeMenu : TextInputLayout
     private lateinit var emailField: TextInputLayout
     private lateinit var passwordField: TextInputLayout
     private lateinit var registerButton: Button
@@ -46,6 +54,7 @@ class WelcomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         textField = binding.menu
+        themeMenu = binding.themeMenu
         registerButton = binding.registerBtn
         loginButton = binding.loginBtn
         emailField = binding.emailField
@@ -80,6 +89,13 @@ class WelcomeFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
         (textField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
+        val themeAutoCompleteTextView = view.findViewById<AutoCompleteTextView>(R.id.autoTextView2)
+        val themeList = AppTheme.values().map { it.name }.toList()
+        val themeAdapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, themeList)
+        themeAutoCompleteTextView.setAdapter(themeAdapter)
+        var selectedTheme = preferenceManager.getThemePreference()
+        themeAutoCompleteTextView.setText(selectedTheme.name, false)
+
         loginButton.setOnClickListener {
             val emailInput = emailField.editText?.text.toString()
             val passwordInput = passwordField.editText?.text.toString()
@@ -94,6 +110,14 @@ class WelcomeFragment : Fragment() {
                     preferenceManager.saveUser(user)
 
                     Log.d("role: ", role)
+
+                    val selectedThemeName = themeAutoCompleteTextView.text.toString()
+                    selectedTheme = AppTheme.valueOf(selectedThemeName)
+                    preferenceManager.saveThemePreference(selectedTheme)
+
+                    showAnnouncementDialog {
+                        requireActivity().recreate()
+                    }
 
                     if(user.isStudent == 1 && user.isAdmin == 0 && user.isLecturer == 0 && role == "Študent")
                     {
@@ -122,6 +146,21 @@ class WelcomeFragment : Fragment() {
             val action = WelcomeFragmentDirections.actionWelcomeFragmentToRegistrationFragment()
             view.findNavController().navigate(action)
         }
+    }
+
+    //TODO: theme is not overwritten, check
+    private fun showAnnouncementDialog(onDialogDismissed: () -> Unit) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.announcement_dialog)
+        dialog.setCancelable(false)
+        dialog.show()
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            dialog.dismiss()
+            onDialogDismissed()
+        }, 3200) // Change the delay time if necessary
     }
 
     private fun checkLogin() {

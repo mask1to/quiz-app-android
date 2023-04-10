@@ -53,5 +53,17 @@ class PreferenceManager(context: Context)
         editor.remove("is_student")
         editor.apply()
     }
+
+    fun saveThemePreference(theme: AppTheme) {
+        val editor = sharedPreferences.edit()
+        editor.putString("theme_preference", theme.name)
+        editor.apply()
+    }
+
+    fun getThemePreference(): AppTheme {
+        val themeName = sharedPreferences.getString("theme_preference", AppTheme.LIGHT.name)
+        return AppTheme.valueOf(themeName ?: AppTheme.LIGHT.name)
+    }
+
 }
 

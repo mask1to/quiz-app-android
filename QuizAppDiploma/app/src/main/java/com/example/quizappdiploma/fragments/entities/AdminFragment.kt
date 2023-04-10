@@ -46,6 +46,7 @@ import kotlinx.android.synthetic.main.custom_dialog_remove_course.*
 import kotlinx.android.synthetic.main.custom_dialog_remove_user.*
 import kotlinx.android.synthetic.main.custom_dialog_update_course.*
 import kotlinx.android.synthetic.main.custom_dialog_update_user.*
+import java.util.regex.Pattern
 
 class AdminFragment : Fragment()
 {
@@ -88,7 +89,6 @@ class AdminFragment : Fragment()
                 val navState = navController.saveState()
 
                 // Remove all the previous fragments from the back stack
-                //TODO: change the fragment
                 navController.popBackStack(R.id.courseFragment, true)
 
                 // Minimize the app
@@ -191,55 +191,66 @@ class AdminFragment : Fragment()
 
         val positiveButton = dialog.findViewById<Button>(R.id.dialogPositiveButton)
 
-        /*val courseMenu = dialog.findViewById<TextInputLayout>(R.id.courseMenu)
+        val courseMenu = dialog.findViewById<TextInputLayout>(R.id.courseMenu)
         val lectureMenu = dialog.findViewById<TextInputLayout>(R.id.lectureMenu)
+        val imageUrlField = dialog.findViewById<TextInputLayout>(R.id.imageUrlField)
         val newLectureDesc = dialog.findViewById<TextInputLayout>(R.id.newLectureDescDialogField)
 
-        val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
-        val lectureAdapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
+        if (courseMenu != null)
+        {
+            val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
+            (courseMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
-        (courseMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
-        (lectureMenu.editText as? AutoCompleteTextView)?.setAdapter(lectureAdapter)
+            courseViewModel.getCourseNames().observeOnce(viewLifecycleOwner)
+            { courses ->
+                val courseNames = courses.map { it.courseName }
+                val courseIds = courses.map { it.id }
 
-        courseViewModel.getCourseNames().observeOnce(viewLifecycleOwner) { courses ->
-            val courseNames = courses.map { it.courseName }
-            val courseIds = courses.map { it.id }
+                adapter.clear()
+                adapter.addAll(courseNames)
+                val courseAutoCompleteTextView = (courseMenu.editText as? AutoCompleteTextView)
+                courseAutoCompleteTextView?.setAdapter(adapter)
 
-            adapter.clear()
-            adapter.addAll(courseNames)
-            val courseAutoCompleteTextView = (courseMenu.editText as? AutoCompleteTextView)
-            courseAutoCompleteTextView?.setAdapter(adapter)
+                courseAutoCompleteTextView?.setOnItemClickListener{ parent, _, position, _ ->
+                    val selectedCourseId = courseIds[position]
 
-            val lectureAutoCompleteTextView = (lectureMenu.editText as? AutoCompleteTextView)
+                    if (selectedCourseId != null && lectureMenu != null)
+                    {
+                        val lectureAdapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
+                        (lectureMenu.editText as? AutoCompleteTextView)?.setAdapter(lectureAdapter)
 
-            courseAutoCompleteTextView?.setOnItemClickListener { parent, _, position, _ ->
-                val selectedCourseId = courseIds[position]
+                        lectureViewModel.getLectureNameByCourseId(selectedCourseId).observeOnce(viewLifecycleOwner)
+                        { lectures ->
+                            val lectureNames = lectures.mapNotNull { it.lectureName } // Filter out null values
 
-                if (selectedCourseId != null) {
-                    lectureViewModel.getLectureNameByCourseId(selectedCourseId).observeOnce(viewLifecycleOwner) { lectures ->
-                        val lectureNames = lectures.mapNotNull { it.lectureName } // Filter out null values
+                            lectureAdapter.clear()
+                            lectureAdapter.addAll(lectureNames)
+                            val lectureAutoCompleteTextView = (lectureMenu.editText as? AutoCompleteTextView)
+                            lectureAutoCompleteTextView?.setAdapter(lectureAdapter)
 
-                        lectureAdapter.clear()
-                        lectureAdapter.addAll(lectureNames)
-                        lectureAutoCompleteTextView?.setAdapter(lectureAdapter)
-                    }
-                }
-            }
+                            lectureAutoCompleteTextView?.setOnItemClickListener { _, _, position, _ ->
+                                val selectedLectureName = lectureAutoCompleteTextView.adapter.getItem(position).toString()
 
-            lectureAutoCompleteTextView?.setOnItemClickListener { _, _, position, _ ->
-                val selectedLectureName = lectureAutoCompleteTextView.adapter.getItem(position).toString()
-
-                lectureViewModel.getLectureDescByLectureName(selectedLectureName).observeOnce(viewLifecycleOwner) { lecture ->
-                    if (lecture != null) {
-                        if (lecture.isNotEmpty()) {
-                            val currLecture = lecture.first()
-                            Log.d("currLecture: ", currLecture.toString())
-                            newLectureDesc.editText?.setText(currLecture.lectureDescription)
+                                lectureViewModel.getLectureDescByLectureName(selectedLectureName).observeOnce(viewLifecycleOwner)
+                                { lecture ->
+                                    if (lecture != null)
+                                    {
+                                        if (lecture.isNotEmpty())
+                                        {
+                                            val currLecture = lecture.first()
+                                            Log.d("currLecture: ", currLecture.toString())
+                                            if (newLectureDesc != null) {
+                                                newLectureDesc.editText?.setText(currLecture.lectureDescription)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-        }*/
+        }
 
 
         positiveButton.text = action.capitalize()
@@ -283,31 +294,40 @@ class AdminFragment : Fragment()
                     }
                     else
                     {
-                        /*val lectureName = dialog.findViewById<TextInputLayout>(R.id.lectureNameDialogField)
+                        val lectureName = dialog.findViewById<TextInputLayout>(R.id.lectureNameDialogField)
                         val lectureDesc = dialog.findViewById<TextInputLayout>(R.id.lectureDescDialogField)
                         val course = courseMenu.editText?.text.toString()
 
                         courseViewModel.getCourseIdByName(course).observeOnce(viewLifecycleOwner){ courseId ->
                             if(courseId != null)
                             {
-                                if(courseId.isNotEmpty())
+                                val url = imageUrlField?.editText?.text.toString()
+                                if(isValidUrl(url))
                                 {
-                                    val cId = courseId.first()
-                                    val lecture = LectureModel(
-                                        id = null,
-                                        course_id = cId.id,
-                                        image_path = null,
-                                        lectureName = lectureName?.editText?.text.toString(),
-                                        lectureDescription = lectureDesc?.editText?.text.toString()
-                                    )
-                                    if(checkLectureFields(lectureName, lectureDesc))
+                                    if(courseId.isNotEmpty())
                                     {
-                                        lectureViewModel.addLecture(lecture)
-                                        showConfirmationDialog("Lecture has been added")
+                                        val cId = courseId.first()
+                                        val lecture = LectureModel(
+                                            id = null,
+                                            course_id = cId.id,
+                                            image_path = url,
+                                            lectureName = lectureName?.editText?.text.toString(),
+                                            lectureDescription = lectureDesc?.editText?.text.toString()
+                                        )
+                                        if(checkLectureFields(lectureName, lectureDesc))
+                                        {
+                                            lectureViewModel.addLecture(lecture)
+                                            showConfirmationDialog("Lecture has been added")
+                                        }
                                     }
                                 }
+                                else
+                                {
+                                    Toast.makeText(requireContext(), "Please enter valid URL", Toast.LENGTH_SHORT).show()
+                                }
+
                             }
-                        }*/
+                        }
                     }
                 }
                 "update" ->
@@ -379,7 +399,7 @@ class AdminFragment : Fragment()
                     }
                     else
                     {
-                        /*val lectureName = lectureMenu.editText?.text.toString()
+                        val lectureName = lectureMenu.editText?.text.toString()
 
                         lectureViewModel.getLectureDescByLectureName(lectureName).observeOnce(viewLifecycleOwner){lecture ->
                             if(lecture !=null)
@@ -399,7 +419,7 @@ class AdminFragment : Fragment()
                                     showConfirmationDialog("Lecture has been updated")
                                 }
                             }
-                        }*/
+                        }
                     }
                 }
                 "remove" ->
@@ -463,7 +483,25 @@ class AdminFragment : Fragment()
                     }
                     else
                     {
-
+                        val lectureName = lectureMenu.editText?.text.toString()
+                        lectureViewModel.getLectureDescByLectureName(lectureName).observeOnce(viewLifecycleOwner){lecture ->
+                            if(lecture != null)
+                            {
+                                if(lecture.isNotEmpty())
+                                {
+                                    val currLecture = lecture.first()
+                                    val removedLecture = LectureModel(
+                                        id = currLecture.id,
+                                        course_id = currLecture.course_id,
+                                        image_path = currLecture.image_path,
+                                        lectureName = currLecture.lectureName,
+                                        lectureDescription = currLecture.lectureDescription
+                                    )
+                                    lectureViewModel.deleteLecture(removedLecture)
+                                    showConfirmationDialog("Lecture has been deleted")
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -485,6 +523,23 @@ class AdminFragment : Fragment()
                 removeObserver(this)
             }
         })
+    }
+
+    fun isValidUrl(url: String): Boolean
+    {
+        val urlPattern = Pattern.compile(
+            "^(https?:\\/\\/)" +     // URL protocol
+                    "(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.([a-z]{2,}|imgur\\.com)|" + // Domain name or imgur.com
+                    "((\\d{1,3}\\.){3}\\d{1,3}))" +   // OR IP (v4) address
+                    "(:\\d{1,5})?" +                // Optional port
+                    "(\\/[-a-z\\d%_.~+]*)*" +       // Path
+                    "(\\?[;&a-z\\d%_.~+=-]*)?" +    // Query string
+                    "(\\#[-a-z\\d_]*)?\$",          // Fragment locator
+            Pattern.CASE_INSENSITIVE
+        )
+
+        val matcher = urlPattern.matcher(url)
+        return matcher.matches()
     }
 
     private fun checkUserFields(firstField: EditText, secondField: EditText, thirdField: EditText): Boolean {

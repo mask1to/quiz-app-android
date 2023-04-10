@@ -49,9 +49,6 @@ class QuizFragment : Fragment(), OnClickListener
     private var _binding : FragmentQuizBinding? = null
     private val binding get() = _binding!!
 
-    //getUsername of user, who is doing it
-    //TODO: remove
-    private val username = "masko"
     private lateinit var quizQuestionViewModel: QuizQuestionViewModel
     private lateinit var userAnswersViewModel: UserAnswersViewModel
     private lateinit var quizViewModel: QuizViewModel
@@ -413,8 +410,6 @@ class QuizFragment : Fragment(), OnClickListener
             }
         }
     }
-
-    //TODO:
     private fun updateQuizQuestions(correctAnswers: Int, courseId: Int, timeSpent: Double) {
         when (correctAnswers)
         {
