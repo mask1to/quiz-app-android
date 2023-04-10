@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,11 +15,8 @@ import com.example.quizappdiploma.R
 import com.example.quizappdiploma.adapters.lists.StatsAdapter
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.quizzes.stats.QuizStatsDataRepository
-import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.fragments.viewmodels.QuizStatsViewModel
-import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizStatsViewModelFactory
-import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
 import kotlinx.coroutines.launch
 
 class StatsFragment : Fragment() {
@@ -33,9 +29,7 @@ class StatsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_stats, container, false)
-
-        return view
+        return inflater.inflate(R.layout.fragment_stats, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

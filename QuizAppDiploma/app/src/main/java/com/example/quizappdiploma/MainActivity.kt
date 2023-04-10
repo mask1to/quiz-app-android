@@ -5,12 +5,15 @@ import android.os.Bundle
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.quizappdiploma.preferences.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity()
 {
+    private lateinit var preferenceManager: PreferenceManager
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        preferenceManager = PreferenceManager(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
