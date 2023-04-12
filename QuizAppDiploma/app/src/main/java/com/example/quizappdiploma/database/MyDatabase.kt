@@ -31,7 +31,6 @@ abstract class MyDatabase : RoomDatabase()
     abstract fun myDatabaseDao(): MyDatabaseDao
     abstract fun courseDao(): CourseDao
     abstract fun lectureDao(): LectureDao
-
     abstract fun quizDao() : QuizDao
     abstract fun quizQuestionDao(): QuizQuestionDao
     abstract fun userDao(): UserDao

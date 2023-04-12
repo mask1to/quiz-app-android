@@ -47,4 +47,6 @@
     <string name="enter_lecture_name">Enter lecture name</string>
     <string name="pick_a_course">Pick a course</string>
     <string name="paste_image_url">Paste image URL</string>
+    <string name="enter_quiz_name">Enter quiz name</string>
+    <string name="enter_quiz_points">Enter quiz points</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.quizappdiploma.fragments.entities
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -14,11 +15,13 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isEmpty
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -30,6 +33,10 @@ import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.database.courses.CourseModel
 import com.example.quizappdiploma.database.lectures.LectureDataRepository
 import com.example.quizappdiploma.database.lectures.LectureModel
+import com.example.quizappdiploma.database.quizzes.QuizDataRepository
+import com.example.quizappdiploma.database.quizzes.QuizModel
+import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
+import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
 import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.database.users.UserModel
 import com.example.quizappdiploma.databinding.FragmentAdminBinding
@@ -62,6 +69,8 @@ class AdminFragment : Fragment()
     private lateinit var userViewModel : UserViewModel
     private lateinit var courseViewModel : CourseViewModel
     private lateinit var lectureViewModel : LectureViewModel
+    private lateinit var quizViewModel: QuizViewModel
+    private lateinit var quizQuestionViewModel : QuizQuestionViewModel
 
     private var currentList: String = "users"
 
@@ -100,28 +109,82 @@ class AdminFragment : Fragment()
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
+        binding.addButton.isEnabled = false
+        binding.updateButton.isEnabled = false
+        binding.removeButton.isEnabled = false
 
         val userDao = MyDatabase.getDatabase(requireContext()).userDao()
         val courseDao = MyDatabase.getDatabase(requireContext()).courseDao()
         val lectureDao = MyDatabase.getDatabase(requireContext()).lectureDao()
+        val quizDao = MyDatabase.getDatabase(requireContext()).quizDao()
+        val quizQuestionDao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
 
         val userRepository = UserDataRepository(userDao)
         val courseRepository = CourseDataRepository(courseDao)
         val lectureRepository = LectureDataRepository(lectureDao)
+        val quizRepository = QuizDataRepository(quizDao)
+        val quizQuestionRepository = QuizQuestionDataRepository(quizQuestionDao)
 
         userViewModel = ViewModelProvider(this, UserViewModelFactory(userRepository))[UserViewModel::class.java]
         courseViewModel = ViewModelProvider(this, CourseViewModelFactory(courseRepository))[CourseViewModel::class.java]
         lectureViewModel = ViewModelProvider(this, LectureViewModelFactory(lectureRepository))[LectureViewModel::class.java]
+        quizViewModel = ViewModelProvider(this, QuizViewModelFactory(quizRepository))[QuizViewModel::class.java]
+        quizQuestionViewModel = ViewModelProvider(this, QuizQuestionViewModelFactory(quizQuestionRepository))[QuizQuestionViewModel::class.java]
 
-        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.usersRadioButton -> currentList = "user"
-                R.id.coursesRadioButton -> currentList = "course"
-                R.id.lecturesRadioButton -> currentList = "lecture"
+        val usersRadioButton = binding.usersRadioButton
+        val coursesRadioButton = binding.coursesRadioButton
+        val lecturesRadioButton = binding.lecturesRadioButton
+        val questionsRadioButton = binding.questionsRadioButton
+        val quizzesRadioButton = binding.quizzesRadioButton
+
+        val radioButtonClickListener = View.OnClickListener { view ->
+            usersRadioButton.isChecked = view.id == R.id.usersRadioButton
+            coursesRadioButton.isChecked = view.id == R.id.coursesRadioButton
+            lecturesRadioButton.isChecked = view.id == R.id.lecturesRadioButton
+            questionsRadioButton.isChecked = view.id == R.id.questionsRadioButton
+            quizzesRadioButton.isChecked = view.id == R.id.quizzesRadioButton
+
+            when (view.id) {
+                R.id.usersRadioButton -> {
+                    currentList = "user"
+                    binding.addButton.isEnabled = true
+                    binding.updateButton.isEnabled = true
+                    binding.removeButton.isEnabled = true
+                }
+                R.id.coursesRadioButton -> {
+                    currentList = "course"
+                    binding.updateButton.isEnabled = true
+                    binding.removeButton.isEnabled = true
+                }
+                R.id.lecturesRadioButton -> {
+                    currentList = "lecture"
+                    binding.updateButton.isEnabled = true
+                    binding.removeButton.isEnabled = true
+                }
+                R.id.questionsRadioButton -> {
+                    currentList = "question"
+                    binding.updateButton.isEnabled = true
+                    binding.removeButton.isEnabled = true
+                }
+                R.id.quizzesRadioButton -> {
+                    currentList = "quiz"
+                    binding.updateButton.isEnabled = false
+                    binding.removeButton.isEnabled = false
+                }
             }
         }
 
-        binding.usersRadioButton.isChecked = true
+        usersRadioButton.setOnClickListener(radioButtonClickListener)
+        coursesRadioButton.setOnClickListener(radioButtonClickListener)
+        lecturesRadioButton.setOnClickListener(radioButtonClickListener)
+        questionsRadioButton.setOnClickListener(radioButtonClickListener)
+        quizzesRadioButton.setOnClickListener(radioButtonClickListener)
+
+        val loggedInUser = preferenceManager.getLoggedInUser()
+        binding.nameTextView.text = loggedInUser.username
+        binding.emailTextView.text = loggedInUser.email
+
+        //binding.usersRadioButton.isChecked = true
 
         // Set up initial fragment to be displayed
         switchFragment(usersList)
@@ -179,6 +242,18 @@ class AdminFragment : Fragment()
                 "remove" -> R.layout.custom_dialog_remove_lecture
                 else -> throw IllegalArgumentException("Invalid action")
             }
+            "question" -> when(action)
+            {
+                "add" -> R.layout.custom_dialog_add_question
+                "update" -> R.layout.custom_dialog_update_question
+                "remove" -> R.layout.custom_dialog_remove_question
+                else -> throw IllegalArgumentException("Invalid action")
+            }
+            "quiz" -> when(action)
+            {
+                "add" -> R.layout.custom_dialog_add_quiz
+                else -> throw IllegalArgumentException("Invalid action")
+            }
             else -> throw IllegalArgumentException("Invalid listType")
         }
 
@@ -193,16 +268,15 @@ class AdminFragment : Fragment()
 
         val courseMenu = dialog.findViewById<TextInputLayout>(R.id.courseMenu)
         val lectureMenu = dialog.findViewById<TextInputLayout>(R.id.lectureMenu)
+        val questionMenu = dialog.findViewById<TextInputLayout>(R.id.questionMenu)
         val imageUrlField = dialog.findViewById<TextInputLayout>(R.id.imageUrlField)
         val newLectureDesc = dialog.findViewById<TextInputLayout>(R.id.newLectureDescDialogField)
 
-        if (courseMenu != null)
-        {
+        if (courseMenu != null) {
             val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
             (courseMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
-            courseViewModel.getCourseNames().observeOnce(viewLifecycleOwner)
-            { courses ->
+            courseViewModel.getCourseNames().observeOnce(viewLifecycleOwner) { courses ->
                 val courseNames = courses.map { it.courseName }
                 val courseIds = courses.map { it.id }
 
@@ -211,16 +285,14 @@ class AdminFragment : Fragment()
                 val courseAutoCompleteTextView = (courseMenu.editText as? AutoCompleteTextView)
                 courseAutoCompleteTextView?.setAdapter(adapter)
 
-                courseAutoCompleteTextView?.setOnItemClickListener{ parent, _, position, _ ->
+                courseAutoCompleteTextView?.setOnItemClickListener { parent, _, position, _ ->
                     val selectedCourseId = courseIds[position]
 
-                    if (selectedCourseId != null && lectureMenu != null)
-                    {
+                    if (selectedCourseId != null && lectureMenu != null) {
                         val lectureAdapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
                         (lectureMenu.editText as? AutoCompleteTextView)?.setAdapter(lectureAdapter)
 
-                        lectureViewModel.getLectureNameByCourseId(selectedCourseId).observeOnce(viewLifecycleOwner)
-                        { lectures ->
+                        lectureViewModel.getLectureNameByCourseId(selectedCourseId).observeOnce(viewLifecycleOwner) { lectures ->
                             val lectureNames = lectures.mapNotNull { it.lectureName } // Filter out null values
 
                             lectureAdapter.clear()
@@ -231,17 +303,43 @@ class AdminFragment : Fragment()
                             lectureAutoCompleteTextView?.setOnItemClickListener { _, _, position, _ ->
                                 val selectedLectureName = lectureAutoCompleteTextView.adapter.getItem(position).toString()
 
-                                lectureViewModel.getLectureDescByLectureName(selectedLectureName).observeOnce(viewLifecycleOwner)
-                                { lecture ->
-                                    if (lecture != null)
-                                    {
-                                        if (lecture.isNotEmpty())
-                                        {
+                                lectureViewModel.getLectureDescByLectureName(selectedLectureName).observeOnce(viewLifecycleOwner) { lecture ->
+                                    if (lecture != null) {
+                                        if (lecture.isNotEmpty()) {
                                             val currLecture = lecture.first()
-                                            Log.d("currLecture: ", currLecture.toString())
                                             if (newLectureDesc != null) {
                                                 newLectureDesc.editText?.setText(currLecture.lectureDescription)
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (selectedCourseId != null && questionMenu != null) {
+                        val questionAdapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
+                        (questionMenu.editText as? AutoCompleteTextView)?.setAdapter(questionAdapter)
+
+                        // Replace this with your ViewModel and method to get question names by courseId
+                        quizQuestionViewModel.getQuestionNamesByCourseId(selectedCourseId).observeOnce(viewLifecycleOwner) { questions ->
+                            val questionNames = questions.mapNotNull { it.questionName } // Filter out null values
+
+                            questionAdapter.clear()
+                            questionAdapter.addAll(questionNames)
+                            val questionAutoCompleteTextView = (questionMenu.editText as? AutoCompleteTextView)
+                            questionAutoCompleteTextView?.setAdapter(questionAdapter)
+
+                            // Add any specific actions when a question is selected, if needed
+                            questionAutoCompleteTextView?.setOnItemClickListener { _, _, position, _ ->
+                                val selectedQuestionName = questionAutoCompleteTextView.adapter.getItem(position).toString()
+                                quizQuestionViewModel.getQuestionPropsByQuestionName(selectedQuestionName).observeOnce(viewLifecycleOwner){questionProps->
+                                    if(questionProps != null)
+                                    {
+                                        if(questionProps.isNotEmpty())
+                                        {
+                                            val currProps = questionProps.first()
+                                            //TODO: setup all fields
                                         }
                                     }
                                 }
@@ -254,266 +352,374 @@ class AdminFragment : Fragment()
 
 
         positiveButton.text = action.capitalize()
-        positiveButton.setOnClickListener {
-            when (action)
-            {
-                "add" ->
+            positiveButton.setOnClickListener {
+                when (action)
                 {
-                    if (listType == "user")
+                    "add" ->
                     {
-                        val emailField = dialog.findViewById<EditText>(R.id.firstDialogField)
-                        val usernameField = dialog.findViewById<EditText>(R.id.secondDialogField)
-                        val passwordField = dialog.findViewById<EditText>(R.id.thirdDialogField)
-                        val user = UserModel(
-                            id = null,
-                            email = emailField?.text.toString(),
-                            username = usernameField?.text.toString(),
-                            password = passwordField?.text.toString(),
-                            isAdmin = 0,
-                            isLecturer = 0,
-                            isStudent = 1
-                        )
-                        if(checkUserFields(emailField, usernameField, passwordField))
+                        if (listType == "user")
                         {
-                            userViewModel.insertUser(user)
-                            showConfirmationDialog("User has been added")
-                        }
-                    }
-                    else if (listType == "course")
-                    {
-                        val courseName = dialog.findViewById<EditText>(R.id.courseDialogField)
-                        val course = CourseModel(
-                            id = null,
-                            courseName = courseName?.text.toString()
-                        )
-                        if(checkCourseFields(courseName))
-                        {
-                            courseViewModel.addCourse(course)
-                            showConfirmationDialog("Course has been added")
-                        }
-                    }
-                    else
-                    {
-                        val lectureName = dialog.findViewById<TextInputLayout>(R.id.lectureNameDialogField)
-                        val lectureDesc = dialog.findViewById<TextInputLayout>(R.id.lectureDescDialogField)
-                        val course = courseMenu.editText?.text.toString()
-
-                        courseViewModel.getCourseIdByName(course).observeOnce(viewLifecycleOwner){ courseId ->
-                            if(courseId != null)
+                            val emailField = dialog.findViewById<EditText>(R.id.firstDialogField)
+                            val usernameField = dialog.findViewById<EditText>(R.id.secondDialogField)
+                            val passwordField = dialog.findViewById<EditText>(R.id.thirdDialogField)
+                            val user = UserModel(
+                                id = null,
+                                email = emailField?.text.toString(),
+                                username = usernameField?.text.toString(),
+                                password = passwordField?.text.toString(),
+                                isAdmin = 0,
+                                isLecturer = 0,
+                                isStudent = 1
+                            )
+                            if(checkUserFields(emailField, usernameField, passwordField))
                             {
-                                val url = imageUrlField?.editText?.text.toString()
-                                if(isValidUrl(url))
+                                userViewModel.insertUser(user)
+                                showConfirmationDialog("User has been added")
+                            }
+                        }
+                        else if (listType == "course")
+                        {
+                            val courseName = dialog.findViewById<EditText>(R.id.courseDialogField)
+                            val course = CourseModel(
+                                id = null,
+                                courseName = courseName?.text.toString()
+                            )
+                            if(checkCourseFields(courseName))
+                            {
+                                courseViewModel.addCourse(course)
+                                showConfirmationDialog("Course has been added")
+                            }
+                        }
+                        else if (listType == "lecture")
+                        {
+                            val lectureName = dialog.findViewById<TextInputLayout>(R.id.lectureNameDialogField)
+                            val lectureDesc = dialog.findViewById<TextInputLayout>(R.id.lectureDescDialogField)
+                            val course = courseMenu.editText?.text.toString()
+
+                            courseViewModel.getCourseIdByName(course).observeOnce(viewLifecycleOwner){ courseId ->
+                                if(courseId != null)
                                 {
-                                    if(courseId.isNotEmpty())
+                                    val url = imageUrlField?.editText?.text.toString()
+                                    if(isValidUrl(url))
                                     {
-                                        val cId = courseId.first()
-                                        val lecture = LectureModel(
-                                            id = null,
-                                            course_id = cId.id,
-                                            image_path = url,
-                                            lectureName = lectureName?.editText?.text.toString(),
-                                            lectureDescription = lectureDesc?.editText?.text.toString()
-                                        )
-                                        if(checkLectureFields(lectureName, lectureDesc))
+                                        if(courseId.isNotEmpty())
                                         {
-                                            lectureViewModel.addLecture(lecture)
-                                            showConfirmationDialog("Lecture has been added")
+                                            val cId = courseId.first()
+                                            val lecture = LectureModel(
+                                                id = null,
+                                                course_id = cId.id,
+                                                image_path = url,
+                                                lectureName = lectureName?.editText?.text.toString(),
+                                                lectureDescription = lectureDesc?.editText?.text.toString()
+                                            )
+                                            if(checkLectureFields(lectureName, lectureDesc))
+                                            {
+                                                lectureViewModel.addLecture(lecture)
+                                                showConfirmationDialog("Lecture has been added")
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(requireContext(), "Please enter valid URL", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                }
+                            }
+                        }
+                        else if(listType == "question")
+                        {
+                            val courseName = courseMenu.editText?.text.toString()
+                            val questionNameTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionNameField)
+                            val imagePathTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionImagePath)
+                            val questionPointsTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionPointsField)
+                            val questionDifficultyTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionDifficultyField)
+                            val questionFirstAnswer = dialog.findViewById<TextInputLayout>(R.id.firstAnswerField)
+                            val questionSecondAnswer = dialog.findViewById<TextInputLayout>(R.id.secondAnswerField)
+                            val questionThirdAnswer = dialog.findViewById<TextInputLayout>(R.id.thirdAnswerField)
+                            val questionFourthAnswer = dialog.findViewById<TextInputLayout>(R.id.fourthAnswerField)
+                            val questionCorrectAnswer = dialog.findViewById<TextInputLayout>(R.id.correctAnswerField)
+
+                            courseViewModel.getCourseIdByName(courseName).observeOnce(viewLifecycleOwner){course ->
+                                if(course != null)
+                                {
+                                    val url = imagePathTextInputLayout?.editText?.text.toString()
+                                    if(isValidUrl(url))
+                                    {
+                                        if(course.isNotEmpty())
+                                        {
+                                            val cId = course.first()
+                                            val questionPoints = questionPointsTextInputLayout?.editText?.text.toString().toIntOrNull()
+                                            val questionDifficulty = questionDifficultyTextInputLayout?.editText?.text.toString().toIntOrNull()
+                                            val correctAnswer = questionCorrectAnswer?.editText?.text.toString().toIntOrNull()
+                                            if(questionPoints != null && questionDifficulty != null && correctAnswer != null)
+                                            {
+                                                if(checkQuestionFields(questionNameTextInputLayout, imagePathTextInputLayout, questionPointsTextInputLayout, questionDifficultyTextInputLayout,
+                                                        questionFirstAnswer, questionSecondAnswer, questionThirdAnswer, questionFourthAnswer, questionCorrectAnswer))
+                                                {
+                                                    val newQuestion = QuizQuestionModel(
+                                                        id = null,
+                                                        courseId = cId.id,
+                                                        questionName = questionNameTextInputLayout?.editText?.text.toString(),
+                                                        image_path = url,
+                                                        questionPoints = questionPoints,
+                                                        questionDifficulty = questionDifficulty,
+                                                        questionOptionA = questionFirstAnswer?.editText?.text.toString(),
+                                                        questionOptionB = questionSecondAnswer?.editText?.text.toString(),
+                                                        questionOptionC = questionThirdAnswer?.editText?.text.toString(),
+                                                        questionOptionD = questionFourthAnswer?.editText?.text.toString(),
+                                                        answer = correctAnswer,
+                                                        alreadyUsed = 0
+                                                    )
+                                                    quizQuestionViewModel.addQuestion(newQuestion)
+                                                    showConfirmationDialog("Question has been added")
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(requireContext(), "Please enter valid URL", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            val quizNameField = dialog.findViewById<TextInputLayout>(R.id.quizDialogField)
+                            val quizPointsField = dialog.findViewById<TextInputLayout>(R.id.quizPointsDialogField)
+                            val courseName = courseMenu.editText?.text.toString()
+
+                            val extractedEditTextString = quizPointsField.editText?.text.toString()
+                            val quizPoints: Int? = extractedEditTextString.toIntOrNull()
+
+                            val extractedEditTextName = quizNameField.editText?.text.toString()
+
+                            if(quizPoints != null)
+                            {
+                                courseViewModel.getCourseByName(courseName).observeOnce(viewLifecycleOwner){ course ->
+                                    if(course != null)
+                                    {
+                                        if(course.isNotEmpty())
+                                        {
+                                            val currCourse = course.first()
+                                            val quiz = QuizModel(
+                                                id = null,
+                                                course_id = currCourse.id,
+                                                quizName = extractedEditTextName,
+                                                quizTotalPoints = quizPoints
+                                            )
+
+                                            if(checkQuizFields(quizNameField, quizPointsField))
+                                            {
+                                                quizViewModel.insertQuiz(quiz)
+                                                showConfirmationDialog("Quiz has been added")
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(requireContext(), "Fill in fields, please", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }
-                                else
-                                {
-                                    Toast.makeText(requireContext(), "Please enter valid URL", Toast.LENGTH_SHORT).show()
-                                }
-
                             }
+                        }
+                    }
+                    "update" ->
+                    {
+                        if (listType == "user")
+                        {
+                            val currentEmailField = dialog.findViewById<EditText>(R.id.currentEmailField)
+                            val currentUsernameField = dialog.findViewById<EditText>(R.id.currentUsernameField)
+                            val newEmailField = dialog.findViewById<EditText>(R.id.newEmailField)
+                            val newUsernameField = dialog.findViewById<EditText>(R.id.newUsernameField)
+                            val newPasswordField = dialog.findViewById<EditText>(R.id.newPasswordField)
+
+                            userViewModel.getUserByUsernameAndEmail(currentUsernameField?.text.toString(),
+                                currentEmailField?.text.toString()).observeOnce(viewLifecycleOwner) { user ->
+                                if(user != null)
+                                {
+                                    if(user.isNotEmpty())
+                                    {
+                                        val currUser = user.first()
+                                        val updatedUser = UserModel(
+                                            id = currUser.id,
+                                            email = newEmailField?.text.toString(),
+                                            username = newUsernameField?.text.toString(),
+                                            password = newPasswordField?.text.toString(),
+                                            isAdmin = 0,
+                                            isLecturer = 0,
+                                            isStudent = 1
+                                        )
+                                        if(checkUpdatedUserFields(currentEmailField, newEmailField, currentUsernameField, newUsernameField, newPasswordField))
+                                        {
+                                            userViewModel.updateUser(updatedUser)
+                                            showConfirmationDialog("User has been updated")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(requireContext(), "Fill in fields, please", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                        else if (listType == "course")
+                        {
+                            val currentCourseName = courseMenu.editText?.text.toString()
+                            val newCourseName = dialog.findViewById<EditText>(R.id.newCourseNameField)
+
+                            courseViewModel.getCourseByName(currentCourseName).observeOnce(viewLifecycleOwner){ course ->
+                                if(course != null)
+                                {
+                                    if(course.isNotEmpty())
+                                    {
+                                        val currCourse = course.first()
+                                        val updatedCourse = CourseModel(
+                                            id = currCourse.id,
+                                            courseName = newCourseName?.text.toString()
+                                        )
+                                        if(checkUpdatedCourseFields(currentCourseName, newCourseName))
+                                        {
+                                            courseViewModel.updateCourse(updatedCourse)
+                                            showConfirmationDialog("Course has been updated")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(requireContext(), "Fill in fields, please", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                        else if (listType == "lecture")
+                        {
+                            val lectureName = lectureMenu.editText?.text.toString()
+
+                            lectureViewModel.getLectureDescByLectureName(lectureName).observeOnce(viewLifecycleOwner){lecture ->
+                                if(lecture !=null)
+                                {
+                                    if(lecture.isNotEmpty())
+                                    {
+                                        val currLecture = lecture.first()
+                                        val updatedLecture = LectureModel(
+                                            id = currLecture.id,
+                                            course_id = currLecture.course_id,
+                                            image_path = currLecture.image_path,
+                                            lectureName = currLecture.lectureName,
+                                            lectureDescription = newLectureDesc.editText?.text.toString()
+                                        )
+
+                                        lectureViewModel.updateLecture(updatedLecture)
+                                        showConfirmationDialog("Lecture has been updated")
+                                    }
+                                }
+                            }
+                        }
+                        else if(listType == "question")
+                        {
+                            val currentCourseName = courseMenu.editText?.text.toString()
+                            val currentQuestionName = questionMenu.editText?.text.toString()
+                        }
+                    }
+                    "remove" ->
+                    {
+                        if (listType == "user")
+                        {
+                            val userEmail = dialog.findViewById<EditText>(R.id.removeUserField)
+                            userViewModel.getUserByEmail(userEmail?.text.toString()).observeOnce(viewLifecycleOwner){user ->
+                                if(user != null)
+                                {
+                                    if(user.isNotEmpty())
+                                    {
+                                        val currUser = user.first()
+                                        val removedUser = UserModel(
+                                            id = currUser.id,
+                                            email = userEmail?.text.toString(),
+                                            username = null,
+                                            password = null,
+                                            isAdmin = null,
+                                            isLecturer = null,
+                                            isStudent = null
+                                        )
+                                        if(checkRemovedUserFields(userEmail))
+                                        {
+                                            userViewModel.deleteUser(removedUser)
+                                            showConfirmationDialog("User has been deleted")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(requireContext(), "Fill in the field, please", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                        else if (listType == "course")
+                        {
+                            val courseName = dialog.findViewById<EditText>(R.id.removeCourseField)
+                            courseViewModel.getCourseByName(courseName?.text.toString()).observeOnce(viewLifecycleOwner){course ->
+                                if(course != null)
+                                {
+                                    if(course.isNotEmpty())
+                                    {
+                                        val currCourse = course.first()
+                                        val removedCourse = CourseModel(
+                                            id = currCourse.id,
+                                            courseName = courseName?.text.toString()
+                                        )
+                                        if(checkRemovedCourseFields(courseName))
+                                        {
+                                            courseViewModel.deleteCourse(removedCourse)
+                                            showConfirmationDialog("Course has been deleted")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(requireContext(), "Fill in the field, please", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                        else if (listType == "lecture")
+                        {
+                            val lectureName = lectureMenu.editText?.text.toString()
+                            lectureViewModel.getLectureDescByLectureName(lectureName).observeOnce(viewLifecycleOwner){lecture ->
+                                if(lecture != null)
+                                {
+                                    if(lecture.isNotEmpty())
+                                    {
+                                        val currLecture = lecture.first()
+                                        val removedLecture = LectureModel(
+                                            id = currLecture.id,
+                                            course_id = currLecture.course_id,
+                                            image_path = currLecture.image_path,
+                                            lectureName = currLecture.lectureName,
+                                            lectureDescription = currLecture.lectureDescription
+                                        )
+                                        lectureViewModel.deleteLecture(removedLecture)
+                                        showConfirmationDialog("Lecture has been deleted")
+                                    }
+                                }
+                            }
+                        }
+                        else if(listType == "question")
+                        {
+
                         }
                     }
                 }
-                "update" ->
-                {
-                    if (listType == "user")
-                    {
-                        val currentEmailField = dialog.findViewById<EditText>(R.id.currentEmailField)
-                        val currentUsernameField = dialog.findViewById<EditText>(R.id.currentUsernameField)
-                        val newEmailField = dialog.findViewById<EditText>(R.id.newEmailField)
-                        val newUsernameField = dialog.findViewById<EditText>(R.id.newUsernameField)
-                        val newPasswordField = dialog.findViewById<EditText>(R.id.newPasswordField)
-
-                        userViewModel.getUserByUsernameAndEmail(currentUsernameField?.text.toString(),
-                            currentEmailField?.text.toString()).observeOnce(viewLifecycleOwner) { user ->
-                            if(user != null)
-                            {
-                                if(user.isNotEmpty())
-                                {
-                                    val currUser = user.first()
-                                    val updatedUser = UserModel(
-                                        id = currUser.id,
-                                        email = newEmailField?.text.toString(),
-                                        username = newUsernameField?.text.toString(),
-                                        password = newPasswordField?.text.toString(),
-                                        isAdmin = 0,
-                                        isLecturer = 0,
-                                        isStudent = 1
-                                    )
-                                    if(checkUpdatedUserFields(currentEmailField, newEmailField, currentUsernameField, newUsernameField, newPasswordField))
-                                    {
-                                        userViewModel.updateUser(updatedUser)
-                                        showConfirmationDialog("User has been updated")
-                                    }
-                                }
-                                else
-                                {
-                                    Toast.makeText(requireContext(), "Fill in fields, please", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
-                    else if (listType == "course")
-                    {
-                        val currentCourseName = dialog.findViewById<EditText>(R.id.currentCourseNameField)
-                        val newCourseName = dialog.findViewById<EditText>(R.id.newCourseNameField)
-
-                        courseViewModel.getCourseByName(currentCourseName?.text.toString()).observeOnce(viewLifecycleOwner){ course ->
-                            if(course != null)
-                            {
-                                if(course.isNotEmpty())
-                                {
-                                    val currCourse = course.first()
-                                    val updatedCourse = CourseModel(
-                                        id = currCourse.id,
-                                        courseName = newCourseName?.text.toString()
-                                    )
-                                    if(checkUpdatedCourseFields(currentCourseName, newCourseName))
-                                    {
-                                        courseViewModel.updateCourse(updatedCourse)
-                                        showConfirmationDialog("Course has been updated")
-                                    }
-                                }
-                                else
-                                {
-                                    Toast.makeText(requireContext(), "Fill in fields, please", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        val lectureName = lectureMenu.editText?.text.toString()
-
-                        lectureViewModel.getLectureDescByLectureName(lectureName).observeOnce(viewLifecycleOwner){lecture ->
-                            if(lecture !=null)
-                            {
-                                if(lecture.isNotEmpty())
-                                {
-                                    val currLecture = lecture.first()
-                                    val updatedLecture = LectureModel(
-                                        id = currLecture.id,
-                                        course_id = currLecture.course_id,
-                                        image_path = currLecture.image_path,
-                                        lectureName = currLecture.lectureName,
-                                        lectureDescription = newLectureDesc.editText?.text.toString()
-                                    )
-
-                                    lectureViewModel.updateLecture(updatedLecture)
-                                    showConfirmationDialog("Lecture has been updated")
-                                }
-                            }
-                        }
-                    }
-                }
-                "remove" ->
-                {
-                    if (listType == "user")
-                    {
-                        val userEmail = dialog.findViewById<EditText>(R.id.removeUserField)
-                        userViewModel.getUserByEmail(userEmail?.text.toString()).observeOnce(viewLifecycleOwner){user ->
-                            if(user != null)
-                            {
-                                if(user.isNotEmpty())
-                                {
-                                    val currUser = user.first()
-                                    val removedUser = UserModel(
-                                        id = currUser.id,
-                                        email = userEmail?.text.toString(),
-                                        username = null,
-                                        password = null,
-                                        isAdmin = null,
-                                        isLecturer = null,
-                                        isStudent = null
-                                    )
-                                    if(checkRemovedUserFields(userEmail))
-                                    {
-                                        userViewModel.deleteUser(removedUser)
-                                        showConfirmationDialog("User has been deleted")
-                                    }
-                                }
-                                else
-                                {
-                                    Toast.makeText(requireContext(), "Fill in the field, please", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
-                    else if (listType == "course")
-                    {
-                        val courseName = dialog.findViewById<EditText>(R.id.removeCourseField)
-                        courseViewModel.getCourseByName(courseName?.text.toString()).observeOnce(viewLifecycleOwner){course ->
-                            if(course != null)
-                            {
-                                if(course.isNotEmpty())
-                                {
-                                    val currCourse = course.first()
-                                    val removedCourse = CourseModel(
-                                        id = currCourse.id,
-                                        courseName = courseName?.text.toString()
-                                    )
-                                    if(checkRemovedCourseFields(courseName))
-                                    {
-                                        courseViewModel.deleteCourse(removedCourse)
-                                        showConfirmationDialog("Course has been deleted")
-                                    }
-                                }
-                                else
-                                {
-                                    Toast.makeText(requireContext(), "Fill in the field, please", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        val lectureName = lectureMenu.editText?.text.toString()
-                        lectureViewModel.getLectureDescByLectureName(lectureName).observeOnce(viewLifecycleOwner){lecture ->
-                            if(lecture != null)
-                            {
-                                if(lecture.isNotEmpty())
-                                {
-                                    val currLecture = lecture.first()
-                                    val removedLecture = LectureModel(
-                                        id = currLecture.id,
-                                        course_id = currLecture.course_id,
-                                        image_path = currLecture.image_path,
-                                        lectureName = currLecture.lectureName,
-                                        lectureDescription = currLecture.lectureDescription
-                                    )
-                                    lectureViewModel.deleteLecture(removedLecture)
-                                    showConfirmationDialog("Lecture has been deleted")
-                                }
-                            }
-                        }
-                    }
-                }
+                dialog.dismiss()
             }
-            dialog.dismiss()
-        }
 
-        val negativeButton = dialog.findViewById<Button>(R.id.dialogNegativeButton)
-        negativeButton.setOnClickListener {
-            dialog.dismiss()
-        }
+            val negativeButton = dialog.findViewById<Button>(R.id.dialogNegativeButton)
+            negativeButton.setOnClickListener {
+                dialog.dismiss()
+            }
 
-        dialog.show()
+            dialog.show()
+
+
     }
 
     private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
@@ -576,6 +782,37 @@ class AdminFragment : Fragment()
         return true
     }
 
+    private fun checkQuizFields(quizName : TextInputLayout, quizPoints : TextInputLayout) : Boolean
+    {
+        if(quizName.editText?.text.toString().isEmpty() || quizPoints.editText?.text.toString().isEmpty())
+        {
+            Toast.makeText(requireContext(), "Every field is mandatory", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    private fun checkQuestionFields(
+        questionName : TextInputLayout,
+        imagePath : TextInputLayout,
+        questionPoints : TextInputLayout,
+        questionDifficulty : TextInputLayout,
+        questionOptionA : TextInputLayout,
+        questionOptionB : TextInputLayout,
+        questionOptionC : TextInputLayout,
+        questionOptionD : TextInputLayout,
+        correctAnswer : TextInputLayout) : Boolean
+    {
+        if(questionName.editText?.text.toString().isEmpty() || imagePath.editText?.text.toString().isEmpty() || questionPoints.editText?.text.toString().isEmpty()
+            || questionDifficulty.editText?.text.toString().isEmpty() || questionOptionA.editText?.text.toString().isEmpty() || questionOptionB.editText?.text.toString().isEmpty()
+            || questionOptionC.editText?.text.toString().isEmpty() || questionOptionD.editText?.text.toString().isEmpty() || correctAnswer.editText?.text.toString().isEmpty())
+        {
+            Toast.makeText(requireContext(), "Every field is mandatory", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
     private fun checkUpdatedUserFields(currentEmail : EditText, newEmail : EditText,
                                        currentUsername : EditText, newUsername : EditText,
                                        newPassword : EditText): Boolean{
@@ -591,8 +828,8 @@ class AdminFragment : Fragment()
         return true
     }
 
-    private fun checkUpdatedCourseFields(currentCourse : EditText, newCourse : EditText): Boolean{
-        if(currentCourse.text.toString().isEmpty() || newCourse.text.toString().isEmpty())
+    private fun checkUpdatedCourseFields(currentCourse : String, newCourse : EditText): Boolean{
+        if(currentCourse.isEmpty() || newCourse.text.toString().isEmpty())
         {
             Toast.makeText(requireContext(), "Every field is mandatory", Toast.LENGTH_SHORT).show()
             return false

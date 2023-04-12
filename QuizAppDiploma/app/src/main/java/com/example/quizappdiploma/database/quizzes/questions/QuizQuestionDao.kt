@@ -11,7 +11,6 @@ interface QuizQuestionDao
     fun getFirstFiveQuestions(courseId: Int, questionLimit: Int): LiveData<List<QuizQuestionModel>>
     @Query("SELECT * FROM quiz_questions WHERE course_id = :courseId AND question_difficulty = :questionDifficulty AND alreadyUsed == 0 ORDER BY RANDOM() LIMIT :questionLimit")
     suspend fun getLastFiveQuestions(courseId: Int, questionDifficulty: Int, questionLimit: Int): List<QuizQuestionModel>
-
     @Query
         ("""
             SELECT AVG(time_spent) FROM 
@@ -28,6 +27,11 @@ interface QuizQuestionDao
     @Query("SELECT * FROM quiz_questions")
     fun getAllQuestions() : List<QuizQuestionModel>
 
+    @Query("SELECT * FROM quiz_questions WHERE course_id=:courseId")
+    fun getQuestionNamesByCourseId(courseId: Int) : LiveData<List<QuizQuestionModel>>
+
+    @Query("SELECT * FROM quiz_questions WHERE question_name=:questionName")
+    fun getQuestionPropsByQuestionName(questionName: String) : LiveData<List<QuizQuestionModel>>
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addQuestion(question : QuizQuestionModel)
 
@@ -37,6 +41,8 @@ interface QuizQuestionDao
     @Update
     fun resetQuestion(question: QuizQuestionModel)
 
+    @Update
+    suspend fun updateWholeQuestion(question: QuizQuestionModel)
     @Delete
     suspend fun deleteQuestion(question: QuizQuestionModel)
 

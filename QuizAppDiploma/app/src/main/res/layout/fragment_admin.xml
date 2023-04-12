@@ -15,7 +15,7 @@
         <ImageView
             android:layout_width="96dp"
             android:layout_height="96dp"
-            android:src="@drawable/cow" />
+            android:src="@drawable/admin" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
                 android:id="@+id/nameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Admin"
+                android:text="Admin username"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -80,10 +80,12 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
+    <GridLayout
+        android:id="@+id/radioGridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="2"
         android:layout_margin="16dp"
         android:orientation="horizontal">
 
@@ -100,12 +102,24 @@
             android:text="Courses" />
 
         <RadioButton
+            android:id="@+id/lecturesRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lecturesRadioButton"
-            android:text="Lectures"/>
+            android:text="Lectures" />
 
-    </RadioGroup>
+        <RadioButton
+            android:id="@+id/quizzesRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quizzes" />
+
+        <RadioButton
+            android:id="@+id/questionsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Questions" />
+    </GridLayout>
+
 
     <LinearLayout
         android:id="@+id/buttonLayout"

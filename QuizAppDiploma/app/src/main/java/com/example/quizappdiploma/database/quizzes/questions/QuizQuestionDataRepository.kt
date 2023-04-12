@@ -11,6 +11,10 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
         quizQuestionDao.addQuestion(question)
     }
 
+    suspend fun updateWholeQuestion(question: QuizQuestionModel)
+    {
+        quizQuestionDao.updateWholeQuestion(question)
+    }
     fun resetAllQuestions()
     {
         val allQuestions = quizQuestionDao.getAllQuestions()
@@ -22,6 +26,15 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
         }
     }
 
+    fun getQuestionNamesByCourseId(courseId: Int) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDao.getQuestionNamesByCourseId(courseId)
+    }
+
+    fun getQuestionPropsByQuestionName(questionName: String) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDao.getQuestionPropsByQuestionName(questionName)
+    }
     fun updateQuestion(question: QuizQuestionModel)
     {
         quizQuestionDao.updateQuestion(question)

@@ -10,9 +10,18 @@ import kotlinx.coroutines.launch
 
 class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestionDataRepository): ViewModel()
 {
-    suspend fun addQuestion(question : QuizQuestionModel)
+    fun addQuestion(question : QuizQuestionModel)
     {
-        quizQuestionDataRepository.addQuestion(question)
+        viewModelScope.launch {
+            quizQuestionDataRepository.addQuestion(question)
+        }
+    }
+
+    fun updateWholeQuestion(question: QuizQuestionModel)
+    {
+        viewModelScope.launch {
+            quizQuestionDataRepository.updateWholeQuestion(question)
+        }
     }
     fun updateQuestion(question: QuizQuestionModel)
     {
@@ -26,6 +35,16 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
         viewModelScope.launch(Dispatchers.IO) {
             quizQuestionDataRepository.resetAllQuestions()
         }
+    }
+
+    fun getQuestionNamesByCourseId(courseId: Int) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDataRepository.getQuestionNamesByCourseId(courseId)
+    }
+
+    fun getQuestionPropsByQuestionName(questionName: String) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDataRepository.getQuestionPropsByQuestionName(questionName)
     }
     suspend fun deleteQuestion(question: QuizQuestionModel)
     {
