@@ -52,6 +52,7 @@ import kotlinx.android.synthetic.main.custom_dialog_add_user.*
 import kotlinx.android.synthetic.main.custom_dialog_remove_course.*
 import kotlinx.android.synthetic.main.custom_dialog_remove_user.*
 import kotlinx.android.synthetic.main.custom_dialog_update_course.*
+import kotlinx.android.synthetic.main.custom_dialog_update_question.*
 import kotlinx.android.synthetic.main.custom_dialog_update_user.*
 import java.util.regex.Pattern
 
@@ -72,7 +73,7 @@ class AdminFragment : Fragment()
     private lateinit var quizViewModel: QuizViewModel
     private lateinit var quizQuestionViewModel : QuizQuestionViewModel
 
-    private var currentList: String = "users"
+    private var currentList: String = "user"
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -153,16 +154,19 @@ class AdminFragment : Fragment()
                 }
                 R.id.coursesRadioButton -> {
                     currentList = "course"
+                    binding.addButton.isEnabled = true
                     binding.updateButton.isEnabled = true
                     binding.removeButton.isEnabled = true
                 }
                 R.id.lecturesRadioButton -> {
                     currentList = "lecture"
+                    binding.addButton.isEnabled = true
                     binding.updateButton.isEnabled = true
                     binding.removeButton.isEnabled = true
                 }
                 R.id.questionsRadioButton -> {
                     currentList = "question"
+                    binding.addButton.isEnabled = true
                     binding.updateButton.isEnabled = true
                     binding.removeButton.isEnabled = true
                 }
@@ -170,6 +174,7 @@ class AdminFragment : Fragment()
                     currentList = "quiz"
                     binding.updateButton.isEnabled = false
                     binding.removeButton.isEnabled = false
+                    binding.addButton.isEnabled = true
                 }
             }
         }
@@ -184,12 +189,8 @@ class AdminFragment : Fragment()
         binding.nameTextView.text = loggedInUser.username
         binding.emailTextView.text = loggedInUser.email
 
-        //binding.usersRadioButton.isChecked = true
-
-        // Set up initial fragment to be displayed
         switchFragment(usersList)
 
-        // Set up navigation buttons
         binding.usersButton.setOnClickListener {
             switchFragment(usersList)
         }
@@ -271,6 +272,15 @@ class AdminFragment : Fragment()
         val questionMenu = dialog.findViewById<TextInputLayout>(R.id.questionMenu)
         val imageUrlField = dialog.findViewById<TextInputLayout>(R.id.imageUrlField)
         val newLectureDesc = dialog.findViewById<TextInputLayout>(R.id.newLectureDescDialogField)
+        val questionNameTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionNameField)
+        val imagePathTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionImagePath)
+        val questionPointsTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionPointsField)
+        val questionDifficultyTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionDifficultyField)
+        val questionFirstAnswer = dialog.findViewById<TextInputLayout>(R.id.firstAnswerField)
+        val questionSecondAnswer = dialog.findViewById<TextInputLayout>(R.id.secondAnswerField)
+        val questionThirdAnswer = dialog.findViewById<TextInputLayout>(R.id.thirdAnswerField)
+        val questionFourthAnswer = dialog.findViewById<TextInputLayout>(R.id.fourthAnswerField)
+        val questionCorrectAnswer = dialog.findViewById<TextInputLayout>(R.id.correctAnswerField)
 
         if (courseMenu != null) {
             val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, mutableListOf<String>())
@@ -339,7 +349,21 @@ class AdminFragment : Fragment()
                                         if(questionProps.isNotEmpty())
                                         {
                                             val currProps = questionProps.first()
-                                            //TODO: setup all fields
+
+
+                                            if(questionNameTextInputLayout != null || imagePathTextInputLayout != null || questionPointsTextInputLayout != null || questionDifficultyTextInputLayout != null
+                                                || questionFirstAnswer != null || questionSecondAnswer != null || questionThirdAnswer != null || questionFourthAnswer != null || questionCorrectAnswer != null)
+                                            {
+                                                questionNameTextInputLayout.editText?.setText(currProps.questionName)
+                                                imagePathTextInputLayout.editText?.setText(currProps.image_path)
+                                                questionPointsTextInputLayout.editText?.setText(currProps.questionPoints.toString())
+                                                questionDifficultyTextInputLayout.editText?.setText(currProps.questionDifficulty.toString())
+                                                questionFirstAnswer.editText?.setText(currProps.questionOptionA)
+                                                questionSecondAnswer.editText?.setText(currProps.questionOptionB)
+                                                questionThirdAnswer.editText?.setText(currProps.questionOptionC)
+                                                questionFourthAnswer.editText?.setText(currProps.questionOptionD)
+                                                questionCorrectAnswer.editText?.setText(currProps.answer.toString())
+                                            }
                                         }
                                     }
                                 }
@@ -350,9 +374,8 @@ class AdminFragment : Fragment()
             }
         }
 
-
         positiveButton.text = action.capitalize()
-            positiveButton.setOnClickListener {
+        positiveButton.setOnClickListener {
                 when (action)
                 {
                     "add" ->
@@ -430,15 +453,6 @@ class AdminFragment : Fragment()
                         else if(listType == "question")
                         {
                             val courseName = courseMenu.editText?.text.toString()
-                            val questionNameTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionNameField)
-                            val imagePathTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionImagePath)
-                            val questionPointsTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionPointsField)
-                            val questionDifficultyTextInputLayout = dialog.findViewById<TextInputLayout>(R.id.questionDifficultyField)
-                            val questionFirstAnswer = dialog.findViewById<TextInputLayout>(R.id.firstAnswerField)
-                            val questionSecondAnswer = dialog.findViewById<TextInputLayout>(R.id.secondAnswerField)
-                            val questionThirdAnswer = dialog.findViewById<TextInputLayout>(R.id.thirdAnswerField)
-                            val questionFourthAnswer = dialog.findViewById<TextInputLayout>(R.id.fourthAnswerField)
-                            val questionCorrectAnswer = dialog.findViewById<TextInputLayout>(R.id.correctAnswerField)
 
                             courseViewModel.getCourseIdByName(courseName).observeOnce(viewLifecycleOwner){course ->
                                 if(course != null)
@@ -618,8 +632,51 @@ class AdminFragment : Fragment()
                         }
                         else if(listType == "question")
                         {
-                            val currentCourseName = courseMenu.editText?.text.toString()
                             val currentQuestionName = questionMenu.editText?.text.toString()
+
+                            quizQuestionViewModel.getQuestionPropsByQuestionName(currentQuestionName).observeOnce(viewLifecycleOwner){currProps ->
+                                if(currProps != null)
+                                {
+                                    if(currProps.isNotEmpty())
+                                    {
+                                        val url = imagePathTextInputLayout.editText?.text.toString()
+                                        if(isValidUrl(url))
+                                        {
+                                            val questionPoints = questionPointsTextInputLayout.editText?.text.toString().toIntOrNull()
+                                            val questionDifficulty = questionDifficultyTextInputLayout.editText?.text.toString().toIntOrNull()
+                                            val correctAnswer = questionCorrectAnswer.editText?.text.toString().toIntOrNull()
+                                            if(questionPoints != null && questionDifficulty != null && correctAnswer != null)
+                                            {
+                                                val currQuestion = currProps.first()
+                                                val updatedQuestion = QuizQuestionModel(
+                                                    id = currQuestion.id,
+                                                    courseId = currQuestion.courseId,
+                                                    questionName = questionNameTextInputLayout.editText?.text.toString(),
+                                                    image_path = imagePathTextInputLayout.editText?.text.toString(),
+                                                    questionPoints = questionPoints,
+                                                    questionDifficulty = questionDifficulty,
+                                                    questionOptionA = questionFirstAnswer.editText?.text.toString(),
+                                                    questionOptionB = questionSecondAnswer.editText?.text.toString(),
+                                                    questionOptionC = questionThirdAnswer.editText?.text.toString(),
+                                                    questionOptionD = questionFourthAnswer.editText?.text.toString(),
+                                                    answer = correctAnswer,
+                                                    alreadyUsed = 0
+                                                )
+                                                quizQuestionViewModel.updateQuestion(updatedQuestion)
+                                                showConfirmationDialog("Question has been updated")
+                                            }
+                                            else
+                                            {
+                                                Toast.makeText(requireContext(), "Fill in all fields", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(requireContext(), "Please enter valid URL", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     "remove" ->
@@ -705,7 +762,33 @@ class AdminFragment : Fragment()
                         }
                         else if(listType == "question")
                         {
+                            val currentQuestionName = questionMenu.editText?.text.toString()
 
+                            quizQuestionViewModel.getQuestionPropsByQuestionName(currentQuestionName).observeOnce(viewLifecycleOwner){currProps ->
+                                if(currProps != null)
+                                {
+                                    if(currProps.isNotEmpty())
+                                    {
+                                        val currQuestionProps = currProps.first()
+                                        val removedQuestion = QuizQuestionModel(
+                                            id = currQuestionProps.id,
+                                            courseId = currQuestionProps.courseId,
+                                            questionName = currQuestionProps.questionName,
+                                            image_path = currQuestionProps.image_path,
+                                            questionPoints = currQuestionProps.questionPoints,
+                                            questionDifficulty = currQuestionProps.questionDifficulty,
+                                            questionOptionA = currQuestionProps.questionOptionA,
+                                            questionOptionB = currQuestionProps.questionOptionB,
+                                            questionOptionC = currQuestionProps.questionOptionC,
+                                            questionOptionD = currQuestionProps.questionOptionD,
+                                            answer = currQuestionProps.answer,
+                                            alreadyUsed = currQuestionProps.alreadyUsed
+                                        )
+                                        quizQuestionViewModel.deleteQuestion(removedQuestion)
+                                        showConfirmationDialog("Question has been deleted")
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -718,8 +801,6 @@ class AdminFragment : Fragment()
             }
 
             dialog.show()
-
-
     }
 
     private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
@@ -731,7 +812,7 @@ class AdminFragment : Fragment()
         })
     }
 
-    fun isValidUrl(url: String): Boolean
+    private fun isValidUrl(url: String): Boolean
     {
         val urlPattern = Pattern.compile(
             "^(https?:\\/\\/)" +     // URL protocol
@@ -761,7 +842,6 @@ class AdminFragment : Fragment()
             return false
         }
 
-        // Check for password length
         if (thirdField.text.toString().length < 8) {
             Toast.makeText(requireContext(), "Password must consist of 8 characters at least", Toast.LENGTH_SHORT).show()
             return false

@@ -43,6 +43,7 @@ interface QuizQuestionDao
 
     @Update
     suspend fun updateWholeQuestion(question: QuizQuestionModel)
+
     @Delete
     suspend fun deleteQuestion(question: QuizQuestionModel)
 

@@ -49,4 +49,5 @@
     <string name="paste_image_url">Paste image URL</string>
     <string name="enter_quiz_name">Enter quiz name</string>
     <string name="enter_quiz_points">Enter quiz points</string>
+    <string name="pick_a_question">Pick a question</string>
 </resources>

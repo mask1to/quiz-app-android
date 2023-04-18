@@ -46,9 +46,11 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     {
         return quizQuestionDataRepository.getQuestionPropsByQuestionName(questionName)
     }
-    suspend fun deleteQuestion(question: QuizQuestionModel)
+    fun deleteQuestion(question: QuizQuestionModel)
     {
-        quizQuestionDataRepository.deleteQuestion(question)
+        viewModelScope.launch {
+            quizQuestionDataRepository.deleteQuestion(question)
+        }
     }
     fun getFirstFiveQuestions(courseId : Int, questionLimit: Int) : LiveData<List<QuizQuestionModel>>
     {
