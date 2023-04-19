@@ -3,11 +3,13 @@ package com.example.quizappdiploma.database.quizzes.stats
 class QuizStatsDataRepository(private val quizStatsDao: QuizStatsDao)
 {
 
-    suspend fun getAllStats(): List<QuizStatsModel> {
-        return quizStatsDao.getAllStats()
+    suspend fun getAllStats(userId : Int): List<QuizStatsModel>
+    {
+        return quizStatsDao.getAllStats(userId)
     }
 
-    suspend fun insert(quizStats: QuizStatsModel) {
-        quizStatsDao.insert(quizStats)
+    suspend fun insertStats(quizStats: QuizStatsModel)
+    {
+        return quizStatsDao.insert(quizStats)
     }
 }

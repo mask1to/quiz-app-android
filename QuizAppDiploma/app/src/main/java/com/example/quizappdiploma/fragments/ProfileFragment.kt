@@ -40,14 +40,12 @@ class ProfileFragment : Fragment() {
 
         profileAnimation = binding.cowAnimation
         userName = binding.userNameTxt
-        userEmail = binding.userEmail
 
         setupAnimation(profileAnimation)
 
         val loggedInUser = preferenceManager.getLoggedInUser()
         if (loggedInUser != null) {
-            userName.text = loggedInUser.username
-            userEmail.text = loggedInUser.email
+            userName.text = "Welcome ${loggedInUser.username}!"
         } else {
             Toast.makeText(requireContext(), "Not logged in", Toast.LENGTH_SHORT).show()
         }
@@ -62,7 +60,7 @@ class ProfileFragment : Fragment() {
     private fun setupAnimation(animationView: LottieAnimationView) {
         animationView.speed = 1.0F // How fast does the animation play
         animationView.progress = 35F // Starts the animation from 50% of the beginning
-        animationView.setAnimation(R.raw.fitnesscow)
+        animationView.setAnimation(R.raw.welcome)
         animationView.repeatCount = LottieDrawable.INFINITE
         animationView.playAnimation()
     }

@@ -1,9 +1,6 @@
 package com.example.quizappdiploma.fragments.quizzes
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -26,11 +23,15 @@ import com.example.quizappdiploma.database.quizzes.answers.UserAnswers
 import com.example.quizappdiploma.database.quizzes.answers.UserAnswersDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsDataRepository
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsModel
 import com.example.quizappdiploma.databinding.FragmentQuizBinding
 import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
+import com.example.quizappdiploma.fragments.viewmodels.QuizStatsViewModel
 import com.example.quizappdiploma.fragments.viewmodels.QuizViewModel
 import com.example.quizappdiploma.fragments.viewmodels.UserAnswersViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
+import com.example.quizappdiploma.fragments.viewmodels.factory.QuizStatsViewModelFactory
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizViewModelFactory
 import com.example.quizappdiploma.fragments.viewmodels.factory.UserAnswersViewModelFactory
 import com.example.quizappdiploma.preferences.PreferenceManager
@@ -52,6 +53,7 @@ class QuizFragment : Fragment(), OnClickListener
     private lateinit var quizQuestionViewModel: QuizQuestionViewModel
     private lateinit var userAnswersViewModel: UserAnswersViewModel
     private lateinit var quizViewModel: QuizViewModel
+    private lateinit var quizStatsViewModel: QuizStatsViewModel
 
     private lateinit var progressBar : ProgressBar
     private lateinit var submitBtn : Button
@@ -72,14 +74,11 @@ class QuizFragment : Fragment(), OnClickListener
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
-
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
     {
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
@@ -94,17 +93,10 @@ class QuizFragment : Fragment(), OnClickListener
         val callback = object : OnBackPressedCallback(true)
         {
             override fun handleOnBackPressed() {
-                // Save the current navigation state
                 val navController = findNavController()
                 val navState = navController.saveState()
-
-                // Remove all the previous fragments from the back stack
                 navController.popBackStack(R.id.resultQuizFragment, true)
-
-                // Minimize the app
                 requireActivity().moveTaskToBack(true)
-
-                // Restore the navigation state when the app is resumed
                 navController.restoreState(navState)
             }
         }
@@ -143,14 +135,17 @@ class QuizFragment : Fragment(), OnClickListener
         val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
         val answerDao = MyDatabase.getDatabase(requireContext()).userAnswersDao()
         val quizDao = MyDatabase.getDatabase(requireContext()).quizDao()
+        val quizStatsDao = MyDatabase.getDatabase(requireContext()).quizStatsDao()
 
         val repository = QuizQuestionDataRepository(dao)
         val answerRepository = UserAnswersDataRepository(answerDao)
         val quizRepository = QuizDataRepository(quizDao)
+        val quizStatsRepository = QuizStatsDataRepository(quizStatsDao)
 
         quizViewModel = ViewModelProvider(this, QuizViewModelFactory(quizRepository))[QuizViewModel::class.java]
         quizQuestionViewModel = ViewModelProvider(this, QuizQuestionViewModelFactory(repository))[QuizQuestionViewModel::class.java]
         userAnswersViewModel = ViewModelProvider(this, UserAnswersViewModelFactory(answerRepository))[UserAnswersViewModel::class.java]
+        quizStatsViewModel = ViewModelProvider(this, QuizStatsViewModelFactory(quizStatsRepository))[QuizStatsViewModel::class.java]
 
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
@@ -174,7 +169,6 @@ class QuizFragment : Fragment(), OnClickListener
             val timeSpent = questionEndTime - questionStartTime
             val timeSpentSeconds = timeSpent / 1000
             questionStartTime = questionEndTime.toDouble()
-            //Log.d("timeSpent in seconds: ", timeSpentSeconds.toString())
 
             if(mySelectedOption == 0)
             {
@@ -189,11 +183,28 @@ class QuizFragment : Fragment(), OnClickListener
                         setQuestion()
                     }
                     else ->{
-                        quizQuestionViewModel.resetAllQuestions()
-                        val loggedUser = preferenceManager.getLoggedInUser()
-                        val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(
-                            loggedUser.username.toString(), myQuestionList!!.size, correctAnswers)
-                        Navigation.findNavController(requireView()).navigate(action)
+                        quizViewModel.getAllQuizPropertiesByCourseId(courseId).observeOnce(viewLifecycleOwner){quizIds ->
+                            if(quizIds != null)
+                            {
+                                if(quizIds.isNotEmpty())
+                                {
+                                    val currVals = quizIds.first()
+                                    quizQuestionViewModel.resetAllQuestions()
+                                    val loggedUser = preferenceManager.getLoggedInUser()
+                                    val userQuizStats = QuizStatsModel(
+                                        id = null,
+                                        user_id = loggedUser.id,
+                                        quiz_id = currVals.id,
+                                        correctAnswers = correctAnswers,
+                                        quizName = currVals.quizName
+                                    )
+                                    quizStatsViewModel.insertStats(userQuizStats)
+                                    val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(
+                                        loggedUser.username.toString(), myQuestionList!!.size, correctAnswers)
+                                    Navigation.findNavController(requireView()).navigate(action)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -204,7 +215,7 @@ class QuizFragment : Fragment(), OnClickListener
                 quizViewModel.getQuizIdByCourseId(courseId) { quizIds ->
                     val userAnswer = UserAnswers(
                         id = null,
-                        user_id = loggedInUser!!.id,
+                        user_id = loggedInUser.id,
                         question_id = question!!.id,
                         quiz_id = quizIds.first(),
                         answer = mySelectedOption,
@@ -257,8 +268,6 @@ class QuizFragment : Fragment(), OnClickListener
 
         val imagePath = question.image_path
 
-        //binding.imageProgressBar2.visibility = View.VISIBLE
-
         Picasso.get()
             .load(imagePath)
             .noFade()
@@ -280,7 +289,7 @@ class QuizFragment : Fragment(), OnClickListener
         textViewFourthOption.text = question.questionOptionD
         questionW.text = "Question weight: "+question.questionDifficulty.toString()
 
-        binding.btnSubmit.isEnabled = true
+        //binding.btnSubmit.isEnabled = true
         binding.btnSubmit.text = "Submit"
         questionStartTime = System.currentTimeMillis().toDouble()
     }

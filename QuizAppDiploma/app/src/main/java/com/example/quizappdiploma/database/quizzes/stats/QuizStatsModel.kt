@@ -32,7 +32,9 @@ class QuizStatsModel(
     @ColumnInfo(name = "quiz_id")
     val quiz_id: Int?,
     @ColumnInfo(name = "correct_answers")
-    val correctAnswers: Int?
+    val correctAnswers: Int?,
+    @ColumnInfo(name = "quiz_name")
+    val quizName: String?
 )
 {
     override fun equals(other: Any?): Boolean {
@@ -45,6 +47,7 @@ class QuizStatsModel(
         if (user_id != other.user_id) return false
         if (quiz_id != other.quiz_id) return false
         if (correctAnswers != other.correctAnswers) return false
+        if (quizName != other.quizName) return false
 
         return true
     }
@@ -54,10 +57,11 @@ class QuizStatsModel(
         result = 31 * result + (user_id ?: 0)
         result = 31 * result + (quiz_id ?: 0)
         result = 31 * result + (correctAnswers ?: 0)
+        result = 31 * result + (quizName?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String {
-        return "QuizStatsModel(id=$id, user_id=$user_id, quiz_id=$quiz_id, correctAnswers=$correctAnswers)"
+        return "QuizStatsModel(id=$id, user_id=$user_id, quiz_id=$quiz_id, correctAnswers=$correctAnswers, quizName=$quizName)"
     }
 }

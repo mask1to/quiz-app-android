@@ -157,7 +157,7 @@
     </fragment>
     <fragment
         android:id="@+id/statsFragment"
-        android:name="com.example.quizappdiploma.fragments.StatsFragment"
+        android:name="com.example.quizappdiploma.fragments.QuizStatsFragment"
         android:label="StatsFragment" />
 
 </navigation>

@@ -3,8 +3,6 @@ package com.example.quizappdiploma.fragments.content
 import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -13,7 +11,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -25,7 +22,6 @@ import androidx.navigation.fragment.navArgs
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.lectures.LectureDataRepository
-import com.example.quizappdiploma.database.lectures.LectureModel
 import com.example.quizappdiploma.databinding.FragmentContentBinding
 import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
@@ -35,8 +31,7 @@ import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import java.io.File
-import java.io.FileInputStream
+
 
 class ContentFragment : Fragment()
 {
@@ -95,17 +90,11 @@ class ContentFragment : Fragment()
         val callback = object : OnBackPressedCallback(true)
         {
             override fun handleOnBackPressed() {
-                // Save the current navigation state
                 val navController = findNavController()
                 val navState = navController.saveState()
 
-                // Remove all the previous fragments from the back stack
                 navController.popBackStack(R.id.quizFragment, true)
-
-                // Minimize the app
                 requireActivity().moveTaskToBack(true)
-
-                // Restore the navigation state when the app is resumed
                 navController.restoreState(navState)
             }
         }
@@ -163,41 +152,38 @@ class ContentFragment : Fragment()
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
         var lectureId = myArgs?.getInt("lecture_id")
-        val imagePath = arguments?.getString("imagePath") ?: ""
-        val lectureTitle = arguments?.getString("lecture_title") ?: ""
-        val lectureDescription = arguments?.getString("lecture_description") ?: ""
-        Log.d("courseId in content: ", courseId.toString())
-        Log.d("lectureId in content: ", lectureId.toString())
 
-
-        //todo: lecture_id preniest z content do content
-        if (lectureId != null) {
+        if (lectureId != null)
+        {
             lectureViewModel.getLecturesByCourseId(courseId!!).observe(viewLifecycleOwner) { lectures ->
                 val lectureIndex = lectures.indexOfFirst { it.id == lectureId }
-                if (lectureIndex != -1) {
+                if (lectureIndex != -1)
+                {
                     currentLectureIndex = lectureIndex
                     val visitedLectureIds = sharedPreferences.getIntegerSet("visitedLectures_${courseId}", emptySet()).toMutableSet()
                     visitedLectureIds.add(lectureId)
                     sharedPreferences.edit().putIntegerSet("visitedLectures_${courseId}", visitedLectureIds).apply()
                 }
 
-                if (currentLectureIndex + 1 == lectures.size) {
+                if (currentLectureIndex + 1 == lectures.size)
+                {
                     val visitedLectureIds = sharedPreferences.getIntegerSet("visitedLectures_${courseId}", emptySet())
                     val allLecturesVisited = visitedLectureIds.size == lectures.size
                     startQuizButton.isEnabled = allLecturesVisited
                     startQuizButton.visibility = View.VISIBLE
                     nextLectureButton.isEnabled = false
                     previousLectureButton.isEnabled = true
-                } else {
+                }
+                else
+                {
                     startQuizButton.visibility = View.GONE
                     nextLectureButton.isEnabled = true
                     previousLectureButton.isEnabled = true
                 }
 
-                Log.d("lectures size: ", lectures.size.toString())
-
                 nextLectureButton.setOnClickListener {
-                    if (currentLectureIndex + 1 < lectures.size) {
+                    if (currentLectureIndex + 1 < lectures.size)
+                    {
                         currentLectureIndex++
                         val nextLecture = lectures[currentLectureIndex]
                         imageUrl = lectures[currentLectureIndex].image_path.toString()
@@ -207,7 +193,8 @@ class ContentFragment : Fragment()
                 }
 
                 previousLectureButton.setOnClickListener {
-                    if (currentLectureIndex - 1 >= 0) {
+                    if (currentLectureIndex - 1 >= 0)
+                    {
                         currentLectureIndex--
                         val previousLecture = lectures[currentLectureIndex]
                         imageUrl = lectures[currentLectureIndex].image_path.toString()
@@ -222,14 +209,15 @@ class ContentFragment : Fragment()
                 }
             }
         }
-
     }
 
-    fun SharedPreferences.Editor.putIntegerSet(key: String, values: Set<Int>): SharedPreferences.Editor {
+    private fun SharedPreferences.Editor.putIntegerSet(key: String, values: Set<Int>): SharedPreferences.Editor
+    {
         return putStringSet(key, values.map { it.toString() }.toSet())
     }
 
-    fun SharedPreferences.getIntegerSet(key: String, defValues: Set<Int>): Set<Int> {
+    private fun SharedPreferences.getIntegerSet(key: String, defValues: Set<Int>): Set<Int>
+    {
         return getStringSet(key, defValues.map { it.toString() }.toSet())?.map { it.toInt() }?.toSet() ?: defValues
     }
 

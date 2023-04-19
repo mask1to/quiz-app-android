@@ -8,16 +8,15 @@ import kotlinx.coroutines.launch
 
 class QuizStatsViewModel(private val repository: QuizStatsDataRepository) : ViewModel()
 {
-    fun getAllStats(callback: (List<QuizStatsModel>) -> Unit) {
-        viewModelScope.launch {
-            val stats = repository.getAllStats()
-            callback(stats)
-        }
+    suspend fun getAllStats(userId : Int): List<QuizStatsModel>
+    {
+        return repository.getAllStats(userId)
     }
 
-    fun insert(quizStats: QuizStatsModel) {
+    fun insertStats(quizStats: QuizStatsModel)
+    {
         viewModelScope.launch {
-            repository.insert(quizStats)
+            repository.insertStats(quizStats)
         }
     }
 }

@@ -1,17 +1,16 @@
 package com.example.quizappdiploma.fragments.entities
 
 import ProfileFragment
+import QuizStatsFragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.databinding.FragmentStudentBinding
-import com.example.quizappdiploma.fragments.StatsFragment
 import com.example.quizappdiploma.preferences.PreferenceManager
 
 class StudentFragment : Fragment() {
@@ -63,7 +62,7 @@ class StudentFragment : Fragment() {
             when (it.itemId) {
                 R.id.logout -> logout()
                 R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.stats -> replaceFragment(StatsFragment())
+                R.id.stats -> replaceFragment(QuizStatsFragment())
                 else -> { }
             }
             true
