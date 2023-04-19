@@ -21,4 +21,14 @@ class LectureDataRepository(private val lectureDao: LectureDao)
         return lectureDao.getLecturesByCourseId(courseId)
     }
 
+    fun getLectureNameByCourseId(courseId : Int) : LiveData<List<LectureModel>>
+    {
+        return lectureDao.getLectureNameByCourseId(courseId)
+    }
+
+    fun getLectureDescByLectureName(lectureName : String) : LiveData<List<LectureModel>>
+    {
+        return lectureDao.getLectureDescByLectureName(lectureName)
+    }
+
 }

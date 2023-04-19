@@ -1,9 +1,6 @@
 package com.example.quizappdiploma.fragments.quizzes
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -18,6 +15,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.database.MyDatabase
 import com.example.quizappdiploma.database.quizzes.QuizDataRepository
@@ -25,11 +23,15 @@ import com.example.quizappdiploma.database.quizzes.answers.UserAnswers
 import com.example.quizappdiploma.database.quizzes.answers.UserAnswersDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionDataRepository
 import com.example.quizappdiploma.database.quizzes.questions.QuizQuestionModel
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsDataRepository
+import com.example.quizappdiploma.database.quizzes.stats.QuizStatsModel
 import com.example.quizappdiploma.databinding.FragmentQuizBinding
 import com.example.quizappdiploma.fragments.viewmodels.QuizQuestionViewModel
+import com.example.quizappdiploma.fragments.viewmodels.QuizStatsViewModel
 import com.example.quizappdiploma.fragments.viewmodels.QuizViewModel
 import com.example.quizappdiploma.fragments.viewmodels.UserAnswersViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizQuestionViewModelFactory
+import com.example.quizappdiploma.fragments.viewmodels.factory.QuizStatsViewModelFactory
 import com.example.quizappdiploma.fragments.viewmodels.factory.QuizViewModelFactory
 import com.example.quizappdiploma.fragments.viewmodels.factory.UserAnswersViewModelFactory
 import com.example.quizappdiploma.preferences.PreferenceManager
@@ -48,12 +50,10 @@ class QuizFragment : Fragment(), OnClickListener
     private var _binding : FragmentQuizBinding? = null
     private val binding get() = _binding!!
 
-    //getUsername of user, who is doing it
-    //TODO: remove
-    private val username = "masko"
     private lateinit var quizQuestionViewModel: QuizQuestionViewModel
     private lateinit var userAnswersViewModel: UserAnswersViewModel
     private lateinit var quizViewModel: QuizViewModel
+    private lateinit var quizStatsViewModel: QuizStatsViewModel
 
     private lateinit var progressBar : ProgressBar
     private lateinit var submitBtn : Button
@@ -69,29 +69,16 @@ class QuizFragment : Fragment(), OnClickListener
     private lateinit var preferenceManager: PreferenceManager
 
     private var additionalQuestionsGenerated = false
-    private var questionStartTime: Long = 0
+    private var questionStartTime: Double = 0.0
     private var myCurrentPosition : Int = 1
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
-    private var backPressedCallback: OnBackPressedCallback? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
-
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-
-        // todo: popBackStack, find out how to delete navigation which was done
-        backPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this,
-            backPressedCallback as OnBackPressedCallback
-        )
         preferenceManager = PreferenceManager(requireContext())
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
     {
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
@@ -102,6 +89,18 @@ class QuizFragment : Fragment(), OnClickListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+
+        val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                val navController = findNavController()
+                val navState = navController.saveState()
+                navController.popBackStack(R.id.resultQuizFragment, true)
+                requireActivity().moveTaskToBack(true)
+                navController.restoreState(navState)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
         progressBar = binding.progressBar
         submitBtn = binding.btnSubmit
@@ -136,14 +135,17 @@ class QuizFragment : Fragment(), OnClickListener
         val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
         val answerDao = MyDatabase.getDatabase(requireContext()).userAnswersDao()
         val quizDao = MyDatabase.getDatabase(requireContext()).quizDao()
+        val quizStatsDao = MyDatabase.getDatabase(requireContext()).quizStatsDao()
 
         val repository = QuizQuestionDataRepository(dao)
         val answerRepository = UserAnswersDataRepository(answerDao)
         val quizRepository = QuizDataRepository(quizDao)
+        val quizStatsRepository = QuizStatsDataRepository(quizStatsDao)
 
         quizViewModel = ViewModelProvider(this, QuizViewModelFactory(quizRepository))[QuizViewModel::class.java]
         quizQuestionViewModel = ViewModelProvider(this, QuizQuestionViewModelFactory(repository))[QuizQuestionViewModel::class.java]
         userAnswersViewModel = ViewModelProvider(this, UserAnswersViewModelFactory(answerRepository))[UserAnswersViewModel::class.java]
+        quizStatsViewModel = ViewModelProvider(this, QuizStatsViewModelFactory(quizStatsRepository))[QuizStatsViewModel::class.java]
 
         val myArgs = arguments
         val courseId = myArgs?.getInt("course_id")
@@ -166,21 +168,14 @@ class QuizFragment : Fragment(), OnClickListener
             val questionEndTime = System.currentTimeMillis()
             val timeSpent = questionEndTime - questionStartTime
             val timeSpentSeconds = timeSpent / 1000
-            questionStartTime = questionEndTime
-            Log.d("timeSpent in seconds: ", timeSpentSeconds.toString())
+            questionStartTime = questionEndTime.toDouble()
 
             if(mySelectedOption == 0)
             {
                 binding.btnSubmit.isEnabled = false
                 val previousQuestion = myQuestionList!![myCurrentPosition - 1]
                 quizQuestionViewModel.updateQuestion(previousQuestion)
-                // Reset startTime for the next question
 
-                /*
-                 TODO:
-                  1. spravit nejaku novu tabulku na answers aj s user_id, question_id
-                  2. do poslednych 5 otazok nastavit aj parameter timeSpent
-                 */
                 myCurrentPosition++
 
                 when{
@@ -188,32 +183,43 @@ class QuizFragment : Fragment(), OnClickListener
                         setQuestion()
                     }
                     else ->{
-                        //TODO: send correct_answers, username, total_questions
-                        val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(username, myQuestionList!!.size, correctAnswers)
-                        Navigation.findNavController(requireView()).navigate(action)
+                        quizViewModel.getAllQuizPropertiesByCourseId(courseId).observeOnce(viewLifecycleOwner){quizIds ->
+                            if(quizIds != null)
+                            {
+                                if(quizIds.isNotEmpty())
+                                {
+                                    val currVals = quizIds.first()
+                                    quizQuestionViewModel.resetAllQuestions()
+                                    val loggedUser = preferenceManager.getLoggedInUser()
+                                    val userQuizStats = QuizStatsModel(
+                                        id = null,
+                                        user_id = loggedUser.id,
+                                        quiz_id = currVals.id,
+                                        correctAnswers = correctAnswers,
+                                        quizName = currVals.quizName
+                                    )
+                                    quizStatsViewModel.insertStats(userQuizStats)
+                                    val action = QuizFragmentDirections.actionQuizFragmentToResultQuizFragment(
+                                        loggedUser.username.toString(), myQuestionList!!.size, correctAnswers)
+                                    Navigation.findNavController(requireView()).navigate(action)
+                                }
+                            }
+                        }
                     }
                 }
             }
             else
             {
                 val question = myQuestionList?.get(myCurrentPosition - 1)
-                //val isCorrect = question!!.answer == mySelectedOption
-
-                //val userId: Int? = 1
-                //val quizId: Int? = 1
 
                 quizViewModel.getQuizIdByCourseId(courseId) { quizIds ->
-                    // Use the fetched quizIds here
-                    // If you expect only one quiz_id per course_id, you can use quizIds.first() or quizIds[0]
-
-                    // Call the handleQuizId function with the fetched quiz_id
                     val userAnswer = UserAnswers(
                         id = null,
-                        user_id = loggedInUser!!.id,
+                        user_id = loggedInUser.id,
                         question_id = question!!.id,
                         quiz_id = quizIds.first(),
                         answer = mySelectedOption,
-                        time_spent = timeSpentSeconds.toInt()
+                        time_spent = timeSpentSeconds,
                     )
 
                     userAnswersViewModel.addUserAnswer(userAnswer)
@@ -243,11 +249,12 @@ class QuizFragment : Fragment(), OnClickListener
                 if (myCurrentPosition == 5 && !additionalQuestionsGenerated)
                 {
                     additionalQuestionsGenerated = true
-                    updateQuizQuestions(correctAnswers, courseId)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val averageTime = quizQuestionViewModel.getAverageTimeSpentOnUsedQuestions()
+                        updateQuizQuestions(correctAnswers, courseId, averageTime!!)
+                    }
                 }
-
             }
-
         }
     }
 
@@ -260,8 +267,6 @@ class QuizFragment : Fragment(), OnClickListener
         textViewProgress.text = "$myCurrentPosition/${progressBar.max}"
 
         val imagePath = question.image_path
-
-        //binding.imageProgressBar2.visibility = View.VISIBLE
 
         Picasso.get()
             .load(imagePath)
@@ -284,9 +289,9 @@ class QuizFragment : Fragment(), OnClickListener
         textViewFourthOption.text = question.questionOptionD
         questionW.text = "Question weight: "+question.questionDifficulty.toString()
 
-        binding.btnSubmit.isEnabled = true
+        //binding.btnSubmit.isEnabled = true
         binding.btnSubmit.text = "Submit"
-        questionStartTime = System.currentTimeMillis()
+        questionStartTime = System.currentTimeMillis().toDouble()
     }
 
     private fun defaultOptionsView()
@@ -414,32 +419,130 @@ class QuizFragment : Fragment(), OnClickListener
             }
         }
     }
-
-    private fun updateQuizQuestions(correctAnswers: Int, courseId: Int) {
-        when (correctAnswers) {
-            5 -> {
-                /** 1 2 3 3 3 **/
-                generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+    private fun updateQuizQuestions(correctAnswers: Int, courseId: Int, timeSpent: Double) {
+        when (correctAnswers)
+        {
+            5 ->
+            {
+                when (timeSpent) {
+                    in 1.0..3.0 -> {
+                        /** 3 3 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 0, 5) {}
+                    }
+                    in 3.01..5.0 -> {
+                        /** 2 3 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 1, 4) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 2 2 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 2, 3) {}
+                    }
+                    else -> {
+                        /** 2 2 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 3, 2) {}
+                    }
+                }
             }
-            4 -> {
-                /** 1 2 2 3 3 **/
-                generateQuestions(quizQuestionViewModel, courseId, 1, 2, 2) {}
+            4 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 2 2 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 3, 2) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 2 2 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 4, 1) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 2 2 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 0, 5, 0) {}
+                    }
+                    else -> {
+                        /** 1 2 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+                    }
+                }
             }
-            3 -> {
-                /** 1 2 2 2 3 **/
-                generateQuestions(quizQuestionViewModel, courseId, 1, 3, 1) {}
+            3 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 1 2 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 1 2 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 2, 2) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 2 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 3, 1) {}
+                    }
+                    else -> {
+                        /** 1 2 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
+                    }
+                }
             }
-            2 -> {
-                /** 1 1 2 2 2 **/
-                generateQuestions(quizQuestionViewModel, courseId, 2, 3, 0) {}
+            2 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 1 2 2 2 2**/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 1 1 3 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 0, 3) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 1 2 3 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 1, 2) {}
+                    }
+                    else -> {
+                        /** 1 1 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
+                    }
+                }
             }
-            1 -> {
-                /** 1 1 1 2 2 **/
-                generateQuestions(quizQuestionViewModel, courseId, 3, 2, 0) {}
+            1 ->
+            {
+                when (timeSpent) {
+                    in 1.0..5.0 -> {
+                        /** 1 1 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
+                    }
+                    in 5.01..7.0 -> {
+                        /** 1 1 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 3, 0) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 1 1 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 3, 2, 0) {}
+                    }
+                    else -> {
+                        /** 1 1 1 1 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 0, 1) {}
+                    }
+                }
             }
-            0 -> {
-                /** 1 1 1 1 2 **/
-                generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
+            0 ->
+            {
+                when (timeSpent) {
+                    in 2.0..7.0 -> {
+                        /** 1 1 1 1 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 0, 1) {}
+                    }
+                    in 7.01..9.0 -> {
+                        /** 1 1 1 1 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
+                    }
+                    else -> {
+                        /** 1 1 1 1 1 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 5, 0, 0) {}
+                    }
+                }
             }
         }
     }
@@ -452,7 +555,5 @@ class QuizFragment : Fragment(), OnClickListener
             }
         })
     }
-
-
 
 }

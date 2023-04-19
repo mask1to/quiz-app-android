@@ -10,9 +10,18 @@ import kotlinx.coroutines.launch
 
 class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestionDataRepository): ViewModel()
 {
-    suspend fun addQuestion(question : QuizQuestionModel)
+    fun addQuestion(question : QuizQuestionModel)
     {
-        quizQuestionDataRepository.addQuestion(question)
+        viewModelScope.launch {
+            quizQuestionDataRepository.addQuestion(question)
+        }
+    }
+
+    fun updateWholeQuestion(question: QuizQuestionModel)
+    {
+        viewModelScope.launch {
+            quizQuestionDataRepository.updateWholeQuestion(question)
+        }
     }
     fun updateQuestion(question: QuizQuestionModel)
     {
@@ -21,9 +30,27 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
             quizQuestionDataRepository.updateQuestion(question)
         }
     }
-    suspend fun deleteQuestion(question: QuizQuestionModel)
+    fun resetAllQuestions()
     {
-        quizQuestionDataRepository.deleteQuestion(question)
+        viewModelScope.launch(Dispatchers.IO) {
+            quizQuestionDataRepository.resetAllQuestions()
+        }
+    }
+
+    fun getQuestionNamesByCourseId(courseId: Int) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDataRepository.getQuestionNamesByCourseId(courseId)
+    }
+
+    fun getQuestionPropsByQuestionName(questionName: String) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDataRepository.getQuestionPropsByQuestionName(questionName)
+    }
+    fun deleteQuestion(question: QuizQuestionModel)
+    {
+        viewModelScope.launch {
+            quizQuestionDataRepository.deleteQuestion(question)
+        }
     }
     fun getFirstFiveQuestions(courseId : Int, questionLimit: Int) : LiveData<List<QuizQuestionModel>>
     {
@@ -32,6 +59,11 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
     suspend fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : List<QuizQuestionModel>
     {
         return quizQuestionDataRepository.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
+    }
+
+    suspend fun getAverageTimeSpentOnUsedQuestions(): Double?
+    {
+        return quizQuestionDataRepository.getAverageTimeSpentOnUsedQuestions()
     }
 
 }

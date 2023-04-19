@@ -53,7 +53,8 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>()
         notifyDataSetChanged()
     }
 
-    fun splitString(input: String): String {
+    private fun splitString(input: String): String
+    {
         val maxCharsPerLine = 15
         val words = input.split(" ")
         var lineLength = 0

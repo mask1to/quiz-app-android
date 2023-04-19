@@ -3,6 +3,7 @@ package com.example.quizappdiploma.fragments.viewmodels
 import androidx.lifecycle.*
 import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.database.courses.CourseModel
+import kotlinx.coroutines.launch
 
 class CourseViewModel(private val courseDataRepository: CourseDataRepository): ViewModel()
 {
@@ -10,19 +11,36 @@ class CourseViewModel(private val courseDataRepository: CourseDataRepository): V
     {
         return courseDataRepository.getCoursesByIdAsc()
     }
-
-    suspend fun addCourse(course : CourseModel)
+    fun getCourseByName(courseName : String) : LiveData<List<CourseModel>>
     {
-        return courseDataRepository.addCourse(course)
+        return courseDataRepository.getCourseByName(courseName)
     }
 
-    suspend fun updateCourse(course : CourseModel)
+    fun getCourseNames() : LiveData<List<CourseModel>>
     {
-        return courseDataRepository.updateCourse(course)
+        return courseDataRepository.getCourseNames()
     }
 
-    suspend fun deleteCourse(course : CourseModel)
+    fun getCourseIdByName(courseName : String) : LiveData<List<CourseModel>>
     {
-        return courseDataRepository.deleteCourse(course)
+        return courseDataRepository.getCourseIdByName(courseName)
+    }
+    fun addCourse(course : CourseModel)
+    {
+        viewModelScope.launch {
+            courseDataRepository.addCourse(course)
+        }
+    }
+    fun updateCourse(course : CourseModel)
+    {
+        viewModelScope.launch{
+            courseDataRepository.updateCourse(course)
+        }
+    }
+    fun deleteCourse(course : CourseModel)
+    {
+        viewModelScope.launch {
+            courseDataRepository.deleteCourse(course)
+        }
     }
 }

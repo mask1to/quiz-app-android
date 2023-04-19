@@ -1,11 +1,11 @@
 package com.example.quizappdiploma.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +20,7 @@ import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFact
 import com.example.quizappdiploma.preferences.PreferenceManager
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
+
 class WelcomeFragment : Fragment() {
     private var _binding: WelcomeFragmentBinding? = null
     private val binding get() = _binding!!
@@ -50,13 +51,25 @@ class WelcomeFragment : Fragment() {
         emailField = binding.emailField
         passwordField = binding.passwordField
 
+        val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                val navController = findNavController()
+                val navState = navController.saveState()
+                navController.popBackStack(R.id.studentFragment, true)
+                requireActivity().moveTaskToBack(true)
+                navController.restoreState(navState)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         checkLogin()
 
         val dao = MyDatabase.getDatabase(requireContext()).userDao()
         val repository = UserDataRepository(dao)
         userViewModel = ViewModelProvider(this, UserViewModelFactory(repository))[UserViewModel::class.java]
 
-        val items = listOf("Študent", "Lektor", "Administrátor")
+        val items = listOf("Student", "Lecturer", "Administrator")
         val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
         (textField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
@@ -73,27 +86,22 @@ class WelcomeFragment : Fragment() {
                     // Logged in successfully
                     preferenceManager.saveUser(user)
 
-                    Log.d("role: ", role)
-
-                    if(user.isStudent == 1 && user.isAdmin == 0 && user.isLecturer == 0 && role == "Študent")
+                    if(user.isStudent == 1 && user.isAdmin == 0 && user.isLecturer == 0 && role == "Student")
                     {
                         val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
                         findNavController().navigate(action)
                     }
-                    else if(user.isLecturer == 1 && user.isAdmin == 0 && user.isStudent == 0 && role == "Lektor")
+                    else if(user.isLecturer == 1 && user.isAdmin == 0 && user.isStudent == 0 && role == "Lecturer")
                     {
                         val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
                         findNavController().navigate(action)
                     }
-                    else if(user.isAdmin == 1 && user.isLecturer == 0 && user.isStudent == 0 && role == "Administrátor")
+                    else if(user.isAdmin == 1 && user.isLecturer == 0 && user.isStudent == 0 && role == "Administrator")
                     {
                         val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
                         findNavController().navigate(action)
                     }
-                    else
-                    {
-                        Toast.makeText(requireContext(), "Invalid email or password or incorrect role", Toast.LENGTH_SHORT).show()
-                    }
+
                 }
                 else
                 {
@@ -109,20 +117,14 @@ class WelcomeFragment : Fragment() {
 
     private fun checkLogin() {
         val loggedInUser = preferenceManager.getLoggedInUser()
-        val role = textField.editText?.text.toString()
         if (loggedInUser != null) {
-            if(loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0 && role == "Študent")
-            {
+            if (loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0) {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
                 findNavController().navigate(action)
-            }
-            else if(loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0 && role == "Lektor")
-            {
+            } else if (loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0) {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
                 findNavController().navigate(action)
-            }
-            else if(loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0 && role == "Administrátor")
-            {
+            } else if (loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0) {
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
                 findNavController().navigate(action)
             }

@@ -10,10 +10,36 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
     {
         quizQuestionDao.addQuestion(question)
     }
+
+    suspend fun updateWholeQuestion(question: QuizQuestionModel)
+    {
+        quizQuestionDao.updateWholeQuestion(question)
+    }
+    fun resetAllQuestions()
+    {
+        val allQuestions = quizQuestionDao.getAllQuestions()
+
+        for(question in allQuestions)
+        {
+            question.alreadyUsed = 0
+            quizQuestionDao.resetQuestion(question)
+        }
+    }
+
+    fun getQuestionNamesByCourseId(courseId: Int) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDao.getQuestionNamesByCourseId(courseId)
+    }
+
+    fun getQuestionPropsByQuestionName(questionName: String) : LiveData<List<QuizQuestionModel>>
+    {
+        return quizQuestionDao.getQuestionPropsByQuestionName(questionName)
+    }
     fun updateQuestion(question: QuizQuestionModel)
     {
         quizQuestionDao.updateQuestion(question)
     }
+
     suspend fun deleteQuestion(question: QuizQuestionModel)
     {
         quizQuestionDao.deleteQuestion(question)
@@ -27,6 +53,11 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
     suspend fun getLastFiveQuestions(courseId: Int, questionDifficulty : Int, questionLimit : Int) : List<QuizQuestionModel>
     {
         return quizQuestionDao.getLastFiveQuestions(courseId, questionDifficulty, questionLimit)
+    }
+
+    suspend fun getAverageTimeSpentOnUsedQuestions(): Double?
+    {
+        return quizQuestionDao.getAverageTimeSpentOnUsedQuestions()
     }
 
 }

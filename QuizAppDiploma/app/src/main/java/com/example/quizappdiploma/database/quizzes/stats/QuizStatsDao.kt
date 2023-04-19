@@ -11,6 +11,6 @@ interface QuizStatsDao
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(quizStats: QuizStatsModel)
 
-    @Query("SELECT * FROM quiz_stats")
-    suspend fun getAllStats(): List<QuizStatsModel>
+    @Query("SELECT * FROM quiz_stats WHERE user_id=:userId")
+    suspend fun getAllStats(userId : Int): List<QuizStatsModel>
 }

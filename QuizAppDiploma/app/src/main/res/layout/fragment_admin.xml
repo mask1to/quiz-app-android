@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +15,7 @@
         <ImageView
             android:layout_width="96dp"
             android:layout_height="96dp"
-            android:src="@drawable/cow" />
+            android:src="@drawable/admin" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,13 +27,16 @@
                 android:id="@+id/nameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Admin" />
+                android:text="Admin username"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/emailTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="admin@example.com" />
+                android:text="admin@example.com"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </LinearLayout>
@@ -46,21 +51,26 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Users" />
+            android:text="@string/users"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
 
         <Button
             android:id="@+id/coursesButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Courses" />
+            android:text="@string/courses"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
 
         <Button
-            android:id="@+id/lecturesButton"
-            android:layout_width="0dp"
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Lectures" />
+            android:text="@string/logout"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
 
     </LinearLayout>
 
@@ -70,8 +80,78 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <GridLayout
+        android:id="@+id/radioGridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="2"
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/usersRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Users" />
+
+        <RadioButton
+            android:id="@+id/coursesRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Courses" />
+
+        <RadioButton
+            android:id="@+id/lecturesRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lectures" />
+
+        <RadioButton
+            android:id="@+id/quizzesRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quizzes" />
+
+        <RadioButton
+            android:id="@+id/questionsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Questions" />
+    </GridLayout>
+
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Add"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
+
+        <Button
+            android:id="@+id/updateButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Update"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
+
+        <Button
+            android:id="@+id/removeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Remove"
+            app:cornerRadius="8dp"
+            android:backgroundTint="@color/purple_700" />
+    </LinearLayout>
 </LinearLayout>
-
-
-
-

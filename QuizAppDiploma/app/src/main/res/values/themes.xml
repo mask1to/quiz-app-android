@@ -18,4 +18,16 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="Theme.App.SystemDefault" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.App.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.MyApp.Dark.NoActionBar" parent="Theme.MyApp.Dark.NoActionBar" tools:ignore="ResourceCycle">
+        <!-- Customize your theme here. -->
+    </style>
+
 </resources>

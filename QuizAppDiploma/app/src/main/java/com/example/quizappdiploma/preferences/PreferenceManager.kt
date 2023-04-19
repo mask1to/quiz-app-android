@@ -26,12 +26,8 @@ class PreferenceManager(context: Context)
         return sharedPreferences.getInt("user_id", -1) != -1
     }
 
-    fun getLoggedInUser(): UserModel? {
+    fun getLoggedInUser(): UserModel {
         val id = sharedPreferences.getInt("user_id", -1)
-        if (id == -1) {
-            return null
-        }
-
         val email = sharedPreferences.getString("user_email", null)
         val username = sharedPreferences.getString("username", null)
         val password = sharedPreferences.getString("user_password", null)
@@ -53,5 +49,6 @@ class PreferenceManager(context: Context)
         editor.remove("is_student")
         editor.apply()
     }
+
 }
 
