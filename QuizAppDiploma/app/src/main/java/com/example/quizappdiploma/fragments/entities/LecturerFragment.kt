@@ -52,7 +52,6 @@ class LecturerFragment : Fragment()
     {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
-        //checkLoginStatus()
     }
 
     override fun onCreateView(
@@ -134,7 +133,7 @@ class LecturerFragment : Fragment()
         questionsRadioButton.setOnClickListener(radioButtonClickListener)
 
         val loggedInUser = preferenceManager.getLoggedInUser()
-        binding.nameTextView.text = loggedInUser.username
+        binding.nameTextView.text = loggedInUser!!.username
         binding.emailTextView.text = loggedInUser.email
 
         switchFragment(coursesList)

@@ -186,7 +186,7 @@ class AdminFragment : Fragment()
         quizzesRadioButton.setOnClickListener(radioButtonClickListener)
 
         val loggedInUser = preferenceManager.getLoggedInUser()
-        binding.nameTextView.text = loggedInUser.username
+        binding.nameTextView.text = loggedInUser!!.username
         binding.emailTextView.text = loggedInUser.email
 
         switchFragment(usersList)

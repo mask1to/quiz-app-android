@@ -24,10 +24,9 @@ import com.example.quizappdiploma.database.users.UserModel
                 LectureModel::class, QuizModel::class,
                 QuizQuestionModel::class, QuizStatsModel::class,
                 UserAnswers::class],
-    version = 2)
+    version = 3)
 abstract class MyDatabase : RoomDatabase()
 {
-
     abstract fun myDatabaseDao(): MyDatabaseDao
     abstract fun courseDao(): CourseDao
     abstract fun lectureDao(): LectureDao
@@ -40,13 +39,14 @@ abstract class MyDatabase : RoomDatabase()
     companion object {
         @Volatile
         private var INSTANCE: MyDatabase? = null
-        private const val  DATABASE_NAME = "quiz_db"
+        private const val DATABASE_NAME = "quiz_db"
 
         fun getDatabase(context: Context): MyDatabase {
             return INSTANCE ?: synchronized(this) {
                 if (INSTANCE == null) {
                     synchronized(this) {
                         INSTANCE = Room.databaseBuilder(context, MyDatabase::class.java, DATABASE_NAME)
+                            .addMigrations(MIGRATION_2_3) // Add migration here
                             .fallbackToDestructiveMigration()
                             .createFromAsset("database/quiz_db.db")
                             .build()
@@ -55,7 +55,6 @@ abstract class MyDatabase : RoomDatabase()
                 INSTANCE!!
             }
         }
-
     }
 
 }

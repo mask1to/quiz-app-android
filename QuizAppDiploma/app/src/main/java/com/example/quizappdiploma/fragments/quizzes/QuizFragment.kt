@@ -193,7 +193,7 @@ class QuizFragment : Fragment(), OnClickListener
                                     val loggedUser = preferenceManager.getLoggedInUser()
                                     val userQuizStats = QuizStatsModel(
                                         id = null,
-                                        user_id = loggedUser.id,
+                                        user_id = loggedUser!!.id,
                                         quiz_id = currVals.id,
                                         correctAnswers = correctAnswers,
                                         quizName = currVals.quizName
@@ -215,7 +215,7 @@ class QuizFragment : Fragment(), OnClickListener
                 quizViewModel.getQuizIdByCourseId(courseId) { quizIds ->
                     val userAnswer = UserAnswers(
                         id = null,
-                        user_id = loggedInUser.id,
+                        user_id = loggedInUser!!.id,
                         question_id = question!!.id,
                         quiz_id = quizIds.first(),
                         answer = mySelectedOption,

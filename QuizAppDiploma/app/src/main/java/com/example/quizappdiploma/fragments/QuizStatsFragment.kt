@@ -62,7 +62,7 @@ class QuizStatsFragment : Fragment() {
 
         lifecycleScope.launch {
             val loggedInUser = preferenceManager.getLoggedInUser()
-            val quizStats = dao.getAllStats(loggedInUser.id!!)
+            val quizStats = dao.getAllStats(loggedInUser?.id!!)
 
             if (quizStats.isNotEmpty())
             {

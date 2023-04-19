@@ -1,6 +1,7 @@
 package com.example.quizappdiploma.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class WelcomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
+        //preferenceManager.logout()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -117,19 +119,24 @@ class WelcomeFragment : Fragment() {
 
     private fun checkLogin() {
         val loggedInUser = preferenceManager.getLoggedInUser()
+        Log.d("checkLogin", "Logged-in user: $loggedInUser")
         if (loggedInUser != null) {
             if (loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0) {
+                Log.d("checkLogin", "Navigating to StudentFragment")
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
                 findNavController().navigate(action)
             } else if (loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0) {
+                Log.d("checkLogin", "Navigating to LecturerFragment")
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
                 findNavController().navigate(action)
             } else if (loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0) {
+                Log.d("checkLogin", "Navigating to AdminFragment")
                 val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
                 findNavController().navigate(action)
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
