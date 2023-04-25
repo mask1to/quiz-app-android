@@ -23,7 +23,7 @@ class StatsAdapter(private val statsData: List<QuizStatsModel>) : RecyclerView.A
     override fun onBindViewHolder(holder: StatsViewHolder, position: Int) {
         val currentItem = statsData[position]
         holder.quizName.text = splitString(currentItem.quizName.toString())
-        holder.points.text = "Points: ${currentItem.correctAnswers}/$totalQuestions"
+        holder.points.text = "Accuracy: ${currentItem.correctAnswers}/$totalQuestions"
     }
 
     override fun getItemCount() = statsData.size

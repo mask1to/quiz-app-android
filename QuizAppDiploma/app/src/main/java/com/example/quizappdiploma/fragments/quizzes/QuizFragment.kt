@@ -1,6 +1,8 @@
 package com.example.quizappdiploma.fragments.quizzes
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -74,6 +76,8 @@ class QuizFragment : Fragment(), OnClickListener
     private var myQuestionList : ArrayList<QuizQuestionModel>? = null
     private var mySelectedOption : Int = 0
     private var correctAnswers : Int = 0
+    private val REQUEST_CODE_PERMISSIONS = 1000
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -120,17 +124,21 @@ class QuizFragment : Fragment(), OnClickListener
         submitBtn.setOnClickListener(this)
         val loggedInUser = preferenceManager.getLoggedInUser()
 
-        val cacheSize = 20 * 1024 * 1024 // 20 MB
-        val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
-        val okHttpClient = OkHttpClient.Builder()
-            .cache(cache)
-            .build()
+        if (!hasPermissions()) {
+            requestPermissions()
+        } else {
+            val cacheSize = 20 * 1024 * 1024 // 20 MB
+            val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
+            val okHttpClient = OkHttpClient.Builder()
+                .cache(cache)
+                .build()
 
-        picasso = Picasso.Builder(requireContext())
-            .downloader(OkHttp3Downloader(okHttpClient))
-            .indicatorsEnabled(false)
-            .loggingEnabled(true)
-            .build()
+            picasso = Picasso.Builder(requireContext())
+                .downloader(OkHttp3Downloader(okHttpClient))
+                .indicatorsEnabled(false)
+                .loggingEnabled(true)
+                .build()
+        }
 
         val dao = MyDatabase.getDatabase(requireContext()).quizQuestionDao()
         val answerDao = MyDatabase.getDatabase(requireContext()).userAnswersDao()
@@ -212,6 +220,7 @@ class QuizFragment : Fragment(), OnClickListener
             {
                 val question = myQuestionList?.get(myCurrentPosition - 1)
 
+                //todo: answer bad fetching
                 quizViewModel.getQuizIdByCourseId(courseId) { quizIds ->
                     val userAnswer = UserAnswers(
                         id = null,
@@ -234,6 +243,8 @@ class QuizFragment : Fragment(), OnClickListener
                     answerView(mySelectedOption, R.drawable.correct_option_border_bg)
                     correctAnswers++
                 }
+
+                disableOptions()
 
                 if(myCurrentPosition == 10)
                 {
@@ -289,9 +300,10 @@ class QuizFragment : Fragment(), OnClickListener
         textViewFourthOption.text = question.questionOptionD
         questionW.text = "Question weight: "+question.questionDifficulty.toString()
 
-        //binding.btnSubmit.isEnabled = true
         binding.btnSubmit.text = "Submit"
         questionStartTime = System.currentTimeMillis().toDouble()
+
+        enableOptions()
     }
 
     private fun defaultOptionsView()
@@ -419,21 +431,21 @@ class QuizFragment : Fragment(), OnClickListener
             }
         }
     }
-    private fun updateQuizQuestions(correctAnswers: Int, courseId: Int, timeSpent: Double) {
+    private fun updateQuizQuestions(correctAnswers: Int, courseId: Int, averageTimeSpent: Double) {
         when (correctAnswers)
         {
             5 ->
             {
-                when (timeSpent) {
-                    in 1.0..3.0 -> {
+                when (averageTimeSpent) {
+                    in 1.0..4.0 -> {
                         /** 3 3 3 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 0, 0, 5) {}
                     }
-                    in 3.01..5.0 -> {
+                    in 4.01..7.0 -> {
                         /** 2 3 3 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 0, 1, 4) {}
                     }
-                    in 5.01..7.0 -> {
+                    in 7.01..10.0 -> {
                         /** 2 2 3 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 0, 2, 3) {}
                     }
@@ -445,37 +457,37 @@ class QuizFragment : Fragment(), OnClickListener
             }
             4 ->
             {
-                when (timeSpent) {
+                when (averageTimeSpent) {
                     in 1.0..5.0 -> {
                         /** 2 2 2 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 0, 3, 2) {}
                     }
-                    in 5.01..7.0 -> {
+                    in 5.01..8.0 -> {
                         /** 2 2 2 2 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 0, 4, 1) {}
                     }
-                    in 7.01..9.0 -> {
+                    in 8.01..11.0 -> {
                         /** 2 2 2 2 2 **/
                         generateQuestions(quizQuestionViewModel, courseId, 0, 5, 0) {}
                     }
                     else -> {
-                        /** 1 2 3 3 3 **/
-                        generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
+                        /** 1 1 2 2 3 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
                     }
                 }
             }
             3 ->
             {
-                when (timeSpent) {
-                    in 1.0..5.0 -> {
+                when (averageTimeSpent) {
+                    in 1.0..6.0 -> {
                         /** 1 2 3 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 1, 1, 3) {}
                     }
-                    in 5.01..7.0 -> {
+                    in 6.01..9.0 -> {
                         /** 1 2 2 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 1, 2, 2) {}
                     }
-                    in 7.01..9.0 -> {
+                    in 9.01..12.0 -> {
                         /** 1 2 2 2 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 1, 3, 1) {}
                     }
@@ -487,54 +499,54 @@ class QuizFragment : Fragment(), OnClickListener
             }
             2 ->
             {
-                when (timeSpent) {
-                    in 1.0..5.0 -> {
-                        /** 1 2 2 2 2**/
-                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
+                when (averageTimeSpent) {
+                    in 1.0..7.0 -> {
+                        /** 1 1 3 3 3**/
+                        generateQuestions(quizQuestionViewModel, courseId, 2, 0, 3) {}
                     }
-                    in 5.01..7.0 -> {
-                        /** 1 1 3 3 3 **/
-                        generateQuestions(quizQuestionViewModel, courseId, 1, 0, 3) {}
-                    }
-                    in 7.01..9.0 -> {
+                    in 7.01..10.0 -> {
                         /** 1 1 2 3 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 2, 1, 2) {}
                     }
-                    else -> {
+                    in 10.01..13.0 -> {
                         /** 1 1 2 2 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
+                    }
+                    else -> {
+                        /** 1 2 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
                     }
                 }
             }
             1 ->
             {
-                when (timeSpent) {
-                    in 1.0..5.0 -> {
+                when (averageTimeSpent) {
+                    in 1.0..8.0 -> {
                         /** 1 1 2 2 3 **/
                         generateQuestions(quizQuestionViewModel, courseId, 2, 2, 1) {}
                     }
-                    in 5.01..7.0 -> {
+                    in 8.01..11.0 -> {
                         /** 1 1 2 2 2 **/
                         generateQuestions(quizQuestionViewModel, courseId, 2, 3, 0) {}
                     }
-                    in 7.01..9.0 -> {
+                    in 11.01..14.0 -> {
                         /** 1 1 1 2 2 **/
                         generateQuestions(quizQuestionViewModel, courseId, 3, 2, 0) {}
                     }
                     else -> {
-                        /** 1 1 1 1 3 **/
-                        generateQuestions(quizQuestionViewModel, courseId, 4, 0, 1) {}
+                        /** 1 1 1 1 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
                     }
                 }
             }
             0 ->
             {
-                when (timeSpent) {
-                    in 2.0..7.0 -> {
-                        /** 1 1 1 1 3 **/
-                        generateQuestions(quizQuestionViewModel, courseId, 4, 0, 1) {}
+                when (averageTimeSpent) {
+                    in 1.0..9.0 -> {
+                        /** 1 2 2 2 2 **/
+                        generateQuestions(quizQuestionViewModel, courseId, 1, 4, 0) {}
                     }
-                    in 7.01..9.0 -> {
+                    in 9.01..12.0 -> {
                         /** 1 1 1 1 2 **/
                         generateQuestions(quizQuestionViewModel, courseId, 4, 1, 0) {}
                     }
@@ -555,5 +567,47 @@ class QuizFragment : Fragment(), OnClickListener
             }
         })
     }
+
+    private fun disableOptions() {
+        textViewFirstOption.setOnClickListener(null)
+        textViewSecondOption.setOnClickListener(null)
+        textViewThirdOption.setOnClickListener(null)
+        textViewFourthOption.setOnClickListener(null)
+    }
+
+    private fun enableOptions() {
+        textViewFirstOption.setOnClickListener(this)
+        textViewSecondOption.setOnClickListener(this)
+        textViewThirdOption.setOnClickListener(this)
+        textViewFourthOption.setOnClickListener(this)
+    }
+
+    private fun hasPermissions(): Boolean {
+        val context = requireContext()
+        val internetPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET)
+        val writeExternalStoragePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        return internetPermission == PackageManager.PERMISSION_GRANTED &&
+                writeExternalStoragePermission == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermissions() {
+        requestPermissions(
+            arrayOf(Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            REQUEST_CODE_PERMISSIONS
+        )
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // All required permissions are granted, you can now start downloading files from the internet
+            } else {
+                // Show a message to the user explaining why the app needs these permissions
+                Toast.makeText(requireContext(), "This app requires the internet and storage permissions to download files.", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
 
 }

@@ -13,7 +13,6 @@ class PreferenceManager(context: Context)
 
     fun saveUser(user: UserModel) {
         val editor = sharedPreferences.edit()
-        Log.d("Preferences", "Saving user: $user")
         editor.putInt("user_id", user.id ?: -1)
         editor.putString("user_email", user.email)
         editor.putString("username", user.username)
@@ -39,7 +38,6 @@ class PreferenceManager(context: Context)
         val isAdmin = sharedPreferences.getInt("is_admin", 0)
         val isLecturer = sharedPreferences.getInt("is_lecturer", 0)
         val isStudent = sharedPreferences.getInt("is_student", 0)
-        Log.d("Preferences", "Read values: id=$id, email=$email, username=$username, password=$password, isAdmin=$isAdmin, isLecturer=$isLecturer, isStudent=$isStudent")
         return UserModel(id, email, username, password, isAdmin, isLecturer, isStudent)
     }
 

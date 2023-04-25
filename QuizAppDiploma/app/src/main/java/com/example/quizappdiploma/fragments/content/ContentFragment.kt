@@ -3,6 +3,7 @@ package com.example.quizappdiploma.fragments.content
 import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -13,8 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -48,6 +51,7 @@ class ContentFragment : Fragment()
     private lateinit var picasso: Picasso
 
     private var currentLectureIndex = 0
+    private val REQUEST_CODE_PERMISSIONS = 1000
     private val args : ContentFragmentArgs by navArgs()
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -100,6 +104,8 @@ class ContentFragment : Fragment()
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
+
+
         lectureTitle = binding.lectureTitleTxt
         lectureDescription = binding.lectureDescriptionTxt
         lectureImage = binding.lectureImageView
@@ -114,35 +120,36 @@ class ContentFragment : Fragment()
         val repository = LectureDataRepository(dao)
         lectureViewModel = ViewModelProvider(this, LectureViewModelFactory(repository))[LectureViewModel::class.java]
 
-
-        val cacheSize = 20 * 1024 * 1024 // 20 MB
-        val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
-        val okHttpClient = OkHttpClient.Builder()
-            .cache(cache)
-            .build()
-
-        picasso = Picasso.Builder(requireContext())
-            .downloader(OkHttp3Downloader(okHttpClient))
-            .indicatorsEnabled(false)
-            .loggingEnabled(true)
-            .build()
-
         var imageUrl = args.imagePath
+        if (!hasPermissions()) {
+            requestPermissions()
+        } else {
+            val cacheSize = 20 * 1024 * 1024 // 20 MB
+            val cache = Cache(requireContext().cacheDir, cacheSize.toLong())
+            val okHttpClient = OkHttpClient.Builder()
+                .cache(cache)
+                .build()
 
-        Picasso.get()
-            .load(imageUrl)
-            .noFade()
-            .into(lectureImage, object : Callback {
-                override fun onSuccess() {
-                    binding.imageProgressBar.visibility = View.GONE
-                }
+            picasso = Picasso.Builder(requireContext())
+                .downloader(OkHttp3Downloader(okHttpClient))
+                .indicatorsEnabled(false)
+                .loggingEnabled(true)
+                .build()
 
-                override fun onError(e: Exception?) {
-                    binding.imageProgressBar.visibility = View.GONE
-                    Log.e("Err: ", "Error loading image: ${e?.message}")
-                }
-            })
+            Picasso.get()
+                .load(imageUrl)
+                .noFade()
+                .into(lectureImage, object : Callback {
+                    override fun onSuccess() {
+                        binding.imageProgressBar.visibility = View.GONE
+                    }
 
+                    override fun onError(e: Exception?) {
+                        binding.imageProgressBar.visibility = View.GONE
+                        Log.e("Err: ", "Error loading image: ${e?.message}")
+                    }
+                })
+        }
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
@@ -219,6 +226,33 @@ class ContentFragment : Fragment()
     private fun SharedPreferences.getIntegerSet(key: String, defValues: Set<Int>): Set<Int>
     {
         return getStringSet(key, defValues.map { it.toString() }.toSet())?.map { it.toInt() }?.toSet() ?: defValues
+    }
+
+    private fun hasPermissions(): Boolean {
+        val context = requireContext()
+        val internetPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET)
+        val writeExternalStoragePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        return internetPermission == PackageManager.PERMISSION_GRANTED &&
+                writeExternalStoragePermission == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermissions() {
+        requestPermissions(
+            arrayOf(Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            REQUEST_CODE_PERMISSIONS
+        )
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // All required permissions are granted, you can now start downloading files from the internet
+            } else {
+                // Show a message to the user explaining why the app needs these permissions
+                Toast.makeText(requireContext(), "This app requires the internet and storage permissions to download files.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
 }

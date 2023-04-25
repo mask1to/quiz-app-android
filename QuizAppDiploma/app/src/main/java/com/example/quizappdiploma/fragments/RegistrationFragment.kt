@@ -74,7 +74,7 @@ class RegistrationFragment : Fragment()
             {
                 val student = UserModel(null, email, nickname, password, 0, 0, 1)
                 userViewModel.insertUser(student)
-                Toast.makeText(requireContext(), "Added", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Registration successful", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_registrationFragment_to_welcomeFragment)
             }
 
