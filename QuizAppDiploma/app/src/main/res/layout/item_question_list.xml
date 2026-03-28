@@ -2,12 +2,15 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/questionCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
+    android:clickable="true"
+    android:focusable="true"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/md_surface">
@@ -18,6 +21,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
+        <!-- Question text + action buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +35,7 @@
                 android:layout_weight="1"
                 android:textSize="14sp"
                 android:textColor="@color/md_on_surface"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:ellipsize="end" />
 
             <ImageButton
@@ -56,6 +60,7 @@
 
         </LinearLayout>
 
+        <!-- Difficulty badge + expand hint -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,13 +82,78 @@
                 android:background="@drawable/bg_primary_gradient" />
 
             <TextView
-                android:id="@+id/courseLabel"
+                android:id="@+id/expandHint"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:textSize="11sp"
-                android:textColor="#88AABB" />
+                android:textColor="#88AABB"
+                android:text="Tap to see answers ▾" />
+
+        </LinearLayout>
+
+        <!-- Expandable answers section -->
+        <LinearLayout
+            android:id="@+id/answersSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:paddingTop="10dp">
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#22AABB"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/optionA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/md_on_surface"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
+
+            <TextView
+                android:id="@+id/optionB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/md_on_surface"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
+
+            <TextView
+                android:id="@+id/optionC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/md_on_surface"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
+
+            <TextView
+                android:id="@+id/optionD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/md_on_surface"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
+
+            <TextView
+                android:id="@+id/correctAnswerLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_primary" />
 
         </LinearLayout>
 

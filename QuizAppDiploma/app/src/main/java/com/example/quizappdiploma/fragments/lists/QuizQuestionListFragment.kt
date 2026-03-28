@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizappdiploma.R
@@ -31,6 +35,12 @@ class QuizQuestionListFragment : Fragment() {
     private lateinit var courseViewModel: CourseViewModel
     private lateinit var adapter: QuizQuestionListAdapter
     private var courses: List<CourseModel> = emptyList()
+    private var selectedCourseId: Int? = null
+    private var currentQuestionsLiveData: LiveData<List<QuizQuestionModel>>? = null
+    private val questionsObserver = Observer<List<QuizQuestionModel>> { questions ->
+        adapter.questionData = questions
+        binding.emptyState.visibility = if (questions.isEmpty()) View.VISIBLE else View.GONE
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentQuestionListBinding.inflate(inflater, container, false)
@@ -51,17 +61,48 @@ class QuizQuestionListFragment : Fragment() {
         binding.questionList.layoutManager = LinearLayoutManager(requireContext())
         binding.questionList.adapter = adapter
 
+        val dropdown = binding.courseFilterDropdown as AutoCompleteTextView
+
         courseViewModel.getCoursesByIdAsc().observe(viewLifecycleOwner) { courseList ->
             courses = courseList
             adapter.courseNameMap = courseList.associate { it.id!! to (it.courseName ?: "") }
+
+            val courseNames = mutableListOf("All courses")
+            courseNames.addAll(courseList.map { it.courseName ?: "Course #${it.id}" })
+            val dropdownAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, courseNames)
+            dropdown.setAdapter(dropdownAdapter)
+
+            // If no course selected yet, auto-select first course if available
+            if (selectedCourseId == null && courseList.isNotEmpty()) {
+                selectedCourseId = courseList.first().id
+                dropdown.setText(courseList.first().courseName ?: "Course #${courseList.first().id}", false)
+                loadQuestionsForCourse(selectedCourseId)
+            }
         }
 
-        questionViewModel.getAllQuestionsLive().observe(viewLifecycleOwner) { questions ->
-            adapter.questionData = questions
-            binding.emptyState.visibility = if (questions.isEmpty()) View.VISIBLE else View.GONE
+        dropdown.setOnItemClickListener { _, _, position, _ ->
+            if (position == 0) {
+                selectedCourseId = null
+                loadQuestionsForCourse(null)
+            } else {
+                val course = courses.getOrNull(position - 1)
+                selectedCourseId = course?.id
+                loadQuestionsForCourse(selectedCourseId)
+            }
         }
 
         binding.fab.setOnClickListener { showQuestionDialog(null) }
+    }
+
+    private fun loadQuestionsForCourse(courseId: Int?) {
+        currentQuestionsLiveData?.removeObserver(questionsObserver)
+        val newLiveData = if (courseId == null) {
+            questionViewModel.getAllQuestionsLive()
+        } else {
+            questionViewModel.getQuestionNamesByCourseId(courseId)
+        }
+        currentQuestionsLiveData = newLiveData
+        newLiveData.observe(viewLifecycleOwner, questionsObserver)
     }
 
     private fun showQuestionDialog(existing: QuizQuestionModel?) {
@@ -105,7 +146,7 @@ class QuizQuestionListFragment : Fragment() {
                     return@setPositiveButton
                 }
 
-                val courseId = existing?.courseId ?: courses.firstOrNull()?.id
+                val courseId = existing?.courseId ?: selectedCourseId ?: courses.firstOrNull()?.id
                 val question = QuizQuestionModel(
                     id = existing?.id,
                     courseId = courseId,

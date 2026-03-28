@@ -254,7 +254,8 @@ class QuizFragment : Fragment(), OnClickListener {
 
         progressBar.progress = myCurrentPosition
         progressBar.max = myQuestionList!!.size
-        textViewProgress.text = "Question $myCurrentPosition/${myQuestionList!!.size}"
+        val total = if (additionalQuestionsGenerated) myQuestionList!!.size.toString() else "?"
+        textViewProgress.text = "Question $myCurrentPosition/$total"
 
         val points = question.questionPoints ?: 1
         questionW.text = "$points ${if (points == 1) "point" else "points"}"
@@ -362,11 +363,17 @@ class QuizFragment : Fragment(), OnClickListener {
                     val midDeferred = async { quizQuestionViewModel.getLastFiveQuestions(courseId, 2, secondQuestionLimit) }
                     val hardDeferred = async { quizQuestionViewModel.getLastFiveQuestions(courseId, 3, thirdQuestionLimit) }
                     val results = awaitAll(easyDeferred, midDeferred, hardDeferred)
-                    val questionList = results[0] + results[1] + results[2]
+                    val existingIds = myQuestionList?.mapNotNull { it.id }?.toSet() ?: emptySet()
+                    val questionList = (results[0] + results[1] + results[2])
+                        .filter { it.id !in existingIds }
+                        .distinctBy { it.id }
                     if (questionList.isNotEmpty()) {
                         myQuestionList?.addAll(questionList)
-                        callback(myQuestionList)
                     }
+                    // Always update display once additional question generation completes
+                    progressBar.max = myQuestionList!!.size
+                    textViewProgress.text = "Question $myCurrentPosition/${myQuestionList!!.size}"
+                    callback(myQuestionList)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -1,6 +1,7 @@
 package com.example.quizappdiploma.fragments.lists
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,9 @@ import com.example.quizappdiploma.fragments.viewmodels.CourseViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.CourseViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CourseListFragment : Fragment() {
 
@@ -84,14 +87,23 @@ class CourseListFragment : Fragment() {
             .setMessage("Delete \"${course.courseName}\"?\n\nAll lectures, questions and quizzes in this course will also be permanently deleted.")
             .setPositiveButton("Delete All") { _, _ ->
                 val courseId = course.id ?: return@setPositiveButton
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val db = MyDatabase.getDatabase(requireContext())
-                    // Delete in order: deepest FK dependencies first
-                    db.userAnswersDao().deleteAnswersByCourseId(courseId)
-                    db.quizQuestionDao().deleteQuestionsByCourseId(courseId)
-                    db.quizDao().deleteQuizzesByCourseId(courseId)
-                    db.lectureDao().deleteLecturesByCourseId(courseId)
-                    db.courseDao().deleteCourse(course)
+                val appContext = requireContext().applicationContext
+                lifecycleScope.launch {
+                    try {
+                        withContext(Dispatchers.IO) {
+                            val db = MyDatabase.getDatabase(appContext)
+                            // Delete in correct FK dependency order
+                            db.userAnswersDao().deleteAnswersByCourseId(courseId)
+                            db.quizStatsDao().deleteStatsByCourseId(courseId)
+                            db.quizQuestionDao().deleteQuestionsByCourseId(courseId)
+                            db.quizDao().deleteQuizzesByCourseId(courseId)
+                            db.lectureDao().deleteLecturesByCourseId(courseId)
+                            db.courseDao().deleteCourse(course)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("CourseDelete", "Failed to delete course $courseId", e)
+                        Toast.makeText(appContext, "Delete failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
             .setNegativeButton("Cancel", null)
