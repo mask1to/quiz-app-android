@@ -22,4 +22,9 @@ interface LectureDao
     @Delete
     suspend fun deleteLecture(lecture: LectureModel)
 
+    @Query("SELECT * FROM lectures ORDER BY id ASC")
+    fun getAllLectures(): LiveData<List<LectureModel>>
+
+    @Query("DELETE FROM lectures WHERE course_id = :courseId")
+    suspend fun deleteLecturesByCourseId(courseId: Int)
 }

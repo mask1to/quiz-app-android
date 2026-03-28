@@ -43,4 +43,13 @@ class LectureViewModel(private val lectureDataRepository: LectureDataRepository)
         }
     }
 
+    fun getAllLectures(): LiveData<List<LectureModel>> {
+        return lectureDataRepository.getAllLectures()
+    }
+
+    fun deleteLecturesByCourseId(courseId: Int) {
+        viewModelScope.launch {
+            lectureDataRepository.deleteLecturesByCourseId(courseId)
+        }
+    }
 }

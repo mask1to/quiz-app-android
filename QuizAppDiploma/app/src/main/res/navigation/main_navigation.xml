@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_lecturerFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_lecturerFragment_to_importContentFragment"
+            app:destination="@id/importContentFragment" />
     </fragment>
     <fragment
         android:id="@+id/adminFragment"
@@ -54,6 +57,9 @@
         <action
             android:id="@+id/action_adminFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_adminFragment_to_importContentFragment"
+            app:destination="@id/importContentFragment" />
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"
@@ -159,5 +165,11 @@
         android:id="@+id/statsFragment"
         android:name="com.example.quizappdiploma.fragments.QuizStatsFragment"
         android:label="StatsFragment" />
+
+    <fragment
+        android:id="@+id/importContentFragment"
+        android:name="com.example.quizappdiploma.fragments.import.ImportContentFragment"
+        android:label="ImportContentFragment"
+        tools:layout="@layout/fragment_import_content" />
 
 </navigation>

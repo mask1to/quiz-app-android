@@ -66,4 +66,13 @@ class QuizQuestionViewModel(private val quizQuestionDataRepository: QuizQuestion
         return quizQuestionDataRepository.getAverageTimeSpentOnUsedQuestions()
     }
 
+    fun getAllQuestionsLive(): LiveData<List<QuizQuestionModel>> {
+        return quizQuestionDataRepository.getAllQuestionsLive()
+    }
+
+    fun deleteQuestionsByCourseId(courseId: Int) {
+        viewModelScope.launch {
+            quizQuestionDataRepository.deleteQuestionsByCourseId(courseId)
+        }
+    }
 }

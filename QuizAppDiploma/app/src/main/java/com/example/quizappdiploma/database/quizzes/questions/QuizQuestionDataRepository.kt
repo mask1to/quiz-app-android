@@ -60,4 +60,11 @@ class QuizQuestionDataRepository(private val quizQuestionDao: QuizQuestionDao)
         return quizQuestionDao.getAverageTimeSpentOnUsedQuestions()
     }
 
+    fun getAllQuestionsLive(): LiveData<List<QuizQuestionModel>> {
+        return quizQuestionDao.getAllQuestionsLive()
+    }
+
+    suspend fun deleteQuestionsByCourseId(courseId: Int) {
+        quizQuestionDao.deleteQuestionsByCourseId(courseId)
+    }
 }

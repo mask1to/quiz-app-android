@@ -25,4 +25,11 @@ interface UserAnswersDao
 
     @Query("DELETE FROM user_answers WHERE user_id = :userId AND quiz_id = :quizId")
     suspend fun deleteUserAnswersByQuiz(userId: Int, quizId: Int)
+
+    @Query("""
+        DELETE FROM user_answers
+        WHERE question_id IN (SELECT id FROM quiz_questions WHERE course_id = :courseId)
+           OR quiz_id IN (SELECT id FROM quizzes WHERE course_id = :courseId)
+    """)
+    suspend fun deleteAnswersByCourseId(courseId: Int)
 }

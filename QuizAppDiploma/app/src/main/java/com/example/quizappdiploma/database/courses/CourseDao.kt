@@ -8,6 +8,9 @@ interface CourseDao
 {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addCourse(course : CourseModel)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addCourseReturnId(course: CourseModel): Long
     @Query("SELECT * FROM courses ORDER BY id ASC")
     fun getCoursesOrderByIdAsc(): LiveData<List<CourseModel>>
     @Query("SELECT * FROM courses WHERE course_name= :courseName")

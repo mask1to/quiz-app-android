@@ -27,6 +27,9 @@ interface QuizQuestionDao
     @Query("SELECT * FROM quiz_questions")
     fun getAllQuestions() : List<QuizQuestionModel>
 
+    @Query("SELECT * FROM quiz_questions ORDER BY id ASC")
+    fun getAllQuestionsLive(): LiveData<List<QuizQuestionModel>>
+
     @Query("SELECT * FROM quiz_questions WHERE course_id=:courseId")
     fun getQuestionNamesByCourseId(courseId: Int) : LiveData<List<QuizQuestionModel>>
 
@@ -47,4 +50,6 @@ interface QuizQuestionDao
     @Delete
     suspend fun deleteQuestion(question: QuizQuestionModel)
 
+    @Query("DELETE FROM quiz_questions WHERE course_id = :courseId")
+    suspend fun deleteQuestionsByCourseId(courseId: Int)
 }

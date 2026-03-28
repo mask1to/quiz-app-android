@@ -20,9 +20,15 @@ interface QuizDao
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuiz(quiz: QuizModel)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertQuizReturnId(quiz: QuizModel): Long
+
     @Update
     suspend fun updateQuiz(quiz: QuizModel)
 
     @Delete
     suspend fun deleteQuiz(quiz: QuizModel)
+
+    @Query("DELETE FROM quizzes WHERE course_id = :courseId")
+    suspend fun deleteQuizzesByCourseId(courseId: Int)
 }

@@ -7,7 +7,7 @@
     android:background="@color/md_background">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/userList"
+        android:id="@+id/lectureList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="8dp"
@@ -25,9 +25,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No users yet"
+            android:text="No lectures yet"
             android:textSize="16sp"
             android:textColor="#88AABB" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tap + to add one"
+            android:textSize="13sp"
+            android:textColor="#88AABB"
+            android:layout_marginTop="4dp" />
 
     </LinearLayout>
 
@@ -38,7 +46,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/baseline_add_24"
-        android:contentDescription="Add user"
+        android:contentDescription="Add lecture"
         app:backgroundTint="@color/md_primary" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
