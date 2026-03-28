@@ -197,7 +197,7 @@ class LecturerFragment : Fragment()
         dialog.setContentView(layoutId)
 
         val title = dialog.findViewById<TextView>(R.id.dialogTitle)
-        title.text = "${action.capitalize()} ${listType.capitalize()}"
+        title.text = "${action.replaceFirstChar { it.uppercase() }} ${listType.replaceFirstChar { it.uppercase() }}"
 
         val positiveButton = dialog.findViewById<Button>(R.id.dialogPositiveButton)
 
@@ -307,7 +307,7 @@ class LecturerFragment : Fragment()
                 }
             }
         }
-        positiveButton.text = action.capitalize()
+        positiveButton.text = action.replaceFirstChar { it.uppercase() }
         positiveButton.setOnClickListener {
             when (action)
             {

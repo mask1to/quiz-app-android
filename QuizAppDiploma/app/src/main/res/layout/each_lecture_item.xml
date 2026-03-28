@@ -1,48 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lectureCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="20dp"
-    android:layout_marginHorizontal = "10dp"
-    android:layout_marginVertical="16dp"
-    android:id="@+id/lectureCardView"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/md_surface">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/cardview_light_background">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/eachImg"
-            android:layout_width="120dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
+        <!-- Number/icon circle -->
         <TextView
-            android:id="@+id/lectureNameTxt"
-            android:layout_width="wrap_content"
+            android:id="@+id/lectureNumberTxt"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_primary_gradient"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Lecture info -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Kurz"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:fontFamily="@font/poppins_bold"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.452"
-            app:layout_constraintStart_toEndOf="@+id/eachImg"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.507" />
+            android:layout_weight="1"
+            android:layout_marginStart="14dp"
+            android:orientation="vertical">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/lectureNameTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lecture Name"
+                android:textColor="@color/md_on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Tap to read"
+                android:textColor="@color/md_on_surface_variant"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <!-- Arrow -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/baseline_arrow_forward_ios_24"
+            app:tint="@color/md_outline" />
+
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -5,8 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,24 +23,20 @@ import com.example.quizappdiploma.databinding.WelcomeFragmentBinding
 import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
 import com.example.quizappdiploma.preferences.PreferenceManager
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
 class WelcomeFragment : Fragment() {
     private var _binding: WelcomeFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var textField: TextInputLayout
-    private lateinit var emailField: TextInputLayout
-    private lateinit var passwordField: TextInputLayout
-    private lateinit var registerButton: Button
-    private lateinit var loginButton: Button
+
     private lateinit var userViewModel: UserViewModel
     private lateinit var preferenceManager: PreferenceManager
+
+    private var selectedRole: String = "Student"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager = PreferenceManager(requireContext())
-        //preferenceManager.logout()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -47,20 +47,9 @@ class WelcomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textField = binding.menu
-        registerButton = binding.registerBtn
-        loginButton = binding.loginBtn
-        emailField = binding.emailField
-        passwordField = binding.passwordField
-
-        val callback = object : OnBackPressedCallback(true)
-        {
+        val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val navController = findNavController()
-                val navState = navController.saveState()
-                navController.popBackStack(R.id.studentFragment, true)
                 requireActivity().moveTaskToBack(true)
-                navController.restoreState(navState)
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -71,72 +60,80 @@ class WelcomeFragment : Fragment() {
         val repository = UserDataRepository(dao)
         userViewModel = ViewModelProvider(this, UserViewModelFactory(repository))[UserViewModel::class.java]
 
-        val items = listOf("Student", "Lecturer", "Administrator")
-        val adapter = ArrayAdapter(requireContext(), R.layout.entity_dropdown_item, items)
-        (textField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        setupRoleSelector()
 
-        loginButton.setOnClickListener {
-            val emailInput = emailField.editText?.text.toString()
-            val passwordInput = passwordField.editText?.text.toString()
-            val role = textField.editText?.text.toString()
+        binding.loginBtn.setOnClickListener {
+            val emailInput = binding.emailField.editText?.text.toString().trim()
+            val passwordInput = binding.passwordField.editText?.text.toString()
 
-            // Check if user exists in the database
+            if (emailInput.isEmpty() || passwordInput.isEmpty()) {
+                Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             viewLifecycleOwner.lifecycleScope.launch {
                 val user = userViewModel.getUserByEmailAndPassword(emailInput, passwordInput)
-                if (user != null && role.isNotEmpty())
-                {
-                    // Logged in successfully
+                if (user != null) {
                     preferenceManager.saveUser(user)
-
-                    if(user.isStudent == 1 && user.isAdmin == 0 && user.isLecturer == 0 && role == "Student")
-                    {
-                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
-                        findNavController().navigate(action)
+                    when {
+                        user.isStudent == 1 && selectedRole == "Student" ->
+                            findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment())
+                        user.isLecturer == 1 && selectedRole == "Lecturer" ->
+                            findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment())
+                        user.isAdmin == 1 && selectedRole == "Administrator" ->
+                            findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment())
+                        else ->
+                            Toast.makeText(requireContext(), "Role mismatch or invalid credentials", Toast.LENGTH_SHORT).show()
                     }
-                    else if(user.isLecturer == 1 && user.isAdmin == 0 && user.isStudent == 0 && role == "Lecturer")
-                    {
-                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
-                        findNavController().navigate(action)
-                    }
-                    else if(user.isAdmin == 1 && user.isLecturer == 0 && user.isStudent == 0 && role == "Administrator")
-                    {
-                        val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
-                        findNavController().navigate(action)
-                    }
-
-                }
-                else
-                {
+                } else {
                     Toast.makeText(requireContext(), "Invalid email or password", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        registerButton.setOnClickListener {
-            val action = WelcomeFragmentDirections.actionWelcomeFragmentToRegistrationFragment()
-            view.findNavController().navigate(action)
+
+        binding.registerBtn.setOnClickListener {
+            view.findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToRegistrationFragment())
         }
+    }
+
+    private fun setupRoleSelector() {
+        selectRole("Student")
+
+        binding.roleStudent.setOnClickListener { selectRole("Student") }
+        binding.roleLecturer.setOnClickListener { selectRole("Lecturer") }
+        binding.roleAdmin.setOnClickListener { selectRole("Administrator") }
+    }
+
+    private fun selectRole(role: String) {
+        selectedRole = role
+
+        setRoleCardState(binding.roleStudent, binding.iconStudent, binding.labelStudent, role == "Student")
+        setRoleCardState(binding.roleLecturer, binding.iconLecturer, binding.labelLecturer, role == "Lecturer")
+        setRoleCardState(binding.roleAdmin, binding.iconAdmin, binding.labelAdmin, role == "Administrator")
+    }
+
+    private fun setRoleCardState(card: LinearLayout, icon: ImageView, label: TextView, selected: Boolean) {
+        val bg = if (selected) R.drawable.bg_role_selected else R.drawable.bg_role_unselected
+        val tintColor = if (selected) R.color.md_primary else R.color.md_outline
+        val textColor = if (selected) R.color.md_primary else R.color.md_outline
+
+        card.setBackgroundResource(bg)
+        icon.imageTintList = ContextCompat.getColorStateList(requireContext(), tintColor)
+        label.setTextColor(ContextCompat.getColor(requireContext(), textColor))
     }
 
     private fun checkLogin() {
-        val loggedInUser = preferenceManager.getLoggedInUser()
-        Log.d("checkLogin", "Logged-in user: $loggedInUser")
-        if (loggedInUser != null) {
-            if (loggedInUser.isStudent == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isLecturer == 0) {
-                Log.d("checkLogin", "Navigating to StudentFragment")
-                val action = WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment()
-                findNavController().navigate(action)
-            } else if (loggedInUser.isLecturer == 1 && loggedInUser.isAdmin == 0 && loggedInUser.isStudent == 0) {
-                Log.d("checkLogin", "Navigating to LecturerFragment")
-                val action = WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment()
-                findNavController().navigate(action)
-            } else if (loggedInUser.isAdmin == 1 && loggedInUser.isLecturer == 0 && loggedInUser.isStudent == 0) {
-                Log.d("checkLogin", "Navigating to AdminFragment")
-                val action = WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment()
-                findNavController().navigate(action)
-            }
+        val user = preferenceManager.getLoggedInUser() ?: return
+        Log.d("WelcomeFragment", "Auto-login: $user")
+        when {
+            user.isStudent == 1 && user.isAdmin == 0 && user.isLecturer == 0 ->
+                findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToStudentFragment())
+            user.isLecturer == 1 && user.isAdmin == 0 && user.isStudent == 0 ->
+                findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToLecturerFragment())
+            user.isAdmin == 1 && user.isLecturer == 0 && user.isStudent == 0 ->
+                findNavController().navigate(WelcomeFragmentDirections.actionWelcomeFragmentToAdminFragment())
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

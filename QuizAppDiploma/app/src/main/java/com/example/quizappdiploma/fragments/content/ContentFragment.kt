@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,7 +28,7 @@ import com.example.quizappdiploma.database.lectures.LectureDataRepository
 import com.example.quizappdiploma.databinding.FragmentContentBinding
 import com.example.quizappdiploma.fragments.viewmodels.LectureViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.LectureViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.button.MaterialButton
 import com.squareup.picasso.Callback
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
@@ -44,9 +44,9 @@ class ContentFragment : Fragment()
     private lateinit var lectureTitle : TextView
     private lateinit var lectureDescription : TextView
     private lateinit var lectureImage : ImageView
-    private lateinit var nextLectureButton: FloatingActionButton
-    private lateinit var previousLectureButton : FloatingActionButton
-    private lateinit var startQuizButton: FloatingActionButton
+    private lateinit var nextLectureButton: MaterialButton
+    private lateinit var previousLectureButton: MaterialButton
+    private lateinit var startQuizButton: MaterialButton
     private lateinit var lectureViewModel: LectureViewModel
     private lateinit var picasso: Picasso
 

@@ -13,7 +13,6 @@ import com.example.quizappdiploma.database.courses.CourseDataRepository
 import com.example.quizappdiploma.databinding.FragmentCourseListBinding
 import com.example.quizappdiploma.fragments.viewmodels.CourseViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.CourseViewModelFactory
-import kotlinx.android.synthetic.main.fragment_course_list.*
 
 class CourseListFragment : Fragment()
 {
@@ -38,8 +37,8 @@ class CourseListFragment : Fragment()
 
 
         val adapter = CourseListAdapter()
-        courseList.layoutManager = LinearLayoutManager(requireContext())
-        courseList.adapter = adapter
+        binding.courseList.layoutManager = LinearLayoutManager(requireContext())
+        binding.courseList.adapter = adapter
 
         courseViewModel.getCoursesByIdAsc().observe(viewLifecycleOwner) { courses ->
             adapter.setData(courses)

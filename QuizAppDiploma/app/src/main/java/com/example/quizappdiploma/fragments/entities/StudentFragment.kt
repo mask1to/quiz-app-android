@@ -1,7 +1,5 @@
 package com.example.quizappdiploma.fragments.entities
 
-import ProfileFragment
-import QuizStatsFragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.quizappdiploma.R
 import com.example.quizappdiploma.databinding.FragmentStudentBinding
+import com.example.quizappdiploma.fragments.ProfileFragment
+import com.example.quizappdiploma.fragments.QuizStatsFragment
+import com.example.quizappdiploma.fragments.UserProfileFragment
 import com.example.quizappdiploma.preferences.PreferenceManager
 
 class StudentFragment : Fragment() {
@@ -24,10 +25,7 @@ class StudentFragment : Fragment() {
         preferenceManager = PreferenceManager(requireContext())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStudentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -35,21 +33,9 @@ class StudentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val callback = object : OnBackPressedCallback(true)
-        {
+        val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Save the current navigation state
-                val navController = findNavController()
-                val navState = navController.saveState()
-
-                // Remove all the previous fragments from the back stack
-                navController.popBackStack(R.id.courseFragment, true)
-
-                // Minimize the app
                 requireActivity().moveTaskToBack(true)
-
-                // Restore the navigation state when the app is resumed
-                navController.restoreState(navState)
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
@@ -57,39 +43,35 @@ class StudentFragment : Fragment() {
         checkLoginStatus()
 
         replaceFragment(ProfileFragment())
+        binding.bottomNavigationView.selectedItemId = R.id.home
 
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.logout -> logout()
-                R.id.profile -> replaceFragment(ProfileFragment())
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> replaceFragment(ProfileFragment())
+                R.id.courses -> findNavController().navigate(StudentFragmentDirections.actionStudentFragmentToCourseFragment())
                 R.id.stats -> replaceFragment(QuizStatsFragment())
-                else -> { }
+                R.id.profile -> replaceFragment(UserProfileFragment())
             }
             true
         }
     }
 
+    fun navigateToStats() {
+        binding.bottomNavigationView.selectedItemId = R.id.stats
+        replaceFragment(QuizStatsFragment())
+    }
+
     private fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = childFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_layout, fragment)
-        fragmentTransaction.commit()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.frame_layout, fragment)
+            .commit()
     }
 
     private fun checkLoginStatus() {
-        val loggedInUser = preferenceManager.getLoggedInUser()
-        if (loggedInUser == null) {
-            val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-            findNavController().navigate(action)
+        if (preferenceManager.getLoggedInUser() == null) {
+            findNavController().navigate(StudentFragmentDirections.actionStudentFragmentToWelcomeFragment())
         }
     }
-
-    private fun logout() {
-        preferenceManager.logout()
-        val action = StudentFragmentDirections.actionStudentFragmentToWelcomeFragment()
-        findNavController().navigate(action)
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

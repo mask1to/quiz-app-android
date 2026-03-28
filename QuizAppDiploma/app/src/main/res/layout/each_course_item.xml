@@ -1,48 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="20dp"
-    android:layout_marginHorizontal = "10dp"
-    android:layout_marginVertical="16dp"
     android:id="@+id/eachCourseCardView"
-    app:cardElevation="4dp">
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Gradient background (will be tinted per course color via code) -->
+    <LinearLayout
+        android:id="@+id/courseCardBg"
         android:layout_width="match_parent"
-        android:background="@color/white"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_primary_gradient"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageView
-            android:id="@+id/eachCourseImg"
-            android:layout_width="120dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_baseline_person_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        <!-- Icon row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="end|top"
+            android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/bg_avatar_circle"
+                android:padding="10dp"
+                android:src="@drawable/baseline_book_24"
+                app:tint="@color/md_primary" />
+
+        </LinearLayout>
+
+        <!-- Course name -->
         <TextView
             android:id="@+id/eachCourseTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Course Name"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Subtitle -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:text="@string/courseName"
-            android:fontFamily="@font/poppins_bold"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
-            app:layout_constraintStart_toEndOf="@+id/eachCourseImg"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="4dp"
+            android:text="Tap to explore lectures"
+            android:textColor="#CCFFFFFF"
+            android:textSize="12sp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

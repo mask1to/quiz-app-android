@@ -1,68 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/backgroundColor"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:gravity="center_horizontal"
-    tools:context=".fragments.quizzes.ResultQuizFragment">
+    android:background="@color/md_background">
 
-    <TextView
-        android:id="@+id/textViewResult"
-        android:layout_width="wrap_content"
+    <!-- Gradient header -->
+    <LinearLayout
+        android:id="@+id/resultHeader"
+        android:layout_width="0dp"
+        android:layout_height="280dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bg_primary_gradient"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Score circle -->
+        <FrameLayout
+            android:layout_width="140dp"
+            android:layout_height="140dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/scoreCircle"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                app:indicatorSize="140dp"
+                app:trackThickness="10dp"
+                app:trackColor="#33FFFFFF"
+                app:indicatorColor="@color/white"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/textViewScorePercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Score"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textViewCongrats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Quiz Complete!"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Great job!"
+            android:textColor="#CCFFFFFF"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <!-- Stats card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/statsCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="Result"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"/>
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="-24dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/md_surface"
+        app:layout_constraintTop_toBottomOf="@id/resultHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/finalAnimation"
-        android:layout_width="250dp"
-        android:layout_height="271dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-    <TextView
-        android:id="@+id/textViewCongrats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Congrats!"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"/>
+            <!-- User name -->
+            <TextView
+                android:id="@+id/textViewUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/md_on_surface"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Username" />
 
-    <TextView
-        android:id="@+id/textViewUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:textColor="@android:color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        tools:text="Username"/>
+            <!-- Stats row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
 
-    <TextView
-        android:id="@+id/textViewScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:textColor="@android:color/secondary_text_dark"
-        android:textSize="20sp"
-        tools:text="Your score is 9 out of 10"/>
+                <!-- Correct -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_answer_correct"
+                    android:layout_marginEnd="6dp">
 
-    <Button
+                    <TextView
+                        android:id="@+id/textViewCorrectCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/answer_correct_border"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Correct"
+                        android:textColor="@color/answer_correct_border"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <!-- Wrong -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_answer_wrong"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp">
+
+                    <TextView
+                        android:id="@+id/textViewWrongCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/answer_wrong_border"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wrong"
+                        android:textColor="@color/answer_wrong_border"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <!-- Total -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_answer_selected"
+                    android:layout_marginStart="6dp">
+
+                    <TextView
+                        android:id="@+id/textViewTotalCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/md_primary"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total"
+                        android:textColor="@color/md_primary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Score text -->
+            <TextView
+                android:id="@+id/textViewScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="You answered 0 out of 10 correctly"
+                android:textColor="@color/md_on_surface_variant"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Finish button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFinish"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@android:color/white"
-        android:text="Finish"
-        android:textColor="@color/design_default_color_primary"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:text="Back to Home"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="16dp"
+        app:backgroundTint="@color/md_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

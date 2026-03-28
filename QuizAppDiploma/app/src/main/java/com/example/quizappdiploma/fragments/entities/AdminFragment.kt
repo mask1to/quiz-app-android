@@ -46,14 +46,6 @@ import com.example.quizappdiploma.fragments.viewmodels.*
 import com.example.quizappdiploma.fragments.viewmodels.factory.*
 import com.example.quizappdiploma.preferences.PreferenceManager
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.custom_dialog_add_course.*
-import kotlinx.android.synthetic.main.custom_dialog_add_user.*
-import kotlinx.android.synthetic.main.custom_dialog_remove_course.*
-import kotlinx.android.synthetic.main.custom_dialog_remove_user.*
-import kotlinx.android.synthetic.main.custom_dialog_update_course.*
-import kotlinx.android.synthetic.main.custom_dialog_update_question.*
-import kotlinx.android.synthetic.main.custom_dialog_update_user.*
 import java.util.regex.Pattern
 
 class AdminFragment : Fragment()
@@ -263,7 +255,7 @@ class AdminFragment : Fragment()
         dialog.setContentView(layoutId)
 
         val title = dialog.findViewById<TextView>(R.id.dialogTitle)
-        title.text = "${action.capitalize()} ${listType.capitalize()}"
+        title.text = "${action.replaceFirstChar { it.uppercase() }} ${listType.replaceFirstChar { it.uppercase() }}"
 
         val positiveButton = dialog.findViewById<Button>(R.id.dialogPositiveButton)
 
@@ -374,7 +366,7 @@ class AdminFragment : Fragment()
             }
         }
 
-        positiveButton.text = action.capitalize()
+        positiveButton.text = action.replaceFirstChar { it.uppercase() }
         positiveButton.setOnClickListener {
                 when (action)
                 {

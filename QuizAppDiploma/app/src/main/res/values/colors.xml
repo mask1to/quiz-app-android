@@ -1,12 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- Material 3 Primary palette (Indigo-Blue) -->
+    <color name="md_primary">#4F6AF5</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#DEE3FF</color>
+    <color name="md_on_primary_container">#00168A</color>
+
+    <!-- Secondary palette (Violet) -->
+    <color name="md_secondary">#7B5EA7</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#EEDCFF</color>
+    <color name="md_on_secondary_container">#310066</color>
+
+    <!-- Tertiary palette (Cyan accent) -->
+    <color name="md_tertiary">#006875</color>
+    <color name="md_on_tertiary">#FFFFFF</color>
+    <color name="md_tertiary_container">#97F0FF</color>
+    <color name="md_on_tertiary_container">#001F24</color>
+
+    <!-- Error -->
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+    <color name="md_error_container">#FFDAD6</color>
+    <color name="md_on_error_container">#410002</color>
+
+    <!-- Surface / Background (Light) -->
+    <color name="md_background">#F8F9FF</color>
+    <color name="md_on_background">#1A1C2A</color>
+    <color name="md_surface">#F8F9FF</color>
+    <color name="md_on_surface">#1A1C2A</color>
+    <color name="md_surface_variant">#E3E2F4</color>
+    <color name="md_on_surface_variant">#46464F</color>
+    <color name="md_surface_container">#EDEDFD</color>
+    <color name="md_surface_container_high">#E7E7F7</color>
+    <color name="md_outline">#777680</color>
+    <color name="md_outline_variant">#C7C5D0</color>
+
+    <!-- Custom app-specific semantic colors -->
+    <color name="app_navy">#0F172A</color>
+    <color name="app_navy_light">#1E293B</color>
+    <color name="app_navy_card">#263145</color>
+    <color name="app_accent_cyan">#22D3EE</color>
+    <color name="app_accent_green">#22C55E</color>
+    <color name="app_accent_red">#EF4444</color>
+    <color name="app_accent_orange">#F97316</color>
+    <color name="app_accent_yellow">#EAB308</color>
+
+    <!-- Quiz answer states -->
+    <color name="answer_default_bg">#FFFFFF</color>
+    <color name="answer_default_border">#E3E2F4</color>
+    <color name="answer_selected_bg">#DEE3FF</color>
+    <color name="answer_selected_border">#4F6AF5</color>
+    <color name="answer_correct_bg">#DCFCE7</color>
+    <color name="answer_correct_border">#22C55E</color>
+    <color name="answer_wrong_bg">#FEE2E2</color>
+    <color name="answer_wrong_border">#EF4444</color>
+
+    <!-- Course gradient colors (per-course accent) -->
+    <color name="course_color_1">#4F6AF5</color>
+    <color name="course_color_2">#7B5EA7</color>
+    <color name="course_color_3">#006875</color>
+    <color name="course_color_4">#B5522A</color>
+    <color name="course_color_5">#2E7D32</color>
+    <color name="course_color_6">#1565C0</color>
+
+    <!-- Difficulty colors -->
+    <color name="difficulty_easy">#22C55E</color>
+    <color name="difficulty_medium">#F97316</color>
+    <color name="difficulty_hard">#EF4444</color>
+
+    <!-- Legacy kept for compat -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="backgroundColor">#050a30</color>
-    <color name="progressBackground">#0c165e</color>
+    <color name="backgroundColor">#0F172A</color>
+    <color name="progressBackground">#1E293B</color>
+    <color name="purple_700">#4F6AF5</color>
 </resources>

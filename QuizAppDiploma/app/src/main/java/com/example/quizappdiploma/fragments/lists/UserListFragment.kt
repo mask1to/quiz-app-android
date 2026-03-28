@@ -13,7 +13,6 @@ import com.example.quizappdiploma.database.users.UserDataRepository
 import com.example.quizappdiploma.databinding.FragmentUserListBinding
 import com.example.quizappdiploma.fragments.viewmodels.UserViewModel
 import com.example.quizappdiploma.fragments.viewmodels.factory.UserViewModelFactory
-import kotlinx.android.synthetic.main.fragment_user_list.*
 
 class UserListFragment : Fragment()
 {
@@ -37,8 +36,8 @@ class UserListFragment : Fragment()
 
 
         val adapter = UserListAdapter()
-        userList.layoutManager = LinearLayoutManager(requireContext())
-        userList.adapter = adapter
+        binding.userList.layoutManager = LinearLayoutManager(requireContext())
+        binding.userList.adapter = adapter
 
         userViewModel.getUsers().observe(viewLifecycleOwner) { users ->
             adapter.setData(users)
